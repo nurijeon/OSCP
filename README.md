@@ -46,6 +46,10 @@ BOOM
 
 To change the IP, i would either prefer ctrl + z or just create a new file with the method above ^
 
+## Article
+https://www.hackingarticles.in/a-detailed-guide-on-evil-winrm/
+
+
 ## Shells & stuff
 https://www.revshells.com/
 
