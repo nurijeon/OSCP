@@ -442,7 +442,11 @@ png,jpg,jpeg,gif,bmp
 feroxbuster -w /usr/share/seclists/Discovery/Web-Content/raft-medium-words.txt  --url http://<% tp.frontmatter["RHOST"] %>/  -x php,aspx,jsp,pdf  -C 404,401,403 --output brute.txt
 
 # Gobuster
+### Directory Mode
 gobuster dir -u http://<% tp.frontmatter["RHOST"] %>/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+
+### Pattern matching(API)
+gobuster dir -u http://192.168.50.16:5002 -w /usr/share/wordlists/dirb/big.txt -p pattern
 
 # API Fuzzing
 ffuf -u https://<% tp.frontmatter["RHOST"] %>/api/v2/FUZZ -w api_seen_in_wild.txt -c -ac -t 250 -fc 400,404,412
