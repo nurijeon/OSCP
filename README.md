@@ -709,3 +709,17 @@ autorecon <% tp.frontmatter["RHOST"] %> --exclude-tags="dirbuster,top-100-udp-po
 ```
 
 
+### ssh-keygen
+```bash
+kali@kali:~$ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/kali/.ssh/id_rsa):fileup
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in fileupYour public key has been saved in fileup.pub
+...
+
+kali@kali:~$cat fileup.pub > authorized_keys
+```
+
+
