@@ -702,3 +702,10 @@ autorecon <% tp.frontmatter["RHOST"] %> --exclude-tags="dirbuster,top-100-udp-po
 # if you want to omit portscans of all port if you already have the list!
 autorecon <% tp.frontmatter["RHOST"] %> --exclude-tags="dirbuster,top-100-udp-ports,enum4linux,top-tcp-ports,all-tcp-ports" --dirbuster.tool ffuf -vv
 ```
+
+### Check if running powershell or cmd
+```bash
+(dir 2>&1 *`|echo CMD);&<# rem #>echo PowerShell
+```
+
+
