@@ -474,6 +474,10 @@ wpscan --rua -e ap,at,tt,cb,dbe,u,m --url http://<% tp.frontmatter["RHOST"] %> -
 wpscan --url [http://192.168.243.244](http://192.168.243.244) --enumerate p --plugins-detection aggressive  --api-token qLVQId1c9vb4suVQzft2zhHusr9BsSaSpxcanRW6qSA
 <example>
 
+<example>
+wpscan --url http://ipaddress.of.website/ --enumerate vp --api-token API-TOKEN
+<example>
+
 
 
 # Hydra
