@@ -722,4 +722,29 @@ Your identification has been saved in fileupYour public key has been saved in fi
 kali@kali:~$cat fileup.pub > authorized_keys
 ```
 
+### mysql
+```bash
+mysql -u root -p'root' -h 192.168.50.16 -P 3306
+select version();
+select system_user();
+show databases;
+SELECT user, authentication_string FROM mysql.user WHERE user = 'offsec';
+```
+
+### mssql
+```bash
+impacket-mssqlclient Administrator:Lab123@192.168.50.18 -windows-auth
+SELECT @@version;
+SELECT name FROM sys.databases;
+SELECT * FROM offsec.information_schema.tables;
+```
+
+### mssql
+```bash
+impacket-mssqlclient Administrator:Lab123@192.168.50.18 -windows-auth
+SELECT @@version;
+SELECT name FROM sys.databases;
+SELECT * FROM offsec.information_schema.tables;
+select * from offsec.dbo.users;
+```
 
