@@ -523,6 +523,8 @@ sudo hashcat -m 13100 hashes.kerberoast2 /usr/share/wordlists/rockyou.txt -r /us
 
 #keypass
 keepass2<% tp.frontmatter["USERNAME"] %> Database.kdbx > keepass.hash
+#make sure to remove "Database:" Before cracking with hashcat
+
 hashcat --help | grep -i "KeePass"
 hashcat -m 13400 keepass.hash /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/rockyou-30000.rule --force
 
