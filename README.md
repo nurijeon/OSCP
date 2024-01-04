@@ -802,3 +802,9 @@ echo -n "secret" | sha256sum
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/ca7ce199-47ed-4a09-bdc8-3184ea590ef5)
 
 
+
+### POWERSHELL LOCAL ENUM
+```bash
+Get-LocalUser
+```
+
