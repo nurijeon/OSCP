@@ -815,3 +815,9 @@ proxychains -q nmap -vvv -sT --top-ports 20 -Pn 172.16.208.10
 
 ```
 
+### Sharphound
+```bash
+powershell -ep bypass
+. .\Sharphound.ps1
+Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\Users\stephanie\Desktop\ -OutputPrefix "corp audit"
+```
