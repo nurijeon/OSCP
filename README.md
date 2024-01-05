@@ -809,3 +809,9 @@ echo -n "secret" | sha256sum
 Get-LocalUser
 ```
 
+### Proxychains
+```bash
+proxychains -q nmap -vvv -sT --top-ports 20 -Pn 172.16.208.10
+
+```
+
