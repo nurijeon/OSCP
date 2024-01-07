@@ -835,6 +835,7 @@ Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\Users\stephanie\Desk
 ### Powershell To Query Services
 ```bash
 Get-CimInstance -ClassName win32_service | Select Name,State,PathName | Where-Object {$_.State -like 'Running'}
+### when apps are installed on C:\ directly, we may be able to replace the executable files since they're not located on C:\Windows\System32
 ```
 
 ### PowerUp.ps1 
