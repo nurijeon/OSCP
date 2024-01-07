@@ -851,3 +851,7 @@ Invoke-AllChecks
 reg add HKCU\Console /v VirtualTerminalLevel /t REG_DWORD /d 1
 ```
 
+### query sheduled tasks
+```bash
+schtasks /query /fo LIST /v
+```
