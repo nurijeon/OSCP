@@ -877,3 +877,11 @@ shutdown /r /t 0
 ```bash
 .\accesschk.exe /accepteula -uwcqv yoshi servicename
 ```
+![image](https://github.com/nuricheun/OSCP/assets/14031269/7c0c468a-3c88-4a71-8bbb-6b15fa85359f)
+
+### sc
+```bash
+sc qc service
+```
+![image](https://github.com/nuricheun/OSCP/assets/14031269/987fc700-4a40-4445-8a8c-24b2b65da9f4)
+
