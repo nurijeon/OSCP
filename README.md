@@ -885,3 +885,55 @@ sc qc service
 ```
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/987fc700-4a40-4445-8a8c-24b2b65da9f4)
 
+
+### Priv Esc Windows Local Enumeration
+```bash
+# username and hostname
+C:\Users\dave>whoami
+whoami
+clientwk220\dave
+
+# Group memberships of the current user
+whoami /groups
+
+# Existing users and groups
+net user || Get-LocalUser
+net localgroup || Get-LocalGroup
+Get-LocalGroupMember adminteam
+Get-LocalGroupMember Administrators
+
+# Operating system, version and architecture
+systeminfo
+
+# Network information
+ipconfig /all
+route print
+#List all active network connections
+netstat -ano
+
+# Installed applications
+Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
+Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
+## Additionally we should always check 32-bit and 64-bit Program Files directories located in C:\.
+## Also we should review the contents of the Downloads directory of our user to find more potential programs.
+
+# Running processes
+Get-Process
+```
+
+### Search for juicy files on Windows
+```bash
+Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
+Get-ChildItem -Path C:\xampp -Include *.txt,*.ini,*.pdf,*.log -File -Recurse -ErrorAction SilentlyContinue
+Get-ChildItem -Path C:\Users\dave\ -Include *.txt,*.pdf,*.xls,*.xlsx,*.doc,*.docx -File -Recurse -ErrorAction SilentlyContinue
+
+# Powershell
+Get-History
+(Get-PSReadlineOption).HistorySavePath
+```
+
+
+### runas other user
+```bash
+runas /user:backupadmin cmd
+```
