@@ -872,3 +872,8 @@ icacls "C:\xampp\apache\bin\httpd.exe"
 ```bash
 shutdown /r /t 0
 ```
+
+### accesschk
+```bash
+.\accesschk.exe /accepteula -uwcqv yoshi servicename
+```
