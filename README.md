@@ -844,3 +844,10 @@ Get-CimInstance -ClassName win32_service | Select Name,State,PathName | Where-Ob
 ## Check misconfig
 Invoke-AllChecks
 ```
+
+### winPEAS
+```bash
+# give winPEAS color
+reg add HKCU\Console /v VirtualTerminalLevel /t REG_DWORD /d 1
+```
+
