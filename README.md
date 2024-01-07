@@ -861,6 +861,9 @@ schtasks /query /fo LIST /v
 ### query service
 ```bash
 Get-CimInstance -ClassName win32_service
+
+#Check if the service can be started automatically(so we can reboot the machine)
+Get-CimInstance -ClassName win32_service | Select Name, StartMode | Where-Object {$_.Name -like 'mysql'}
 ```
 
 ### icacls
@@ -871,6 +874,7 @@ icacls "C:\xampp\apache\bin\httpd.exe"
 
 ### shutdown 
 ```bash
+### With SeShutdownPrivilege we can reboot the machine
 shutdown /r /t 0
 ```
 
