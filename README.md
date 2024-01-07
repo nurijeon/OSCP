@@ -836,3 +836,11 @@ Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\Users\stephanie\Desk
 ```bash
 Get-CimInstance -ClassName win32_service | Select Name,State,PathName | Where-Object {$_.State -like 'Running'}
 ```
+
+### PowerUp.ps1 
+```bash
+. .\PowerUp.ps1
+
+## Check misconfig
+Invoke-AllChecks
+```
