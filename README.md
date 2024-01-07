@@ -844,6 +844,9 @@ Get-CimInstance -ClassName win32_service | Select Name,State,PathName | Where-Ob
 
 ## Check misconfig
 Invoke-AllChecks
+
+### Displays services the currnet user can modify
+Get-ModifiableServiceFile
 ```
 
 ### winPEAS
