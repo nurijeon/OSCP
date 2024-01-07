@@ -855,3 +855,20 @@ reg add HKCU\Console /v VirtualTerminalLevel /t REG_DWORD /d 1
 ```bash
 schtasks /query /fo LIST /v
 ```
+
+
+### query service
+```bash
+Get-CimInstance -ClassName win32_service
+```
+
+### icacls
+```bash
+icacls "C:\xampp\apache\bin\httpd.exe"
+```
+
+
+### shutdown 
+```bash
+shutdown /r /t 0
+```
