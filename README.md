@@ -963,4 +963,11 @@ keepass2john Database.kdbx > keepass.hash
 hashcat -m 13400 keepass.hash /usr/share/wordlists/rockyou.txt --force 
 ```
 
+### Add user on windows
+```bash
+Net User /Add lazyadmin
+net user admin password123!
+net localgroup <groupname> <username> /add
+```
+
 
