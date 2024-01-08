@@ -1044,3 +1044,8 @@ ls -l /etc/shadow
 openssl passwd 'passwd'
 
 ```
+
+### Linux find writable and executable ###
+```bash
+find / \( -perm -o w -perm -o x \) -type d 2>/dev/null
+```
