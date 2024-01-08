@@ -957,4 +957,10 @@ x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
 exiftool WElcomeLetter.pdf
 ```
 
+### keepass
+```bash
+keepass2john Database.kdbx > keepass.hash
+hashcat -m 13400 keepass.hash /usr/share/wordlists/rockyou.txt --force 
+```
+
 
