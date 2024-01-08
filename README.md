@@ -951,3 +951,10 @@ runas /user:backupadmin cmd
 ### compile C code to a 64- bit application
 x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
 ```
+
+### exiftool
+```bash
+exiftool WElcomeLetter.pdf
+```
+
+
