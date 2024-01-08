@@ -970,4 +970,11 @@ net user admin password123!
 net localgroup <groupname> <username> /add
 ```
 
+### must search on directory traversal
+```bash
+/home/user/.ssh/id_ecdsa
+/home/user/.ssh/id_eddsa
+/home/user/.ssh/id_dsa
+/home/user/.ssh/id_rsa
+```
 
