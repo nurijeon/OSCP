@@ -998,6 +998,30 @@ ps aux | grep "^root"
 dpkg -l | grep <program>
 ```
 
+### Linux Privesc Setuid Binaries and Capabilities
+```bash
+find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 
+2> /dev/null
+
+/usr/sbin/getcap -r / 2>/dev/null
+```
+
+### Linux find all writable files in /etc/
+```bash
+$ find /etc -maxdepth 1 -writable -type f
+```
+
+### Find all readable files in /etc:
+```bash
+$ find /etc -maxdepth 1 -readable -type f
+```
+
+### Find all directories which can be written to: 
+```bash
+$ find / -executable -writable -type d 2> /dev/null
+```
+
+
 ### gcc for mysql exploit (example): This is possbile when root's password is set to ''
 ```bash
 # Add -fPIC when compiling for x64 system
