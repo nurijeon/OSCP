@@ -1310,6 +1310,11 @@ locate wsgidav
 ```
 
 
+### KPCLI to use kdbx
+```bash
+sudo apt install kpcli
+kpcli --kdb=Database.kdbx
+```
 
 
 
