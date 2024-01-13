@@ -1326,7 +1326,7 @@ $ echo "cGFzc3dvcmQxMjM=" | base64 -d
 # Once again we can simply use winexe to spawn a shell as the admin user
 ```
 
-### Windows Privesc: SAM
+### Windows Privesc: SAM !!!! when there's some windows.old or some backup, we must check for SAM and SYSTEM files!!!
 If you have the ability to read the SAM and SYSTEM Files, you can extract the hashes.
 The SAM and SYSTEM files are located in the C:\Windows\System32\config directory.(LOCKED)
 Backups of the files may exist in the c:\Windows\Repair or C:\Windows\System32\config\RegBack directory
