@@ -1308,6 +1308,10 @@ oLink.Save
 
 ## Linux Privesc
 
+### Linux Privesc: When victim machine doesn't have gcc and we can't install it, https://github.com/X0RW3LL/XenSpawn should be the solution (Ubuntu)
+
+
+
 ### Linux enumeration: search for backup files
 ```bash
 # search for / (root), /tmp, /var/backups
