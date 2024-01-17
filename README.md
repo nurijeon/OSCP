@@ -267,6 +267,8 @@ meterpreter > download *
 #nmap
 sudo nmap -A -T4 -sC -sV -p- <% tp.frontmatter["RHOST"] %>
 sudo nmap -sV -sU <% tp.frontmatter["RHOST"] %>
+## scan top ports(UDP)
+sudo nmap -sU --top-ports 20 -sV 192.168.195.149
 sudo nmap -A -T4 -sC -sV --script vuln <% tp.frontmatter["RHOST"] %>
 sudo nmap -A -T4 -p- -sS -sV -oN initial --script discovery <% tp.frontmatter["RHOST"] %>
 sudo nmap -sC -sV -p- --scan-delay 5s <% tp.frontmatter["RHOST"] %>
