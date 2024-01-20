@@ -1,50 +1,13 @@
 OSCP
 
-I used the Templater community plugin in obsidian to automatically populate IP,username,password Thanks siddicky for this cool idea!
-
-I do have plans to actively maintain it if people like it
-
-https://www.youtube.com/watch?v=2NLi4wzAvTw&t=634s
-
-Have a look at this video, if youre wondering what im talking about!
-
-Steps to use-
-
-1-> Download obsidian, click on settings and browse "community plugins"
-
-2-> Install the Templater plugin by SilentVoid and enable the plugin
-
-3-> Copy the template and save
-
-4->Create a new .md file and put in your desired values
+## WINDOWS ENUM
+- whoami /priv
+- systeminfo(OS NAME, OS VERSION)
+- username:username
+- winPEAS
 
 
 
-```
-hyphenhyphenhyphen
-
-LHOST: 1.1.1.1
-RHOST: 0.0.0.0
-USERNAME: username
-PASSWORD: password
-DOMAIN: domain
-
-hyphenhyphenhyphen
-
-```
-
-Always make sure you have source mode enabled, else this wont work!
-![test](https://media.discordapp.net/attachments/1146454908539769002/1149737116167852122/image.png?width=1602&height=720)
-
-![test](https://cdn.discordapp.com/attachments/1125391842125549601/1149407842885980190/image.png)
-
-
-
-5->press alt+e and select your template name
-
-BOOM
-
-To change the IP, i would either prefer ctrl + z or just create a new file with the method above ^
 
 ## Article
 https://www.hackingarticles.in/a-detailed-guide-on-evil-winrm/
