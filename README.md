@@ -873,6 +873,8 @@ shutdown /r /t 0
 ### accesschk
 ```bash
 .\accesschk.exe /accepteula -uwcqv yoshi servicename
+.\accesschk.exe /accepteula -uwcqv "Authenticated Users" *
+
 ```
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/7c0c468a-3c88-4a71-8bbb-6b15fa85359f)
 
