@@ -1,3 +1,13 @@
+# Default Credentials
+admin:admin
+admin:password
+admin:null
+root:root
+root:password
+root:null
+platform:platform
+
+
 # HTTP/HTTPS(80,8080,8000,443...)
 
 ## wappalyzer
