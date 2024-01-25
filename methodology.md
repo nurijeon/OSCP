@@ -73,3 +73,8 @@ ldapsearch -x -H 'ldap://192.168.216.122' -D 'hutch\fmcsorley' -w 'CrabSharkJell
 snmpwalk -c public -v1 192.168.x.x
 snmpwalk -v2c -c public 192.168.195.149 NET-SNMP-EXTEND-MIB::nsExtendObjects
 ```
+
+
+# File Read Exploit
+- /etc/passwd
+- find password files for other program that's running(for authenticated exploit)
