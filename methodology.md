@@ -78,3 +78,6 @@ snmpwalk -v2c -c public 192.168.195.149 NET-SNMP-EXTEND-MIB::nsExtendObjects
 # File Read Exploit
 - /etc/passwd
 - find password files for other program that's running(for authenticated exploit)
+- /home/username/id_rsa
+- /home/username/.ssh/id_rsa
+- /home/username/id_dsa
