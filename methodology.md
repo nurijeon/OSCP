@@ -67,7 +67,6 @@ ldapsearch -x -H 'ldap://192.168.216.122' -D 'hutch\fmcsorley' -w 'CrabSharkJell
 ```
 
 
-
 # SNMP(161)
 ```bash
 snmpwalk -c public -v1 192.168.x.x
@@ -76,8 +75,10 @@ snmpwalk -v2c -c public 192.168.195.149 NET-SNMP-EXTEND-MIB::nsExtendObjects
 
 
 # File Read Exploit
+- If the server is running with NY SYSTEM or sudo(root), we can grab any files
 - /etc/passwd
 - find password files for other program that's running(for authenticated exploit)
+- /home/username/.bash_history
 - /home/username/id_rsa
 - /home/username/.ssh/id_rsa
 - /home/username/id_dsa
