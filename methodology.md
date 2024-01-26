@@ -83,5 +83,6 @@ snmpwalk -v2c -c public 192.168.195.149 NET-SNMP-EXTEND-MIB::nsExtendObjects
 - /etc/passwd
 - /etc/shadow
 - /home/username/.bash_history
+- /home/username/.bash_aliases
 
 
