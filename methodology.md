@@ -72,6 +72,8 @@ put /root/offsec/shell.aspx
 ## crackmapexec smb
 ```bash
 crackmapexec smb 192.168.216.165 -u 'enox' -p '' --shares
+crackmapexec smb <% ["RHOST"] %> -u "" -p "" --pass-pol
+
 ```
 
 ## smbclient
