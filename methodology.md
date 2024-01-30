@@ -34,7 +34,11 @@ platform:platform
 > netstat -ano
 
 # Installed Applications
-> 
+> Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
+> Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
+
+# Process
+>Get-Process
 
 # Putty
 > reg query "HKCU\Software\SimonTatham\PuTTY\Sessions" /s
@@ -62,9 +66,6 @@ platform:platform
 > Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
 > Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue
 > Get-ChildItem -Path C:\Users -Include *.txt,*.ini,*.log,*.pdf,*.xls,*.xlsx,*.doc,*.docx -File -Recurse -ErrorAction SilentlyContinue
-
-
-
 
 ```
 
