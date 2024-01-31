@@ -60,6 +60,10 @@ fuser -k 8080/tcp
 > Get-CimInstance -ClassName win32_service | Select Name,StartMode | Where-Object {$_.State -like 'Running'}
 > sc qc servicename
 
+> shutdown /r /t 0
+> net stop service
+> net start service
+
 
 # Scheduled tasks
 > schtasks /query /fo LIST /v
