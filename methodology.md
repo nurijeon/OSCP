@@ -9,6 +9,11 @@ root:null
 platform:platform
 ```
 
+# kill process on a port
+```bash
+fuser -k 8080/tcp
+```
+
 # Windows
 
 ## Add user
