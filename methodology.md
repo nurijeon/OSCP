@@ -38,7 +38,7 @@ platform:platform
 > Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
 
 # Process
->Get-Process
+> Get-Process
 
 # Putty
 > reg query "HKCU\Software\SimonTatham\PuTTY\Sessions" /s
@@ -51,6 +51,8 @@ platform:platform
 
 # Modifiable services/executables
 > Get-CimInstance -ClassName win32_service | Select Name,State,PathName,StartMode | Where-Object {$_.State -like 'Running'}
+# Check StartMode
+> Get-CimInstance -ClassName win32_service | Select Name,StartMode | Where-Object {$_.State -like 'Running'}
 > sc qc servicename
 
 
