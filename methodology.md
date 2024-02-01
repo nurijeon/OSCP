@@ -42,8 +42,15 @@ fuser -k 8080/tcp
 > Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
 > Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
 
-# Process
+# Scheduled tasks: Check Process || query schtasks
 > Get-Process
+# Or Find Process with Watch-Command.ps1 https://github.com/markwragg/PowerShell-Watch/blob/master/README.md
+> . .\Watch-Command.ps1
+> Watch-Command -ScriptBlock { Get-Process }
+
+# Scheduled tasks
+> schtasks /query /fo LIST /v
+
 
 # Putty
 > reg query "HKCU\Software\SimonTatham\PuTTY\Sessions" /s
@@ -65,8 +72,7 @@ fuser -k 8080/tcp
 > Restart-Service service
 
 
-# Scheduled tasks
-> schtasks /query /fo LIST /v
+
 
 
 # Search for juicy files
