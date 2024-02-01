@@ -61,8 +61,8 @@ fuser -k 8080/tcp
 > sc qc servicename
 
 > shutdown /r /t 0
-> net stop service
-> net start service
+> net stop service && net start service
+> Restart-Service service
 
 
 # Scheduled tasks
