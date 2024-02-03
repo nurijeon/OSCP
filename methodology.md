@@ -1,5 +1,7 @@
 # Default Credentials
 ```bash
+test every username with password 'password'
+
 admin:admin
 admin:password
 admin:null
@@ -15,6 +17,15 @@ foundusername:foundusername
 - read contents on windows
 
 # Linux
+## Enumeration
+```bash
+- sudo -l
+- Search for locally running service to pivot as service account?
+- Running Process for hidden credentials?
+
+```
+
+
 ## Find all directories which can be written to by current user:
 ```bash
 $ find / -executable -writable -type d 2> /dev/null
@@ -175,9 +186,13 @@ Windows Privesc: God Potato(https://github.com/BeichenDream/GodPotato)
 
 # HTTP/HTTPS(80,8080,8000,443...)
 ## HTTP Checklist
+- Run feroxbuster?
+- Check every directory and file?
 - Local File Inclusion (ex. http://192.168.249.12/index.php?page=somepage.php)
+  - Can you upload reverse shell through other user?
+  - Can you find SSH keys?
 - File Traversal (ex. id_rsa?)
-- Find cms and its version?
+- Find CMS and its version?
 - SQLi?
 
 
