@@ -14,6 +14,13 @@ platform:platform
 fuser -k 8080/tcp
 ```
 
+# Linux
+Find all directories which can be written to by current user:
+```bash
+$ find / -executable -writable -type d 2> /dev/null
+```
+
+
 # Windows
 
 ## Add user
@@ -377,6 +384,13 @@ Your public key has been saved in fileup.pub
 kali@kali:~$ cat fileup.pub > authorized_keys
 ```
 
+## SSH Crack Paraphrase
+```bash
+$ ssh2john anita_id_rsa > ssh_key
+$ hashcat -m 22911 ./ssh_key /usr/share/wordlists/rockyou.txt --force
+```
+
+
 ## SSH 
 ```bash
 kali@kali:~/passwordattacks$ ssh2john id_rsa > ssh.hash
@@ -506,6 +520,13 @@ hashcat -m 13400 keepass.hash /usr/share/wordlists/rockyou.txt --force
 sudo apt install kpcli
 kpcli --kdb=Database.kdbx
 show -f 2
+```
+
+## JohnTheRipper
+```bash
+# Display already discovered hash
+john hashname --show
+
 ```
 
 ## cross compiliation
