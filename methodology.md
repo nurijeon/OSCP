@@ -10,6 +10,12 @@ platform:platform
 foundusername:foundusername
 ```
 
+# With Correct Credentials
+- crackmpaexec smb all_ips --users
+    - with newly found users, try found passwords on crackmapexec smb with just one machine
+- crackmapexec winrm all_ips
+- xfreerdp with all_ips
+
 # PDF files
 - exiftool to find username and use same usernames for password
 - read contents on windows
