@@ -32,6 +32,9 @@ $ find / -executable -writable -type d 2> /dev/null
 
 ## Enumeration
 ```bash
+# If there's smb, must check for anonymous login
+crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
+
 # Users and groups
 > whoami /priv
 > whoami /groups
