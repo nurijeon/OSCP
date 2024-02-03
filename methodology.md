@@ -55,10 +55,15 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 > whoami /groups
 > net user | Get-LocalGroup
 > net user /domain
-  > add names to usernames.txt
 > net user admin
 > net localgroup | Get-LocalGroup
 > net localgroup Administrators | Get-LocalGroupMember Administrators
+
+# AD Users and groups
+> net user /domain
+> net user jeffadmin /domain
+> net group /domain
+> net group "Sales Department" /domain
 
 
 > systeminfo(OS NAME, OS VERSION)
