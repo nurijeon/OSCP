@@ -38,6 +38,7 @@ foundusername:foundusername
 - sudo -l
 - Search for locally running service to pivot as service account?
 - Running Process for hidden credentials?
+- Any backup files?
 
 ```
 
@@ -676,6 +677,14 @@ x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
 ## Git
 ```bash
 git-dumper http://192.168.234.144:80/.git ./gitdumps 
+```
+
+## zip
+```bash
+First check manually if it's password protected or not
+zip2john sitebackup3.zip > zip.hash
+
+
 ```
 
 ## File transfer
