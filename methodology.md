@@ -673,6 +673,11 @@ i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe -lws2_32
 x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
 ```
 
+## Git
+```bash
+git-dumper http://192.168.234.144:80/.git ./gitdumps 
+```
+
 ## File transfer
 ```bash
 
