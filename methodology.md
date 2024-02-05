@@ -138,11 +138,14 @@ Get-NetGroup "Sales Department" | select member
 Get-NetComputer
 Get-NetComputer | select dnshostname,operatingsystem,operatingsystemversion
 
-# Enumerate Logged on Users
+# Find possible local administrative access on computers under the current user context.
 Find-LocalAdminAccess
+
+# Enumerate Logged on Users
 Get-NetSession -ComputerName files04 -Verbose
 Get-NetSession -ComputerName web04 -Verbose
 
+# Enumerate Logged on Users For newer version
 .\PsLoggedon.exe \\files04
 .\PsLoggedon.exe \\web04
 .\PsLoggedon.exe \\client74
