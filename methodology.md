@@ -699,9 +699,14 @@ git-dumper http://192.168.234.144:80/.git ./gitdumps
 ```bash
 First check manually if it's password protected or not
 zip2john sitebackup3.zip > zip.hash
-
-
 ```
+
+## compiling
+```bash
+# Cross compile for 32bit windows system
+i686-w64-mingw32-gcc MS11-046.c -o MS11-046.exe -lws2_32
+```
+
 
 ## File transfer
 ```bash
