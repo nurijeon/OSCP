@@ -8,6 +8,7 @@
 - Did we submit form using burp suite so we can see what we're submitting?(not everything is displayed)
 - Did we run nikto?(There might be webdav hidden under root directory)
 - Can our current system has File Write permission as system?(WerTrigger: https://github.com/sailay1996/WerTrigger)
+- Did we check windows build version?(old versions have exploits)
 
 
 # Default Credentials
