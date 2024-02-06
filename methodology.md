@@ -1,5 +1,6 @@
 # FEEL LIKE STUCK???
 - Did we try reverse shell with port with 443,80? (Learn this from PG Practice Helpdesk)
+- Did we create correct revshell for the victim architecture?
 - Did we try creating our own account on web service?
 - Did we search with version number?
 - Did we check all user's directories?
