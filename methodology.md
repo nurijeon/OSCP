@@ -4,6 +4,7 @@
 - Did we search with version number?
 - Did we check all user's directories?
 - Did we search port number with + exploit?
+- Did we submit form using burp suite so we can see what we're submitting?(not everything is displayed)
 
 
 # Default Credentials
