@@ -1,3 +1,8 @@
+# MUST READ BEFORE START
+- Must try revshell with port with 443,80(Learn this from PG Practice Helpdesk)
+- 
+- 
+
 # Default Credentials
 ```bash
 test every username with password 'password'
