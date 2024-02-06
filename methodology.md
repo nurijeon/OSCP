@@ -1,12 +1,12 @@
 # FEEL LIKE STUCK???
-- Did we try reverse shell with port with 443,80,445? (Learn this from PG Practice Helpdesk)
+- Did we try reverse shell with port with 443,80,445? (Learn this from PG Practice Helpdesk, Craft2)
 - Did we create correct revshell for the victim architecture?
 - Did we try creating our own account on web service?
 - Did we search with version number?
 - Did we check all user's directories?
 - Did we search port number with + exploit?
 - Did we submit form using burp suite so we can see what we're submitting?(not everything is displayed)
-- Did we run nikto?(There might be webdav hidden)
+- Did we run nikto?(There might be webdav hidden under root directory)
 - Can our current system has File Write permission as system?(WerTrigger: https://github.com/sailay1996/WerTrigger)
 
 
