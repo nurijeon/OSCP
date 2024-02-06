@@ -134,6 +134,12 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 > Check every user's directory && desktop && documents && downloads
 ```
 
+## whoami /priv
+```bash
+SeManageVolumePrivilege
+```
+
+
 ## PowerView.ps1
 ```bash
 Import-Module .\PowerView.ps1
