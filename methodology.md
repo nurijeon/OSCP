@@ -731,6 +731,12 @@ rdesktop -u Administrator 192.168.245.165
 xfreerdp /v:192.168.x.x /u:username /p:password
 ```
 
+## Bloodhound
+```bash
+bloodhound-python -d hutch.offsec -u fmcsorley -p CrabSharkJellyfish192 -c all -ns 192.168.245.122 
+
+```
+
 
 
 ## File transfer
