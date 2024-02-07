@@ -161,6 +161,13 @@ SeManageVolumePrivilege
 
 # Active Directory Tools
 
+## secretsdump
+```bash
+impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL
+
+```
+
+
 ## enum4linux
 ```bash
 enum4linux -a 192.168.201.175
