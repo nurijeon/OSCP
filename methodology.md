@@ -1,5 +1,6 @@
 # FEEL LIKE STUCK???
 - Did we try ftp login with admin:admin, ftp:ftp etc?
+- Did we look into any suspicious binaries using strings?
 - Did we try reverse shell with port with 443,80,445? (Learn this from PG Practice Helpdesk, Craft2)
 - Did we create correct revshell for the victim architecture?
 - Powershell location :: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
