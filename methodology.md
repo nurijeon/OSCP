@@ -419,6 +419,9 @@ crackmapexec smb <% ["RHOST"] %> -u "" -p "" --pass-pol
 ```bash
 smbclient \\\\192.168.161.31\\share -U 'Administrator' -N
 smbclient \\\\192.168.50.212\\share -U Administrator --pw-nt-hash 7a38310ea6f0027ee955abed1762964b
+
+# Download large volume
+> tarmode
 ```
 
 ## smbserver
