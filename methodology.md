@@ -1,8 +1,11 @@
 # FEEL LIKE STUCK???
 - Did we try reverse shell with port with 443,80,445? (Learn this from PG Practice Helpdesk, Craft2)
 - Did we create correct revshell for the victim architecture?
+- Powershell location :: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+- Did we check "C:\Program Files" "C:\Profram Files (x86)" for vulnerable apps?(ex. PaperStream IP)
+- Did we choose x32 bit dll for x32 executable? (Check jacko)
 - Did we try "cmd.exe /c dir"
-- Did we try C:\\TEMP\\revshell instead of C:\
+- Did we try C:\\TEMP\\revshell instead of C:\TEMP\revshell? 
 - Did we try creating our own account on web service?
 - Did we search with version number?
 - Did we check all user's directories?
