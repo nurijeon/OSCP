@@ -142,6 +142,7 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 > Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue
 > Get-ChildItem -Path C:\Users -Include *.txt,*.ini,*.log,*.pdf,*.xls,*.xlsx,*.doc,*.docx,*.git,*.gitconfig -File -Recurse -ErrorAction SilentlyContinue
 > Check every user's directory && desktop && documents && downloads
+> dir /A (display hidden files)
 ```
 
 ## whoami /priv
