@@ -41,7 +41,7 @@ platform:platform
 foundusername:foundusername
 ```
 
-# Enum tips
+# Google Search tips
 - xyz htb
 - xyz hack the box
 - xyz poc
@@ -159,6 +159,16 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 SeManageVolumePrivilege
 ```
 
+# Active Directory Tools
+
+## enum4linux
+```bash
+enum4linux -a 192.168.201.175
+```
+
+## smbmap
+```bash
+```
 
 ## PowerView.ps1
 ```bash
