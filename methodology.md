@@ -18,6 +18,13 @@
 - Did I miss $ sign from username? (svc_apache$ not svc_apache)
 
 
+# NMAP tips
+```bash
+nmap --script "ldap* and not brute" $ip -p 389 -v -Pn -sT
+
+```
+
+
 # Default Credentials
 ```bash
 test every username with password 'password'
