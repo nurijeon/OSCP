@@ -1,6 +1,8 @@
 # FEEL LIKE STUCK???
 - Did we try reverse shell with port with 443,80,445? (Learn this from PG Practice Helpdesk, Craft2)
 - Did we create correct revshell for the victim architecture?
+- Did we try "cmd.exe /c dir"
+- Did we try C:\\TEMP\\revshell instead of C:\
 - Did we try creating our own account on web service?
 - Did we search with version number?
 - Did we check all user's directories?
