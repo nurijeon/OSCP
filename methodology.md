@@ -1,7 +1,7 @@
 # FEEL LIKE STUCK???
 - Did we try ftp login with admin:admin, ftp:ftp etc?
 - Did we check Groups.xml?(crack with gpp-decrypt)
-- Did we try enum4linux,smbclient,smbmap anonymously?
+- Did we try enum4linux,smbclient,smbmap,rpcclient anonymously?
 - Did we look into any suspicious binaries using strings?
 - Did we try reverse shell with port with 443,80,445? (Learn this from PG Practice Helpdesk, Craft2)
 - Did we create correct revshell for the victim architecture?
@@ -169,10 +169,14 @@ SeManageVolumePrivilege
 impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL
 ```
 
-
 ## enum4linux
 ```bash
 enum4linux -a 192.168.201.175
+```
+
+## rpcclient
+```bash
+rpcclient 10.10.10.10
 ```
 
 ## gpp-decrypt
