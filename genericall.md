@@ -1,4 +1,4 @@
-# Resource Based Constrained Delegation
+# GENERICALL ON A MACHINE:: Resource Based Constrained Delegation
 WUT IS DIS?:
 TL;DR
 If we have GenericALL/GenericWrite privileges on a machine account object of a domain, we can abuse it and impersonate ourselves as any user of the domain to it. 
