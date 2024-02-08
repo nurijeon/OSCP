@@ -1,3 +1,13 @@
+# Important Permissions
+GenericAll: Full permissions on object
+GenericWrite: Edit certain attributes on the object
+WriteOwner: Change ownership of the object
+WriteDACL: Edit ACE's applied to object
+AllExtendedRights: Change password, reset password, etc.
+ForceChangePassword: Password change for object
+Self (Self-Membership): Add ourselves to for example a group
+
+
 # GENERICALL ON A MACHINE:: Resource Based Constrained Delegation
 WUT IS DIS?:
 TL;DR
