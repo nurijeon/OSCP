@@ -177,6 +177,7 @@ enum4linux -a 192.168.201.175
 ## rpcclient
 ```bash
 rpcclient 10.10.10.10
+rpcclient 10.10.10.10 -U ''
 ```
 
 ## gpp-decrypt
