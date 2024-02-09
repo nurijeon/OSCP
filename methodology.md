@@ -1,7 +1,7 @@
 # FEEL LIKE STUCK???
 - Did we try ftp login with admin:admin, ftp:ftp etc?
 - Did we check Groups.xml?(crack with gpp-decrypt)
-- Did we try crackmapexec, enum4linux, smbclient, smbmap, rpcclient anonymously/guestuser?
+- Did we try crackmapexec, enum4linux, smbclient, smbmap, rpcclient, ldapsearch anonymously/guestuser?
 - Did we look into any suspicious binaries using strings?
 - Did we try reverse shell with port with 443,80,445? (Learn this from PG Practice Helpdesk, Craft2)
 - Did we create correct revshell for the victim architecture?
