@@ -11,6 +11,7 @@
 - Did we check "C:\Program Files" "C:\Profram Files (x86)" for vulnerable apps?(ex. PaperStream IP)
 - Did we choose x32 bit dll for x32 executable? (Check jacko)
 - Did we try "cmd.exe /c dir"
+- Did we check scheduled tasks?
 - Did we try C:\\TEMP\\revshell instead of C:\TEMP\revshell? 
 - Did we try creating our own account on web service?
 - Did we search with version number?
