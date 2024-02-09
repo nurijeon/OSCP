@@ -472,6 +472,7 @@ sudo smbserver.py -smb2support share $(pwd) -user kali -password kali
 ## ldapsearch: focus on samaccount and description
 ```bash
 # unauthenticated
+ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec' -s base namingcontexts
 ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec'  -b 'DC=hutch,DC=offsec'
 
 # authenticated(LAPS found from SYSVOL)
