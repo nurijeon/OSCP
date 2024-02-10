@@ -1,24 +1,3 @@
-## WINDOWS ENUM
-- whoami /priv
-- systeminfo(OS NAME, OS VERSION)
-- username:username
-- winPEAS
-	- Check putty session
-   	- Modifiable services/executables
-- Check files
-  	- Get-ChildItem 
-
-
-
-## Responder: when there's a url input section 
-```bash
-sudo responder -I tun0
-
-http://192.168.45.176/share/rev.sh
-file://192.168.45.176/share/rev.sh
-```
-
-
 ## Shells & stuff
 https://www.revshells.com/
 
