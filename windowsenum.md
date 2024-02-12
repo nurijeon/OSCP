@@ -108,6 +108,34 @@ Get-ObjectAcl -Identity "Management Department" | ? {$_.ActiveDirectoryRights -e
 "S-1-5-21-1987370270-658905905-1781884369-512","S-1-5-21-1987370270-658905905-1781884369-1104","S-1-5-32-548","S-1-5-18","S-1-5-21-1987370270-658905905-1781884369-519" | Convert-SidToName
 Find-DomainShare
 
+> Get-GPO -Name "Default Domain Policy"
+
+<example>
+*Evil-WinRM* PS C:\TEMP> Get-GPO -Name "Default Domain Policy"
+
+DisplayName      : Default Domain Policy
+DomainName       : vault.offsec
+Owner            : VAULT\Domain Admins
+Id               : 31b2f340-016d-11d2-945f-00c04fb984f9
+GpoStatus        : AllSettingsEnabled
+Description      :
+CreationTime     : 11/19/2021 12:50:33 AM
+ModificationTime : 11/19/2021 1:00:32 AM
+UserVersion      : AD Version: 0, SysVol Version: 0
+ComputerVersion  : AD Version: 4, SysVol Version: 4
+WmiFilter        :
+
+> Get-GPPermission -Guid 31b2f340-016d-11d2-945f-00c04fb984f9 -TargetType User -TargetName anirudh
+
+<example>
+*Evil-WinRM* PS C:\TEMP> Get-GPPermission -Guid 31b2f340-016d-11d2-945f-00c04fb984f9 -TargetType User -TargetName anirudh
+Trustee     : anirudh
+TrusteeType : User
+Permission  : GpoEditDeleteModifySecurity
+Inherited   : False
+
+
+
 # PsLoggedon.exe
 .\PsLoggedon.exe \\files04
 
