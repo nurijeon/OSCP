@@ -73,6 +73,7 @@ foundusername:foundusername
 - Search for locally running service to pivot as service account?
 - Running Process for hidden credentials?
 - Any backup files?
+- ss -lntp
 
 ```
 
