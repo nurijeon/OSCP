@@ -1429,6 +1429,7 @@ dpkg -l | grep <program>
 ### Upgrade bash with python
 ```bash
 python3 -c 'import pty; pty.spawn("/bin/bash")'
+export TERM=xterm-256color
 ```
 
 ### Linux Switch to root
