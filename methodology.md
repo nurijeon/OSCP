@@ -75,6 +75,7 @@ foundusername:foundusername
 - Running Process for hidden credentials?
 - Any backup files?
 - ss -lntp
+- ps -ef
 
 ```
 
