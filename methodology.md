@@ -1,6 +1,7 @@
 # FEEL LIKE STUCK???
 - Did we run cmdkey /list?
 - Did we search cve-2020-xx github, exploit...blahblah?
+- Did we run "impacket-GetUserSPNs 'oscp.exam/web_svc' -dc-ip 10.10.135.146 -request" ??
 - Did we check AutoLogon registery?? reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"?
 - Did we try ftp login with admin:admin, ftp:ftp etc?
 - Did we check Groups.xml?(crack with gpp-decrypt)
