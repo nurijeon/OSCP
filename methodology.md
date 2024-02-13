@@ -40,12 +40,12 @@ db file where i had to change its name from db to db.sqlite and check it with th
 .git, .gitconfig
 random ports(3003,3000)
 snmp 161 --> credentials
-
+FreeSWITCH mod_event_socket
 
 
 # pivoting or privilege escalation
 impacket-getuserspn ( make sure to point at dc)
-internally running service --> check out on running process to find vulnerable service or hints
+internally running service --> check out on running process to find vulnerable service or hints(jdwp)
 windows.old -> download SAM and SYSTEM and use secretsdump to extract hashes
 putty session -> pivot
 mimikatz.exe -> domain credentials
@@ -205,6 +205,11 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 > Get-ChildItem -Path C:\Users -Include *.txt,*.ini,*.log,*.pdf,*.xls,*.xlsx,*.doc,*.docx,*.git,*.gitconfig -File -Recurse -ErrorAction SilentlyContinue
 > Check every user's directory && desktop && documents && downloads
 > dir /A (display hidden files)
+> dir /s *pass* == *.config
+> findstr /si password *.xml *.ini *.txt
+
+
+
 ```
 
 ## whoami /priv
