@@ -1,6 +1,7 @@
 # FEEL LIKE STUCK???
 - Did we run cmdkey /list?
 - Did we try crackmapexec mssql 192.168.x.x ...?
+- Did you try uploading files on inetpub?? ( we can get service account that has seimpersonateprivilege)
 - Did we search cve-2020-xx github, exploit...blahblah?
 - Did we run "impacket-GetUserSPNs 'oscp.exam/web_svc' -dc-ip 10.10.135.146 -request" ??
 - Did we check AutoLogon registery?? reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"?
