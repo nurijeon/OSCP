@@ -221,6 +221,23 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 SeManageVolumePrivilege
 ```
 
+## Powershell Encrypt && Decrypt credentials
+```bash
+# Encryption
+$pwd = “Welcome@123”
+$securepwd = $pwd | ConvertTo-SecureString -AsPlainText -Force
+$encryptedpwd = $securepwd | ConvertFrom-SecureString
+write-host $encryptedpwd
+
+# Decryption
+$pw = Get-Content .creds.txt | ConvertTo-SecureString
+$bstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($pw)
+$UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr)
+$UnsecurePassword
+
+hHO_S9gff7ehXw
+```
+
 # Active Directory Tools
 
 ## secretsdump
