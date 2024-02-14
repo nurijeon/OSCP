@@ -1015,6 +1015,8 @@ kpcli --kdb=Database.kdbx
 
 ### Linux enumeration: must search ssh related files on directory traversal
 ```bash
+/home/user/.ssh/known_hosts
+/home/user/.ssh/authorized_keys
 /home/user/.ssh/id_ecdsa
 /home/user/.ssh/id_eddsa
 /home/user/.ssh/id_dsa
