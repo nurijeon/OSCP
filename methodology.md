@@ -924,6 +924,7 @@ xfreerdp /v:192.168.x.x /u:username /p:password
 ```bash
 bloodhound-python -d hutch.offsec -u fmcsorley -p CrabSharkJellyfish192 -c all -ns 192.168.245.122 
 bloodhound-python --dns-tcp -ns 10.129.193.5 -d active.htb -u 'SVC_TGS' -p 'GPPstillStandingStrong2k18'
+bloodhound-python -d nara-security.com -u 'Tracy.White' -p 'zqwj041FGX' -ns 192.168.193.30 -c all  
 
 ```
 
