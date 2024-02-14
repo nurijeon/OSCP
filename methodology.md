@@ -254,6 +254,15 @@ smbmap -u svc_tgs -p GPPstillStandingStrong2k18 -d active.htb -H 10.129.193.5
 
 ```
 
+## net on kali
+```bash
+<Add user to Remote Access group on kali linux using net> 
+net rpc group addmem "REMOTE ACCESS" "Tracy.White" -U nara-security.com/Tracy.White%zqwj041FGX -S 192.168.193.30 
+
+```
+
+
+
 ## PowerView.ps1
 ```bash
 Import-Module .\PowerView.ps1
