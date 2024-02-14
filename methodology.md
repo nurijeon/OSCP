@@ -71,6 +71,7 @@ admintool.exe (by running exe file we found admin password. make sure to run aft
 nmap --script "ldap* and not brute" $ip -p 389 -v -Pn -sT
 sudo nmap -A -p- -T4 192.168.245.145
 sudo nmap -sU --open --top-ports 20 -sV 192.168.245.149
+sudo nmap -T4 -p445 --script smb-vuln* 192.168.186.40
 ```
 
 
