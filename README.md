@@ -860,13 +860,6 @@ proxychains -q  impacket-GetUserSPNs -request -dc-ip 172.16.234.10 medtech.com/y
 
 ```
 
-### Sharphound
-```bash
-powershell -ep bypass
-. .\Sharphound.ps1
-Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\Users\stephanie\Desktop\ -OutputPrefix "corp audit"
-```
-
 
 ### Powershell To Query Services
 ```bash
