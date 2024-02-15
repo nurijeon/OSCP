@@ -30,6 +30,7 @@
 - Can our current system has File Write permission as system?(WerTrigger: https://github.com/sailay1996/WerTrigger)
 - Did we check windows build version?(old versions have exploits)
 - Did I miss $ sign from username? (svc_apache$ not svc_apache)
+- Can we change user's password on database?
 
 
 # Exploit I encountered
