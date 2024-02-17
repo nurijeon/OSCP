@@ -37,14 +37,42 @@
 
 ```bash
 # initial
-website with a url input --> responder
-website with input --> sqli
-ftp where i can upload a reverse webshell
-db file where i had to change its name from db to db.sqlite and check it with the viewer
-.git, .gitconfig
-random ports(3003,3000)
-snmp 161 --> credentials
-FreeSWITCH mod_event_socket
+- Website with a url input --> smbserver
+- Website with input --> SQLi
+- FTP server that serves as a website's root directory: I can upload a reverse webshell
+- db file where i had to change its name from db to db.sqlite and check it with the viewer
+- .git, .gitconfig
+- random ports(3003,3000)
+- snmp 161 --> credentials
+- FreeSWITCH mod_event_socket
+
+-
+
+- Saltstack (PG-Prac Twiggy)
+- Subrion CMS v4.2.1(PG-Prac Exfiltrated)
+    -  admin:admin
+- Exhibitor Web 1.7.1(PG-Prac Pelican)
+- GRAV(PG-Prac Astronaut)
+- Redis 4.0.14 exploit(Pg-Prac Blackgate)
+- Post form data manipulation && LFI(Pg-Prac Boolean)
+- Login with admin:null and decrypt password with base64(PG-Prac Cockpit)
+- SuiteCRM exploit(PG-Prac Crane)
+- Filemanager hidden by wordpress(PG-Prac Extplorer)
+    - type id and we're disk group
+    - debugfs /dev/mapper/ubuntu--vg-ubuntu--lv
+    - cd /root
+    - cat /root/proof
+- Fuguhub 8.4 exploit(PG-Prac Hub)
+
+- PDFkit(PG-Prac RubyDome): https://github.com/UNICORDev/exploit-CVE-2022-25765
+- LFI with zip filter(PG-Prac Zipper)
+- Jenkins(HTB Jeeves)
+    - admin:admin or admin:password
+    - Grooby script console exploit injection : https://blog.pentesteracademy.com/abusing-jenkins-groovy-script-console-to-get-shell-98b951fa64a6
+- Flask and Searchor 2.4.0 exploit(HTB busqueda) : https://d3u5vu1t.medium.com/hack-the-box-busqueda-walkthrough-cd6c053d7128
+- directory and subdomain fuzzing (HTB UpDown)
+    - When we find git, wget --recursive --no-parent http://siteisup.htb/dev/.git/
+    - subdomain:: wfuzz -c -w /usr/share/dnsrecon/subdomains-top1mil-5000.txt -u http://siteisup.htb -H "Host:FUZZ.siteisup.htb" --hl 39
 
 
 # pivoting or privilege escalation
@@ -63,7 +91,7 @@ credentials from running process!
 cronjob that runs every minute
 kernel exploit(https://github.com/AlexisAhmed/CVE-2022-0847-DirtyPipe-Exploits)
 admintool.exe (by running exe file we found admin password. make sure to run after triggering revshell7777.exe)
-
+strace SUID
 
 ```
 
