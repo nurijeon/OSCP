@@ -97,6 +97,7 @@ kernel exploit(https://github.com/AlexisAhmed/CVE-2022-0847-DirtyPipe-Exploits)
 admintool.exe (by running exe file we found admin password. make sure to run after triggering revshell7777.exe)
 strace SUID
 /var/mail
+pay attention to anything running from /opt when checking running process by root
 
 ```
 
