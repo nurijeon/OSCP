@@ -101,14 +101,19 @@ pay attention to anything running from /opt when checking running process by roo
 
 ```
 
+# /etc/hosts
+```bash
+192.168.x.x ms01
+192.168.x.x ms02
+```
 
 
 # NMAP tips
 ```bash
-nmap --script "ldap* and not brute" $ip -p 389 -v -Pn -sT
-sudo nmap -A -p- -T4 192.168.245.145
-sudo nmap -sU --open --top-ports 20 -sV 192.168.245.149
-sudo nmap -T4 -p445 --script smb-vuln* 192.168.186.40
+sudo nmap --script "ldap* and not brute" $ip -p 389 -v -Pn -sT
+sudo nmap -A -p- -T4 -v 192.168.245.145
+sudo nmap -sU --open -v --top-ports 20 -sV 192.168.245.149
+sudo nmap -T4 -p445 -v --script smb-vuln* 192.168.186.40
 ```
 
 
@@ -499,8 +504,12 @@ When psexec not working
 ```bash
 privilege::debug
 token::elevate
+
 sekurlsa::logonpasswords
+sekurlsa::tickets
 lsadump::sam
+lsadump::lsa
+
 ```
 
 ## Invoke-Mimikatz
@@ -549,8 +558,9 @@ Windows Privesc: God Potato(https://github.com/BeichenDream/GodPotato)
 - Run feroxbuster?
     - └─# feroxbuster -w /usr/share/seclists/Discovery/Web-Content/raft-medium-words.txt --url http://192.168.193.231/ -C 404,401,403 -x php,aspx,asp,jsp
 - Run gobuster?
-    - gobuster dir -u http://192.168.216.122/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,aspx,jsp,pdf
+    - gobuster dir -u http://ms01 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,aspx,jsp,pdf
 - Check every directory and file?
+    - if you download anything, use exiftool! (anything even with .exe files)
 - Tried running POST request on the url?
     - EX. HETEMIT: https://al1z4deh.medium.com/proving-grounds-hetemit-8469d0a3f189
 - LFI OR Local File Inclusion (ex. http://192.168.249.12/index.php?page=somepage.php)  
