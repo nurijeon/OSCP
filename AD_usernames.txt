@@ -1,3 +1,5 @@
+web_svc
+sql_svc
 123456
 admin1
 admin2
