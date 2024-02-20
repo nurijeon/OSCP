@@ -11,6 +11,10 @@ crackmapexec smb 10.10.10.175 -u "fsmith" -p "Thestrokes23" -d Egotistical-bank.
 crackmapexec winrm 10.10.10.175 -u 'fsmith' -p 'Thestrokes23' -d Egotistical-bank.local
 
 
+# rdesktop
+rdesktop 192.168.216.165
+
+
 # smbclient
 ## anon
 smbclient -L 10.10.10.175 -N
