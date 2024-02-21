@@ -107,6 +107,12 @@ net user fsmith /domain
 net group /domain
 net group "Sales Department" /domain
 
+
+# Find breadcrumbs
+dir /s/b *.log
+dir /s/b *.txt
+
+
 # PowerView
 Import-Module .\PowerView.ps1
 Get-NetDomain
