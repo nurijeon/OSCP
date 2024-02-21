@@ -80,7 +80,10 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 
 2. Compiling the dll on Kali linux:
 ```bash
+# for x64 arch
 x86_64-w64-mingw32-gcc dllhijack.c -shared -o windowscoredeviceinfo.dll
+# for x86 arch
+i686-w64-mingw32-gcc dllhijack.c -shared -o windowscoredeviceinfo.dll
 ```
 
 3. UsoDllLoader.exe can be downloaded from here: https://github.com/itm4n/UsoDllLoader/releases/tag/1.0-20190824
