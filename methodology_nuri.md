@@ -10,7 +10,8 @@
   - [Scheduled Tasks](#scheduled-tasks)
   - [SeImpersonatePrivilege](#seimpersonateprivilege)
   - [SeBackupPrivilege](#sebackupprivilege)
-
+- [Linux Privilege Escalation](#linux-privilege-escalation)
+  - [Linux Manual Enumeration](#linux-manual-enumeration)
 
 # General
 ## Important Files
@@ -90,10 +91,7 @@ Get-History
 (Get-PSReadlineOption).HistorySavePath
   type C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
   type C:\Users\username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
-
-
-
-
+C:\Users\Public\Transcript...
 
 ```
 
@@ -130,8 +128,11 @@ shutdown /r /t 0
 ## Scheduled Tasks
 ```bash
 # Scheduled tasks: Check Process || query schtasks
-Get-Process
+Get-ScheduledTask
 schtasks /query /fo LIST /v
+Get-Process
+  Focus on Last Run Time, Next Run Time, Run As User Task To Run
+  Check executable path with icacls to see if we can replace the exe file
 
 # Or Find Process with Watch-Command.ps1 https://github.com/markwragg/PowerShell-Watch/blob/master/README.md
 > . .\Watch-Command.ps1
@@ -141,4 +142,56 @@ schtasks /query /fo LIST /v
 
 ## Unquoted Service Paths
 ```bash
+```
+
+## SeImpersonatePrivilege
+
+# Linux Privilege Escalation
+## Linux Manual Enumeration
+
+```bash
+# User context
+id
+hostname
+
+# Enumerate other userse
+cat /etc/passwd
+
+# Operating system release and version
+cat /etc/issue
+cat /etc/os-release
+
+# Running process
+ps aux
+
+# Network interface
+ip a
+
+# route
+routel
+
+# active network connections
+ss -anp
+
+# Firewall rule
+cat /etc/iptables/rules.v4
+
+# cronjob
+ls -lah /etc/cron*
+crontab -l
+
+# Installed applications
+dpkg -l
+
+# Every directory writable by the current user
+find / -writable -type d 2>/dev/null
+
+# SUID-marked binaries
+find / -perm -u=s -type f 2>/dev/null
+
+# Unmount filesystems
+cat /etc/fstab
+
+# Available disks
+lsblk
 ```
