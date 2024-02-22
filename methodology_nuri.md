@@ -161,23 +161,27 @@ cat /etc/passwd
 cat /etc/issue
 cat /etc/os-release
 
+# Kernel version and architecture
+uname -a
+
 # Running process
 ps aux
 
 # Network interface
 ip a
 
-# route
+# Route
 routel
 
-# active network connections
+# Active network connections
 ss -anp
 
 # Firewall rule
 cat /etc/iptables/rules.v4
 
-# cronjob
+# Cronjob
 ls -lah /etc/cron*
+cat /etc/crontab
 crontab -l
 
 # Installed applications
@@ -189,9 +193,12 @@ find / -writable -type d 2>/dev/null
 # SUID-marked binaries
 find / -perm -u=s -type f 2>/dev/null
 
-# Unmount filesystems
+# List all mounted filesystems
+mount
+
+# List all drives that will be mounted at boot time
 cat /etc/fstab
 
-# Available disks
+# List all available disks
 lsblk
 ```
