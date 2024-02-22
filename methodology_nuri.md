@@ -1,6 +1,6 @@
 # Table of Content
 - [General](#general)
-  - [Important Locations](#important-locations)
+  - [Important Files](#important-files)
 - [Web Attacks](#web-attacks)
 - [Windows Privilege Escalation](#windows-privilege-escalation)
   - [Manual Enumeration](#manual-enumeration)
@@ -9,20 +9,24 @@
   - [Unquoted Service Paths](#unquoted-service-paths)
   - [Scheduled Tasks](#scheduled-tasks)
   - [SeImpersonatePrivilege](#seimpersonateprivilege)
+  - [SeBackupPrivilege]
 
 
 # General
-## Important Locations
+## Important Files
 - Windows
-  ```bash
-  C:/Users/Administrator/NTUser.dat
-  ```
+
+```bash
+
+
+C:/Users/Administrator/NTUser.dat
+```
 - Linux
-  ```bash
-  /etc/passwd
-  /etc/shadow
-  /etc/aliases
-  ```
+```bash
+/etc/passwd
+/etc/shadow
+/etc/aliases
+```
 
 
 # Windows Privilege Escalation
@@ -50,6 +54,14 @@ systeminfo
 #IP
 ipconfig /all
 
+# Putty
+reg query "HKCU\Software\SimonTatham\PuTTY\Sessions" /s
+
+# AutoLogon
+reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
+
+# cmdkey /list
+
 #Active network
 netstat -ano
 
@@ -61,12 +73,45 @@ Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" |
 Get-Process
 
 #Powershell History
-type C:\Users\sathvik\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt
+Get-History
+(Get-PSReadlineOption).HistorySavePath
+  type C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+  type C:\Users\username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+
+#Juicy files
+Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
+Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue
+Get-ChildItem -Path C:\Users -Include *.txt,*.ini,*.log,*.pdf,*.xls,*.xlsx,*.doc,*.docx,*.git,*.gitconfig -File -Recurse -ErrorAction SilentlyContinue
+Check every user's directory && desktop && documents && downloads
+
+dir /s *pass* == *.config
+findstr /si password *.xml *.ini *.txt
+
+
 
 ```
 
 ## Service Binary Hijacking
 ```bash
+# Search for Modifiable services/executables with PowerUP.ps1
+. .\PowerUp.ps1
+Get-ModifiableServiceFile
+
+# Check Modifiable services/executables
+Get-CimInstance -ClassName win32_service | Select Name,State,PathName,StartMode | Where-Object {$_.State -like 'Running'}
+sc query | findstr /i servname
+
+# Check StartMode
+Get-CimInstance -ClassName win32_service | Select Name,StartMode | Where-Object {$_.State -like 'Running'}
+sc qc servicename
+
+#restart service
+net stop service && net start service
+Restart-Service service
+
+#When we can't restart the service but we have seshutdown privilege
+shutdown /r /t 0
+
 ```
 
 ## Service DLL Hijacking
@@ -75,6 +120,14 @@ type C:\Users\sathvik\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\Co
 
 ## Scheduled Tasks
 ```bash
+# Scheduled tasks: Check Process || query schtasks
+Get-Process
+schtasks /query /fo LIST /v
+
+# Or Find Process with Watch-Command.ps1 https://github.com/markwragg/PowerShell-Watch/blob/master/README.md
+> . .\Watch-Command.ps1
+> Watch-Command -ScriptBlock { Get-Process }
+
 ```
 
 ## Unquoted Service Paths
