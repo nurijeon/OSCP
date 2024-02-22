@@ -35,10 +35,10 @@ C:/Users/Administrator/NTUser.dat
 
 ```bash
 #User information&hostname
+whoami
 whoami /priv
 whoami /groups
 whoami /all
-hostname
 
 #Existing users and groups
 net user
@@ -54,6 +54,12 @@ systeminfo
 #IP
 ipconfig /all
 
+#Routing table
+route print
+
+#Active network
+netstat -ano
+
 # Putty
 reg query "HKCU\Software\SimonTatham\PuTTY\Sessions" /s
 
@@ -62,21 +68,12 @@ reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
 
 # cmdkey /list
 
-#Active network
-netstat -ano
-
 #Installed Applications
 Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
 Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
 
 #Running processes
 Get-Process
-
-#Powershell History
-Get-History
-(Get-PSReadlineOption).HistorySavePath
-  type C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
-  type C:\Users\username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
 
 #Juicy files
 Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
@@ -86,6 +83,14 @@ Check every user's directory && desktop && documents && downloads
 
 dir /s *pass* == *.config
 findstr /si password *.xml *.ini *.txt
+
+#Powershell History
+Get-History
+(Get-PSReadlineOption).HistorySavePath
+  type C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+  type C:\Users\username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+
+
 
 
 
