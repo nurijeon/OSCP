@@ -9,7 +9,7 @@
   - [Unquoted Service Paths](#unquoted-service-paths)
   - [Scheduled Tasks](#scheduled-tasks)
   - [SeImpersonatePrivilege](#seimpersonateprivilege)
-  - [SeBackupPrivilege]
+  - [SeBackupPrivilege](#sebackupprivilege)
 
 
 # General
@@ -99,17 +99,20 @@ Get-History
 
 ## Service Binary Hijacking
 ```bash
-# Search for Modifiable services/executables with PowerUP.ps1
-. .\PowerUp.ps1
-Get-ModifiableServiceFile
 
-# Check Modifiable services/executables
+# Get a list of all installed windows services
 Get-CimInstance -ClassName win32_service | Select Name,State,PathName,StartMode | Where-Object {$_.State -like 'Running'}
 sc query | findstr /i servname
 
 # Check StartMode
 Get-CimInstance -ClassName win32_service | Select Name,StartMode | Where-Object {$_.State -like 'Running'}
 sc qc servicename
+
+# Search for Modifiable services/executables with PowerUP.ps1
+. .\PowerUp.ps1
+Get-ModifiableServiceFile
+
+icacls "C:\xampp\apache\bin\httpd.exe"
 
 #restart service
 net stop service && net start service
