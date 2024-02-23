@@ -28,6 +28,21 @@ C:/Users/Administrator/NTUser.dat
 /etc/aliases
 ```
 
+# Web Attacks
+
+## feroxbuster 
+```bash
+feroxbuster -w /usr/share/seclists/Discovery/Web-Content/raft-medium-words.txt --url http://192.168.222.62/ -C 404,401,403,502,500 -x php,html,txt,jsp,asp,aspx,sh,conf,pl,bak,zip,gz,js,config
+```
+
+## curl
+![image](https://github.com/nuricheun/OSCP/assets/14031269/83b00a36-8468-4e38-a5c9-3cf2eb68cbbd)
+```bash
+# -v : When the web page looks like above, use -v for debugging and getting extra information about the response from server
+We can find the stack information as well(ex. saltstack)
+curl -v target:port
+
+```
 
 # Windows Privilege Escalation
 
