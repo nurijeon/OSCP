@@ -181,6 +181,7 @@ uname -a
 
 # Running process
 ps aux
+ps auxwww
 
 # Network interface
 ip a
