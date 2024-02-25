@@ -36,6 +36,8 @@ C:/Users/Administrator/NTUser.dat
 ```
 - Linux
 ```bash
+/proc/self/environ
+/proc/self/cmdline
 /home/user/.bash_history
 /home/user/.bash_aliases
 /etc/passwd
