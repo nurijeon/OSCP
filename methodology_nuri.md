@@ -33,6 +33,8 @@ C:/Users/Administrator/NTUser.dat
 ```
 - Linux
 ```bash
+/proc/self/environ
+/proc/self/cmdline
 /etc/passwd
 /etc/shadow
 /etc/aliases
