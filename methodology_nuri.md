@@ -37,6 +37,7 @@ C:/Users/Administrator/NTUser.dat
 ```
 - Linux
 ```bash
+/config/.htusers.php
 /proc/self/environ
 /proc/self/cmdline
 /home/user/.bash_history
