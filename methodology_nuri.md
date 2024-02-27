@@ -173,6 +173,19 @@ ssh -N -R 9998 kali@192.168.118.4
 
 
 # Web Attacks
+## Checklist
+- Gobuster
+- Feroxbuster
+- nikto
+- admin:admin admin:password admin:null
+- CMS exploit
+- View page/page sources
+- Local File Inclusion
+  - Click stuff to find out if we can find this ?file, ?page
+  - ?file=zip://uploads/upload_xkxkxk.zip%23simple-backdoor&cmd=whoami
+- POST/GET with burp suite
+- Any .config, .conf files?
+
 ## General Tips!
 - Open the website and view page/page sources
   - gobuster: wait until it is finished since some important directories show up later!(ex. /under_construction)
