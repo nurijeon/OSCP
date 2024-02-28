@@ -38,6 +38,7 @@ C:/Users/Administrator/NTUser.dat
 ```
 - Linux
 ```bash
+/opt/*
 /var/mail
 /config/.htusers.php
 /proc/self/environ
