@@ -8,9 +8,11 @@
   - [feroxbuster](#feroxbuster)
   - [gobuster](#gobuster)
   - [wfuzz](#wfuzz)
+  - [ffuf](#ffuf)
   - [wget](#wget)
   - [Python](#python)
   - [hashcat](#hashcat)
+  - [pspy](#pspy)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -117,8 +119,14 @@ wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-Jhaddix.t
 
 # Fuzz for any files in our current directory
 wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -H 'X-Forwarded-For:127.0.0.1' http://192.168.222.134:13337/logs?file=./FUZZ.py
-
 ```
+
+### ffuf
+```bash
+# dns(subdomain)
+ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt -u http://marshalled.pg -H 'Host: FUZZ.marshalled.pg' -fs 868
+```
+
 
 ### wget
 ```bash
@@ -139,8 +147,11 @@ python3 -c 'import urllib.parse; original_string = "\n"; url_encoded_string = ur
 # $2a: 3200
 ($2a$08$zyiNvVoP/UuSMgO2rKDtLuox.vYj.3hZPVYq3i4oG3/CtgET7CjjS)
 hashcat -m 3200 dora /usr/share/wordlists/rockyou.txt --force
+```
 
-
+### pspy
+```bash
+./pspy64 -pf -i 1000
 ```
 
 
@@ -177,13 +188,16 @@ ssh -N -R 127.0.0.1:2345:10.4.50.215:5432 kali@192.168.118.4
 ssh -N -R 9998 kali@192.168.118.4
 ```
 
-
 # Web Attacks
 ## Checklist
 - Gobuster
 - Feroxbuster
 - nikto
-- admin:admin admin:password admin:null
+- curl -v
+- burp suite
+- subdomain using wfuzz
+- USE BURP!! when logging in:: admin:admin admin:password admin:null
+  - Check cookie(urldecode -> base64decode)
 - CMS exploit
 - View page/page sources
 - Local File Inclusion
@@ -443,6 +457,8 @@ lsblk
 ```
 
 ## Linux Privilege Strategy
+- Run linpeas and check every file that's red
+- Run pspy to see if we're missing anything
 - When current user can't use wget that probably means we need to pivot as someone else
 - See if other person can ssh as root(check important files such as .bash_history, .bash_aliases)
 - If the current user can run webserver on victim machine, it's likely that we can only access that port on the same machine
