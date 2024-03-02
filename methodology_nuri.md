@@ -425,6 +425,7 @@ ssh -N -R 9998 kali@192.168.118.4
   - ?file=zip://uploads/upload_xkxkxk.zip%23simple-backdoor&cmd=whoami
 - POST/GET with burp suite
 - Any .config, .conf files?
+- Combination with SQLi and other webpage that we know wehre its root location is
 
 ## General Tips!
 - Try "Jetty exploit", "Jetty RCE"...
