@@ -818,7 +818,7 @@ ldapsearch -x -H ldap://10.10.10.175 -b "dc=Egotistical-bank,dc=local"
 
 # kerbrute
 ## anon
-kerbrute.py -users ./users.txt -dc-ip 192.168.10.175 -domain oscp.exam --downgrade
+./kerbrute userenum -d heist.offsec --dc 192.168.243.165 /PATH/TO/FILE/<USERNAMES>
 
 
 # GetNPUsers.py(18200)
