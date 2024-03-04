@@ -1047,8 +1047,48 @@ reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
 #Installed Applications
 Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
 Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
+
+#Installed Applications inside of Program Files
 C:\Program Files\...
+=============================================== Common Program Files ====================================================
+02/16/2021  10:27 PM    <DIR>          .
+02/16/2021  10:27 PM    <DIR>          ..
+11/04/2020  04:08 AM    <DIR>          Common Files
+11/03/2020  08:34 PM    <DIR>          internet explorer
+11/03/2020  09:37 PM    <DIR>          MSBuild
+11/03/2020  09:37 PM    <DIR>          Reference Assemblies
+02/16/2021  10:27 PM    <DIR>          VMware
+12/08/2020  07:22 PM    <DIR>          Windows Defender
+12/08/2020  07:22 PM    <DIR>          Windows Defender Advanced Threat Protection
+09/14/2018  11:19 PM    <DIR>          Windows Mail
+11/03/2020  08:34 PM    <DIR>          Windows Media Player
+09/14/2018  11:19 PM    <DIR>          Windows Multimedia Platform
+09/14/2018  11:28 PM    <DIR>          windows nt
+11/03/2020  08:34 PM    <DIR>          Windows Photo Viewer
+09/14/2018  11:19 PM    <DIR>          Windows Portable Devices
+09/14/2018  11:19 PM    <DIR>          Windows Security
+09/14/2018  11:19 PM    <DIR>          WindowsPowerShell
+
 C:\Program Files (x86)\...
+=============================================== Common Program Files (x86) ====================================================
+11/03/2020  09:37 PM    <DIR>          .
+11/03/2020  09:37 PM    <DIR>          ..
+09/14/2018  11:28 PM    <DIR>          Common Files
+11/03/2020  08:34 PM    <DIR>          Internet Explorer
+09/14/2018  11:19 PM    <DIR>          Microsoft.NET
+11/03/2020  09:37 PM    <DIR>          MSBuild
+11/03/2020  09:37 PM    <DIR>          Reference Assemblies
+12/08/2020  07:22 PM    <DIR>          Windows Defender
+09/14/2018  11:19 PM    <DIR>          Windows Mail
+11/03/2020  08:34 PM    <DIR>          Windows Media Player
+09/14/2018  11:19 PM    <DIR>          Windows Multimedia Platform
+09/14/2018  11:28 PM    <DIR>          windows nt
+11/03/2020  08:34 PM    <DIR>          Windows Photo Viewer
+09/14/2018  11:19 PM    <DIR>          Windows Portable Devices
+09/14/2018  11:19 PM    <DIR>          WindowsPowerShell
+               0 File(s)              0 bytes
+              15 Dir(s)  11,086,475,264 bytes free
+
 
 #Running processes
 Get-Process
