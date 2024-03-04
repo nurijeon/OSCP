@@ -34,6 +34,7 @@
   - [Responder](#responder)
   - [Hydra](#hydra)
   - [socat](#socat)
+  - [Cadaver](#cadaver)
   - [dig](#dig)
   - [dnsenum](#dnsenum)
 - [SSH](#ssh)
@@ -68,6 +69,7 @@
 - Windows
 ```bash
 C:/Users/Administrator/NTUser.dat
+C:/xampp/phpMyAdmin/config.inc.php
 ```
 
 - Linux
@@ -257,6 +259,11 @@ show databases;
 use user;
 show tables;
 select * from users_secure;
+
+# Add a new row
+INSERT INTO `users` (`id`, `user`, `password`, `date`) VALUES (NULL, 'nick', 'password', '123456789');
+
+# Update/Edit
 update users_secure SET password="$2y$10$R0cpsKNLDqDZpfxDCaq8Qufxl0uLbmwiL0k6XDR1kPBDXVIYbeQ0W" WHERE username="admin"
 
 # Upload a php file
@@ -351,6 +358,7 @@ gobuster dir -u http://192.168.167.109/ -w /usr/share/wordlists/seclists/Discove
 # basic scanning
 nikto -h vulnerable_ip
 nikto -h vulnerable_ip -p 80, 8080, 8000
+  + OPTIONS: WebDAV enabled (COPY PROPFIND MKCOL UNLOCK LOCK PROPPATCH listed as allowed): indicates that we might be able to use cadaver
 
 # plugins
 nikto -h vulnerable_ip --list-plugins
@@ -737,6 +745,11 @@ sudo hydra -l george -P /usr/share/wordlists/rockyou.txt -s 2222 ssh://<% tp.fro
 ### socat
 ```bash
 sudo socat tcp-listen:135,reuseaddr,fork tcp:<victim.ip.add.ress>:9999
+```
+
+### Cadaver
+```bash
+cadaver http://192.168.161.122/
 ```
 
 ### dig
