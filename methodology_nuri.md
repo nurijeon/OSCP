@@ -34,6 +34,7 @@
   - [Responder](#responder)
   - [Hydra](#hydra)
   - [socat](#socat)
+  - [Cadaver](#cadaver)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -349,6 +350,7 @@ gobuster dir -u http://192.168.167.109/ -w /usr/share/wordlists/seclists/Discove
 # basic scanning
 nikto -h vulnerable_ip
 nikto -h vulnerable_ip -p 80, 8080, 8000
+  + OPTIONS: WebDAV enabled (COPY PROPFIND MKCOL UNLOCK LOCK PROPPATCH listed as allowed): indicates that we might be able to use cadaver
 
 # plugins
 nikto -h vulnerable_ip --list-plugins
@@ -726,6 +728,11 @@ sudo hydra -l george -P /usr/share/wordlists/rockyou.txt -s 2222 ssh://<% tp.fro
 ### socat
 ```bash
 sudo socat tcp-listen:135,reuseaddr,fork tcp:<victim.ip.add.ress>:9999
+```
+
+### Cadaver
+```bash
+cadaver http://192.168.161.122/
 ```
 
 ### snmpwalk(161)
