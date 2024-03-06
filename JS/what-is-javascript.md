@@ -1,5 +1,8 @@
 [JavaScript Runtime](#JavaScript-Runtime)
-[Debounce/Throttling]
+[Debounce/Throttling](#Debounce/Throttling)
+[This Binding](#this-binding)
+[Promisify](#promisify)
+[JavaScript Types](#JavaScript-Types)
 
 # JavaScript Runtime
 
@@ -30,7 +33,6 @@
 - Callback Queue(Task queue)
 
 
-
 - Callback function
   - It can be any function that another function calls
   - Or it can be asynchronous callback as in one that it's going to be pushed back on the Callback Queue in the future
@@ -47,3 +49,98 @@
  
 - setTimeout
   - minimum time to execution
+ 
+# Debounce/Throttling
+
+- Higher order function: function that returns another function
+- We need to wait until the delay miliseconds have passwed and call callback function: setTimeout
+- If we call the function again before the delay is up, we reset the delay: clearTimeout
+- We need to have the same timerID so we have to save timerID between function calls: use closer
+- We need a way to pass arguments to the callback function but we don't know how many arguments we're getting: use rest parameter ...args
+- We need a way to bind callback with the correct "this" context: callback.apply(this, args)
+- We shouldn't use arrow function
+
+```bash
+function debounce(callback, delay, immediate = false) {
+  // Write your code here.
+  let timeID = null;
+  
+  return function(...args){
+    clearTimeout(timeID);
+    
+    if(immediate && timeID == null){
+      callback.apply(this, args);
+    }
+
+    timeID = setTimeout(() => {
+      if(!immediate){
+        callback.apply(this, args);
+      }
+      timeID = null;
+    }, delay)
+  }
+}
+```
+
+# This Binding
+- symbol is unique
+- symbol is also non-enumerable
+
+```bash
+Function.prototype.myCall = function (thisContext, ...args) {
+  // Write your code here.
+  const sym = Symbol();
+
+  thisContext[sym] = this;
+  let res = thisContext[sym](...args)
+  delete thisContext[sym]
+  return res;
+};
+
+Function.prototype.myApply = function (thisContext, args = []) {
+  // Write your code here.
+  const sym = Symbol();
+
+  thisContext[sym] = this;
+  let res = thisContext[sym](...args)
+  delete thisContext[sym]
+  return res;
+};
+
+Function.prototype.myBind = function (thisContext, ...args) {
+   return (...newArgs) => this.myApply(thisContext, [...args, ...newArgs])
+};
+```
+
+# Promisify
+```bash
+function promisify(callback) {
+  // Write your code here.
+  return function(...args){
+    return new Promise((resolve, reject) => {
+      function handleErrorAndValue(error, value){
+        if(error){
+          reject(error)
+        }else{
+          resolve(value)
+        }
+      }
+      callback.apply(this, [...args, handleErrorAndValue)
+    })
+  }
+}
+```
+
+
+
+# JavaScript Types
+**object**
+```bash
+typeof obj === 'object' && obj !== null
+```
+
+**array**
+```bash
+Array.isArray(obj)
+```
+
