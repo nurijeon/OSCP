@@ -1,4 +1,5 @@
 [JavaScript Runtime](#JavaScript-Runtime)
+[Debounce/Throttling]
 
 # JavaScript Runtime
 
@@ -41,7 +42,7 @@
   - It's higher priority than callback queue
   - So if your callstack is blocked with synchronous work, render has to wait
   - But if we use asynchromous work, then we give browser a chance to render every once in a while
-  - This is why we shouldn't put slow shitty code to block call stack because it will block browser from rendering!!!
+  - This is why we shouldn't put shitty slow code to block call stack because it will block browser from rendering!!!
 
  
 - setTimeout
