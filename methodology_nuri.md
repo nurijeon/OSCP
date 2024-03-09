@@ -42,6 +42,7 @@
   - [dnsenum](#dnsenum)
   - [McAfee](#McAfee)
   - [WMI](#wmi)
+  - [dnsrecon](#dnsrecon)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -853,6 +854,11 @@ CommandLine = $Command
 }
 ```
 
+# dnsrecon
+```bash
+dnsrecon -d megacorpone.com -t std
+dnsrecon -d megacorp.com -D ~/list.txt -t brt
+```
 
 
 ### bloodhound-python
