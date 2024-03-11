@@ -4,6 +4,13 @@
 
 
 # Enumerating Active Directory
+
+**command injection**
+```bash
+runas.exe /netonly /user:<domain>\<username> cmd.exe
+
+```
+
 **net**
 
 ```bash
@@ -15,8 +22,6 @@ net group "Management Department" /domain
 # add stephanie to management department
 net group "Management Department" stephanie /add /domain
 net group "Management Department" stephanie /del /domain
-
-
 ```
 
 **PowerView**
