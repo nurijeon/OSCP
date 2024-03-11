@@ -29,6 +29,9 @@ Get-NetGroup "Sales Department" | select member
 # domain computer
 Get-NetComputer
 Get-NetComputer | select operatingsystem,dnshostname
+
+# fine possible local administrative access on computers
+Find-LocalAdminAccess
 ```
 
 
