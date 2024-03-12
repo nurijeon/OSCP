@@ -48,6 +48,7 @@
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
+- [Password Attacks](#password_attacks)
 - [Web Attacks](#web-attacks)
   - [Checklist](#checklist)
   - [General Tips](#general-tips)
@@ -1074,6 +1075,14 @@ ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-gracefulsecurity-windows.t
 ## PHP File Upload Bypass
 ```bash
 echo "AddType application/x-httpd-php .xxx" > htaccess
+```
+
+# Password Attacks
+- What is the password encoded with?
+  - base64?
+
+```bash
+pdf2john Infrastructure.pdf > pdf.txt
 ```
 
 
