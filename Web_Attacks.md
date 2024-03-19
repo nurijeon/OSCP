@@ -1,3 +1,5 @@
+- [Checklist](#checklist)
+- [Default Webroot](#default-webroot)
 - [Local File Inclusion](#local-file-inclusion)
 - [Remote File Inclusion](#remote-file-inclusion)
 - [Curl](#curl)
@@ -6,6 +8,29 @@
 - [Feroxbuster](#feroxbuster)
 - [File Upload Vulnerability](#file-upload-vulnerability)
 - [Java Code Execution](#java-code-execution)
+
+# Checklist
+- [ ] Local File Inclusion
+- [ ] Remote File Inclusion
+- [ ] View Source Code
+- [ ] SQLi
+- [ ] curl -IL https://www.inlanefreight.com
+- [ ] whatweb 10.10.10.121
+- [ ] wfuzz
+- [ ] Gobuster
+- [ ] DNS enumeration
+- [ ] File upload vulnerability
+- [ ] Discover webroot
+- [ ] Robots.txt
+
+
+# Default Webroot
+```bash
+Apache	/var/www/html/
+Nginx	/usr/local/nginx/html/
+IIS	c:\inetpub\wwwroot\
+XAMPP	C:\xampp\htdocs\
+```
 
 
 # Local File Inclusion
