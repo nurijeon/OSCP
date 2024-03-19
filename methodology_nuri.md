@@ -11,6 +11,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [NMAP](#nmap)
   - [feroxbuster](#feroxbuster)
   - [gobuster](#gobuster)
   - [nikto](#nikto)
@@ -413,6 +414,19 @@ http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -
 ```
 
 ## Tools
+### NMAP
+```bash
+# locate certain scripts
+locate scripts/citrix
+
+# running nmap script
+nmap --script <script name> -p<port> <host>
+
+# banner grabbing
+nmap -sV --script=banner <target>
+
+```
+
 ### feroxbuster 
 ```bash
 feroxbuster -w /usr/share/seclists/Discovery/Web-Content/raft-medium-words.txt --url http://192.168.222.62/ -C 404,401,403,502,500 -x php,html,txt,jsp,asp,aspx,sh,conf,pl,bak,zip,gz,js,config
@@ -422,6 +436,8 @@ feroxbuster -u http://192.168.209.153:8000/ -w /usr/share/seclists/Discovery/Web
 ### gobuster
 ```bash
 gobuster dir -u http://192.168.167.109/ -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt
+
+gobuster dns -d inlanefreight.com -w /usr/share/SecLists/Discovery/DNS/namelist.txt
 ```
 
 ### nikto
@@ -481,6 +497,9 @@ ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-11000
 ### curl
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/83b00a36-8468-4e38-a5c9-3cf2eb68cbbd)
 ```bash
+# finger print
+curl -IL https://www.inlanefreight.com
+
 # -v : When the web page looks like above, use -v for debugging and getting extra information about the response from server
 We can find the stack information as well(ex. saltstack)
 curl -v target:port
@@ -1000,6 +1019,9 @@ net rpc group addmem "REMOTE ACCESS" "Tracy.White" -U nara-security.com/Tracy.Wh
 
 ### smbclient
 ```bash
+smbclient -N -L \\\\10.129.42.253
+smbclient \\\\10.129.42.253\\users
+smbclient -U bob \\\\10.129.42.253\\users
 smbclient -c 'put myservice.exe' -U t1_leonard.summers -W ZA '//thmiis.za.tryhackme.com/admin$/' EZpass4ever
 ```
 
