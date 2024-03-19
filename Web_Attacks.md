@@ -1,6 +1,7 @@
 - [Local File Inclusion](#local-file-inclusion)
 - [Remote File Inclusion](#remote-file-inclusion)
 - [Curl](#curl)
+- [View Source Code](#view-source-code)
 - [Gobuster](#gobuster)
 - [Feroxbuster](#feroxbuster)
 - [File Upload Vulnerability](#file-upload-vulnerability)
