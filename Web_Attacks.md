@@ -10,18 +10,26 @@
 - [Java Code Execution](#java-code-execution)
 
 # Checklist
-- [ ] Local File Inclusion
-- [ ] Remote File Inclusion
-- [ ] View Source Code
-- [ ] SQLi
+- [ ] NMAP scripts
+  -  nmap -sV --script=http-enum -oA nibbles_nmap_http_enum 10.129.42.190
 - [ ] curl -IL https://www.inlanefreight.com
 - [ ] whatweb 10.10.10.121
-- [ ] wfuzz
+- [ ] View Source Code
 - [ ] Gobuster
+  - admin portal?
+  - file upload vuln?
+  - plugin page?
+- [ ] wfuzz
+- [ ] Check README
 - [ ] DNS enumeration
+- [ ] Authentication: cewl -d 2 -m 4 http://10.129.200.170/nibbleblog/
 - [ ] File upload vulnerability
 - [ ] Discover webroot
 - [ ] Robots.txt
+- [ ] Local File Inclusion
+- [ ] Remote File Inclusion
+- [ ] SQLi
+
 
 
 # Default Webroot
