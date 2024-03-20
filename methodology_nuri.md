@@ -13,6 +13,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [cewl](#cewl)
   - [sudo](#sudo)
   - [Vim](#vim)
   - [NMAP](#nmap)
@@ -447,6 +448,11 @@ http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -
 ```
 
 ## Tools
+### cewl
+```bash
+cewl http://10.129.200.170/nibbleblog/
+```
+
 ### sudo
 ```bash
 #switch to root user
