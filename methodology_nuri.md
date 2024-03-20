@@ -21,6 +21,7 @@
   - [nikto](#nikto)
   - [wfuzz](#wfuzz)
   - [ffuf](#ffuf)
+  - [xmllint](#xmllint)
   - [curl](#curl)
   - [wget](#wget)
   - [SCP](#scp)
@@ -569,11 +570,19 @@ wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/com
 ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt -u http://marshalled.pg -H 'Host: FUZZ.marshalled.pg' -fs 868
 ```
 
+### xmllint
+```bash
+curl -s http://10.129.42.190/nibbleblog/content/private/config.xml | xmllint --format -
+```
+
 ### curl
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/83b00a36-8468-4e38-a5c9-3cf2eb68cbbd)
 ```bash
 # finger print
 curl -IL https://www.inlanefreight.com
+
+# with xmllint
+curl -s http://10.129.42.190/nibbleblog/content/private/config.xml | xmllint --format -
 
 # download files
 curl http://10.10.14.1:8000/linenum.sh -o linenum.sh
