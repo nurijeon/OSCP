@@ -13,6 +13,10 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [MYSQL](#mysql)
+  - [MSSQL](#mssql)
+  - [Nslookup](#nslookup)
+  - [Dig](#dig)
   - [cewl](#cewl)
   - [sudo](#sudo)
   - [Vim](#vim)
@@ -449,6 +453,46 @@ http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -
 ```
 
 ## Tools
+### MYSQL
+```bash
+# mysql configuration file
+cat /etc/mysql/mysql.conf.d/mysqld.cnf | grep -v "#" | sed -r '/^\s*$/d'
+
+# nmap
+sudo nmap 10.129.14.128 -sV -sC -p3306 --script mysql*
+
+# connect
+mysql -u root -h 10.129.14.132
+mysql -u root -pP4SSw0rd -h 10.129.14.128
+```
+
+### MSSQL
+```bash
+python3 mssqlclient.py Administrator@10.129.201.248 -windows-auth
+select name from sys.databases
+```
+
+### Nslookup
+```bash
+nslookup $TARGET
+nslookup -query=A $TARGET
+
+```
+
+### dig
+```bash
+dig facebook.com @1.1.1.1
+dig a www.facebook.com @1.1.1.1
+dig soa www.inlanefreight.com
+dig ns inlanefreight.htb @10.129.14.128
+dig CH TXT version.bind 10.129.120.85
+dig any inlanefreight.htb @10.129.14.128
+dig axfr inlanefreight.htb @10.129.14.128
+dig axfr internal.inlanefreight.htb @10.129.14.128
+
+```
+
+
 ### cewl
 ```bash
 cewl http://10.129.200.170/nibbleblog/
@@ -1023,6 +1067,7 @@ dig @10.10.10.161 AXFR htb.local
 ### dnsenum
 ```bash
 dnsenum 192.168.162.122
+dnsenum --dnsserver 10.129.14.128 --enum -p 0 -s 0 -o subdomains.txt -f /opt/useful/SecLists/Discovery/DNS/subdomains-top1million-110000.txt inlanefreight.htb
 ```
 
 ### scp
@@ -1079,6 +1124,7 @@ sc.exe \\TARGET start THMservice
 ```bash
 # with found usernames, use them against FTP, SSH ETC...
 smtp-user-enum -M VRFY -U /usr/share/wordlists/seclists/Usernames/top-usernames-shortlist.txt -t 192.168.177.63
+smtp-user-enum -M VRFY -U usernames.txt -t 10.129.182.186 -w 10
 ```
 
 # with powershell
