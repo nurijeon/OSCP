@@ -21,6 +21,7 @@
   - plugin page?
 - [ ] wfuzz
 - [ ] Check README
+- [ ] Did we run exiftool against anything found?
 - [ ] DNS enumeration
 - [ ] Authentication: cewl -d 2 -m 4 http://10.129.200.170/nibbleblog/
 - [ ] File upload vulnerability
