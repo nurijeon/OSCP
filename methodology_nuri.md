@@ -547,6 +547,12 @@ netexec smb 10.x.x.x -u 'operator' -p 'operator' --shares
 nslookup $TARGET
 nslookup -query=A $TARGET
 
+#Nameserver
+nslookup -type=NS zonetransfer.me
+
+#Testing for ANY and AXFR Zone Transfer
+nslookup -type=any -query=AXFR zonetransfer.me nsztm1.digi.ninja
+
 #PTR Records for an IP Address
 nslookup -query=PTR 31.13.92.36
 
@@ -566,6 +572,9 @@ nslookup -query=MX $TARGET
 dig facebook.com @1.1.1.1
 dig a www.facebook.com @1.1.1.1
 
+#Nameserver
+dig ns inlanefreight.htb @10.129.14.128
+
 # PTR record
 dig -x 31.13.92.36 @1.1.1.1
 
@@ -579,7 +588,6 @@ dig CH TXT version.bind 10.129.120.85
 dig mx facebook.com @1.1.1.1
 
 dig soa www.inlanefreight.com
-dig ns inlanefreight.htb @10.129.14.128
 
 
 dig axfr inlanefreight.htb @10.129.14.128
@@ -1162,7 +1170,7 @@ sudo socat tcp-listen:135,reuseaddr,fork tcp:<victim.ip.add.ress>:9999
 ### Cadaver
 ```bash
 cadaver http://192.168.161.122/
-```
+``` 8
 
 ### dig
 ```bash
