@@ -743,6 +743,11 @@ ffuf -w /opt/useful/SecLists/Discovery/Web-Content/web-extensions.txt:FUZZ -u ht
 # page fuzzing
 ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt:FUZZ -u http://94.237.49.166:43190/blog/FUZZ.php
 
+# Recursion
+ffuf -w /opt/useful/SecLists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://SERVER_IP:PORT/FUZZ -recursion -recursion-depth 1 -e .php -v
+
+ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt:FUZZ -u http://faculty.academy.htb:43458/courses/FUZZ -e .php,.php7,.phps -v -fs 287,0 -recursion -recursion-depth 1
+
 # GET parameter fuzzing
 ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/burp-parameter-names.txt:FUZZ -u http://admin.academy.htb:37235/admin/admin.php?FUZZ=key -fs 798
 
