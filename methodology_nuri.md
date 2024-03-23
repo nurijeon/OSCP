@@ -727,7 +727,33 @@ wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/com
 ### ffuf
 ```bash
 # dns(subdomain)
+ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt:FUZZ -u http://FUZZ.inlanefreight.com/
+
+# vhosts fuzzing
 ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt -u http://marshalled.pg -H 'Host: FUZZ.marshalled.pg' -fs 868
+
+ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/namelist.txt -u http://10.129.203.167 -H "HOST: FUZZ.inlanefreight.htb" -fs 10918
+
+# directory fuzzing
+ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt:FUZZ -u http://94.237.49.166:43190/FUZZ
+
+# file extension fuzzing
+ffuf -w /opt/useful/SecLists/Discovery/Web-Content/web-extensions.txt:FUZZ -u http://SERVER_IP:PORT/blog/indexFUZZ
+
+# page fuzzing
+ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt:FUZZ -u http://94.237.49.166:43190/blog/FUZZ.php
+
+# GET parameter fuzzing
+ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/burp-parameter-names.txt:FUZZ -u http://admin.academy.htb:37235/admin/admin.php?FUZZ=key -fs 798
+
+# POST parameter fuzzing
+ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/burp-parameter-names.txt:FUZZ -u http://admin.academy.htb:37235/admin/admin.php -X POST -d 'FUZZ=key' -H 'Content-Type: application/x-www-form-urlencoded' -fs xxx
+
+# value fuzzing
+ffuf -w ids.txt:FUZZ -u http://admin.academy.htb:PORT/admin/admin.php -X POST -d 'id=FUZZ' -H 'Content-Type: application/x-www-form-urlencoded' -fs xxx
+
+##We can check this with curl
+curl http://admin.academy.htb:37235/admin/admin.php -X POST -d 'id=73' -H 'Content-Type: application/x-www-form-urlencoded'
 ```
 
 ### xmllint
