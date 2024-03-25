@@ -30,6 +30,8 @@
 - [ ] Local File Inclusion
 - [ ] Remote File Inclusion
 - [ ] SQLi
+  - Try injecting a single quote(')
+  - Try injecting %27
 
 
 
