@@ -5,8 +5,23 @@
 
 # Enumerating Active Directory
 
+**Identifying Hosts**
+```bash
+# wireshark
+sudo -E wireshark
 
-**user enum**
+# tcpdump
+sudo tcpdump -i ens224 
+
+# Fping(it utilizes ICMP requests and replies to reach out and interact with a host)
+fping -asgq 172.16.5.0/23
+```
+
+
+**Identifying Users && user enum**
+- kerbrute
+
+
 - netexec
 ```bash
 # if user exists, it will say "KDC_ERR_PREAUTH_FAILED"
@@ -47,6 +62,7 @@ runas.exe /netonly /user:<domain>\<username> cmd.exe
 **net**
 
 ```bash
+net accounts
 net user /domain
 net user jeffadmin /domain
 net group /domain
