@@ -17,10 +17,10 @@ sudo tcpdump -i ens224
 fping -asgq 172.16.5.0/23
 ```
 
-
 **Identifying Users && user enum**
 - kerbrute
-
+- https://github.com/insidetrust/statistically-likely-usernames/blob/master/jsmith.txt
+kerbrute userenum -d INLANEFREIGHT.LOCAL --dc 172.16.5.5 jsmith.txt -o valid_ad_users
 
 - netexec
 ```bash
@@ -53,11 +53,49 @@ rpcclient 10.10.x.x -U guest
 for i in $(seq 500 4000);do rpcclient -N -U "" 10.129.14.128 -c "queryuser 0x$(printf '%x\n' $i)" | grep "User Name\|user_rid\|group_rid" && echo "";done
 ```
 
+**Enumerating & Retrieving Password Policies**
+- crackmapexec
+```bash
+crackmapexec smb 172.16.5.5 -u avazquez -p Password123 --pass-pol
+```
+
+- rpcclient
+```bash
+rpcclient -U "" -N 172.16.5.5
+rpcclient $> getdompwinfo
+```
+
+- enum4linux-ng
+```bash
+enum4linux-ng -P 172.16.5.5 -oA ilfreight
+```
+
+- ldapsearch
+```bash
+ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "*" | grep -m 1 -B 10 pwdHistoryLength
+```
+
+- powerview
+```bash
+import-module .\PowerView.ps1
+Get-DomainPolicy
+```
+
+- on windows
+```bash
+net use \\DC01\ipc$ "" /u:""
+net use \\DC01\ipc$ "" /u:guest
+net use \\DC01\ipc$ "password" /u:guest
+
+```
+
 **command injection**
 ```bash
 runas.exe /netonly /user:<domain>\<username> cmd.exe
 
 ```
+
+
 
 **net**
 
