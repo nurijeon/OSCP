@@ -78,6 +78,7 @@
 - [NFS](#nfs)
 - [SMB](#smb)
 - [FTP](#ftp)
+- [Jenkins](#jenkins)
 - [Active Directory](#active-directory)
 - [Windows Privilege Escalation](#windows-privilege-escalation)
   - [Manual Enumeration](#manual-enumeration)
@@ -2024,6 +2025,12 @@ trace
 
 # Recursive Listing
 ls -R
+
+```
+
+# Jenkins
+```bash
+
 
 ```
 
