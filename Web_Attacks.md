@@ -12,6 +12,7 @@
 # Checklist
 - [ ] NMAP scripts
   -  nmap -sV --script=http-enum -oA nibbles_nmap_http_enum 10.129.42.190
+- [ ] IIS version -> windows version
 - [ ] curl -IL https://www.inlanefreight.com
 - [ ] whatweb 10.10.10.121
 - [ ] View Source Code
