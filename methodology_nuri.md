@@ -1019,7 +1019,10 @@ rdesktop 192.168.216.165
 
 ### kerbrute
 ```bash
+# kerbrute username list: https://github.com/insidetrust/statistically-likely-usernames/blob/master/jsmith.txt
+
 ./kerbrute userenum --dc 10.10.x.x -d manager.htb /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt
+
 ./kerbrute userenum -d <% tp.frontmatter["DOMAIN"] %> --dc <% tp.frontmatter["DOMAIN"] %> /PATH/TO/FILE/<USERNAMES>
 ./kerbrute passwordspray -d <% tp.frontmatter["DOMAIN"] %> --dc <% tp.frontmatter["DOMAIN"] %> /PATH/TO/FILE/<USERNAMES> <% tp.frontmatter["PASSWORD"] %>
 ```
@@ -2026,6 +2029,19 @@ ls -R
 
 
 # Active Directory
+## Enumeration
+```bash
+
+sudo -E wireshark
+sudo tcpdump -i ens224
+sudo responder -I ens224 -A 
+
+
+# fping
+fping -asgq 172.16.5.0/23
+```
+
+
 ## Important Security Groups And Exploit
 **Backup Operators**
 ```bash
