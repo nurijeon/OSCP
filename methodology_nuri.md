@@ -614,6 +614,10 @@ Stream                   Length
 root.txt                     34
 
 Get-Content -path hm.txt -stream root.txt
+
+# If powershell is not working..
+dir /R
+more < hm.txt:root.txt
 ```
 
 
