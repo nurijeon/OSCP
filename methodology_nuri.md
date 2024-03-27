@@ -13,6 +13,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [KPCLI && kdbx](#kpcli_&&_kdbx)
   - [whatweb](#whatweb)
   - [ntpdate](#ntpdate)
   - [MSSQL](#mssql)
@@ -596,10 +597,20 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Tools
+
+### kpcli && kdbx
+```bash
+keepass2john Database.kdbx > keepass.hash
+hashcat -m 13400 keepass.hash /usr/share/wordlists/rockyou.txt --force 
+
+sudo apt install kpcli
+kpcli --kdb=Database.kdbx
+show -f 2
+```
+
 ### whatweb
 ```bash
 whatweb -a3 https://www.facebook.com -v
-
 ```
 
 
