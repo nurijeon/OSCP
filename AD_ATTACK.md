@@ -35,6 +35,10 @@ enum4linux -U 172.16.5.5  | grep "user:" | cut -f2 -d"[" | cut -f1 -d"]"
 
 **ldapsearch**
 ```bash
+# password policy
+ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "*" | grep -m 1 -B 10 pwdHistoryLength
+
+# userenum
 ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "(&(objectclass=user))"  | grep sAMAccountName: | cut -f2 -d" "
 ```
 
@@ -51,6 +55,9 @@ python3 windapsearch.py --dc-ip 172.16.5.5 -u forend@inlanefreight.local -p Klmc
 
 **crackmapexec**
 ```bash
+# password policy
+crackmapexec smb 172.16.5.5 -u avazquez -p Password123 --pass-pol
+
 # userenum
 crackmapexec smb 172.16.5.5 --users
 
@@ -85,6 +92,11 @@ netexec smb 10.x.x.x -u 'operator' -p 'operator' --shares
 
 **rpcclient**
 ```bash
+# password policy
+rpcclient -U "" -N 172.16.5.5
+rpcclient $> getdompwinfo
+
+
 # first login as some guest user
 rpcclient 10.10.x.x -U guest
 > enumdomusers
@@ -107,7 +119,15 @@ man rpcclient
 
 **net**
 ```bash
+# password policy
 net accounts
+
+# enumerate share
+net use \\DC01\ipc$ "" /u:""
+net use \\DC01\ipc$ "" /u:guest
+net use \\DC01\ipc$ "password" /u:guest
+
+# user, group enumeration
 net user /domain
 net user jeffadmin /domain
 net group /domain
@@ -124,39 +144,14 @@ smbmap -u forend -p Klmcargo2 -d INLANEFREIGHT.LOCAL -H 172.16.5.5
 smbmap -u forend -p Klmcargo2 -d INLANEFREIGHT.LOCAL -H 172.16.5.5 -R 'Department Shares' --dir-only
 ```
 
-## Enumerating & Retrieving Password Policies
-**crackmapexec**
-```bash
-crackmapexec smb 172.16.5.5 -u avazquez -p Password123 --pass-pol
-```
-
-**rpcclient**
-```bash
-rpcclient -U "" -N 172.16.5.5
-rpcclient $> getdompwinfo
-```
-
 **enum4linux-ng**
 ```bash
 enum4linux-ng -P 172.16.5.5 -oA ilfreight
 ```
 
-**ldapsearch**
-```bash
-ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "*" | grep -m 1 -B 10 pwdHistoryLength
-```
-
-**powerview**
-```bash
-import-module .\PowerView.ps1
-Get-DomainPolicy
-```
-
 **net**
 ```bash
-net use \\DC01\ipc$ "" /u:""
-net use \\DC01\ipc$ "" /u:guest
-net use \\DC01\ipc$ "password" /u:guest
+
 
 ```
 
@@ -178,6 +173,10 @@ runas.exe /netonly /user:<domain>\<username> cmd.exe
 
 **PowerView**
 ```bash
+# password policy
+import-module .\PowerView.ps1
+Get-DomainPolicy
+
 # basic information about the domain
 Get-NetDomain
 
