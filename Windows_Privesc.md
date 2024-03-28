@@ -1,4 +1,5 @@
 # Checklist
+- [ ] Run systeminfo 
 - [ ] Get-History, PSReadLine
   - Get-History
   - (Get-PSReadlineOption).HistorySavePath
