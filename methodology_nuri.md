@@ -2055,6 +2055,9 @@ sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
 
 # FTP
 ```bash
+# Download everything
+mget *
+
 # vsFTPd Config File
 cat /etc/vsftpd.conf
 
