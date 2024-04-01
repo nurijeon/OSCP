@@ -6,7 +6,8 @@ nmap 10.10.10.175 --script=smb-enum* -p445
 
 # smbclient
 ## anon
-smbclient -L 10.10.10.175 -N
+smbclient -L 10.10.10.175 -U '' -N
+smbclient -L 10.10.10.x -U ''
 smbclient -L 10.10.10.175 -U "Egotistical-bank.local/fsmith"
 smbclient "\\\\10.10.10.175\\RICOH Aficio SP 8300DN PCL 6" -U "Egotistical-bank.local/fsmith"
 
@@ -50,6 +51,8 @@ rpcclient -U "" -N 10.10.10.161
 > enumdomusers
 > enumdomgroups
 
+# samrdump.py
+samrdump.py 10.129.14.128
 
 # LDAP
 ## anon
