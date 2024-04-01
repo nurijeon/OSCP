@@ -1297,6 +1297,12 @@ powershell -ep bypass
 Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\TEMP\
 ```
 
+### bloodhound-python
+```bash
+bloodhound-python -d htb.local -u svc-alfresco -p s3rvice -gc forest.htb.local -c all -ns 10.10.10.161
+
+```
+
 ### psexec
 ```bash
 psexec.py active.htb/administrator@10.129.193.5
