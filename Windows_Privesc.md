@@ -1,5 +1,6 @@
 # Checklist
-- [ ] Run systeminfo 
+- [ ] Run systeminfo
+- [ ] Check what's on C:\ and check all the directories that are not default
 - [ ] Get-History, PSReadLine
   - Get-History
   - (Get-PSReadlineOption).HistorySavePath
