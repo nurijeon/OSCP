@@ -2886,14 +2886,18 @@ cat /home/user/.bash_history
 # doas(same as sudo) -> check this blog(https://0xdf.gitlab.io/2023/06/10/htb-soccer.html)
 find / -name doas.conf 2>/dev/null
 
-# wriable config file
+# wriable config file(/etc is for config files)
 find /etc -type f -writable 2> /dev/null
 
 # Important directories
-/var
-/opt
-/srv
-/etc
+/var: variable data handled by services. This includes log files, queues, spools, and caches.
+/opt: 3rd party apps
+/srv: data used by servers hosted on this system
+/etc: config files
+/sbin: system program
+/lib/: basic libraries
+
+
 
 # Check config files
 /var/www/html/sites/default/config.php
@@ -2953,6 +2957,7 @@ lsblk
 ```
 
 ## Linux Privilege Strategy
+- If we can reboot the computer, we should look for config files
 - Run linpeas and check every file that's red
 - Check what's already there when you land reverse shell(might be some conf files etc)
 - Check network information for any hidden/unknown vhost(and see where they're located at)
