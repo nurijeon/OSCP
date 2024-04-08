@@ -1176,6 +1176,9 @@ ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/burp-parameter-names
 ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/burp-parameter-names.txt:FUZZ -u http://admin.academy.htb:37235/admin/admin.php -X POST -d 'FUZZ=key' -H 'Content-Type: application/x-www-form-urlencoded' -fs xxx
 
 # value fuzzing
+## it's good to also do with current location...!
+ffuf -w /usr/share/seclists/Discovery/Web-Content/common.txt:FUZZ -u http://192.168.221.134:13337/logs?file=./FUZZ.py -H "X-Forwarded-For:127.0.0.1" -fs 290
+
 ffuf -w ids.txt:FUZZ -u http://admin.academy.htb:PORT/admin/admin.php -X POST -d 'id=FUZZ' -H 'Content-Type: application/x-www-form-urlencoded' -fs xxx
 
 ##We can check this with curl
