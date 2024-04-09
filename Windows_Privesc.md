@@ -35,6 +35,11 @@ sc.exe config <name> <option>= <value>
 net start/stop <name>
 ```
 
+## Query the WMI class win32_service.
+```bash
+Get-CimInstance -ClassName win32_service | Select Name,State,PathName | Where-Object {$_.State -like 'Running'}
+```
+
 ## Service Exploits - Insecure Service Permissions
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/309ec49b-84b7-430e-845c-d33789b3eb43)
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/da59ac17-94f6-4dc5-b681-5b0878363da7)
