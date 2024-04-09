@@ -99,6 +99,10 @@ Get-ModifiableServiceFile
 ## Query the WMI class win32_service.
 ```bash
 Get-CimInstance -ClassName win32_service | Select Name,State,PathName, StartMode | Where-Object {$_.State -like 'Running'}
+
+# with StartName, we can reveal what security context the service is running
+Get-CimInstance -ClassName win32_service | Select Name,State, StartName | Where-Object {$_.State -like 'Running'}
+
 Get-CimInstance -ClassName win32_service | Select Name, StartMode | Where-Object {$_.Name -like 'mysql'}
 ```
 
