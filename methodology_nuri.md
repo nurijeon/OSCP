@@ -1701,7 +1701,13 @@ sudo Responder -I tun0 -A
 ### Hydra
 ```bash
 hydra <% tp.frontmatter["RHOST"] %> -l <% tp.frontmatter["USERNAME"] %> -P /usr/share/wordlists/<FILE> ftp|ssh|smb://<% tp.frontmatter["RHOST"] %>
+
+hydra -l user -P /usr/share/wordlists/rockyou.txt 192.168.50.201 http-post-form "/index.php:fm_usr=user&fm_pwd=^PASS^:Login failed. Invalid"
+
 hydra -l <% tp.frontmatter["USERNAME"] %> -P /usr/share/wordlists/rockyou.txt <% tp.frontmatter["RHOST"] %> http-post-form "/admin.php:username=^USER^&password=^PASS^:login_error"
+
+# In this case we find out that the username and passwords are being base64 encoded so we did ^USER64^ and ^PASS64^
+# Also discovered that the fail code is giving us 403 so set that F=403
 hydra -I -f -L  -P passwords.txt 'http-post-form://192.168.243.61:8081/service/rapture/session:username=^USER64^&password=^PASS64^:C=/:F=403'
 
 sudo hydra -L /usr/share/wordlists/rockyou.txt -p "<% tp.frontmatter["PASSWORD"] %>" rdp://<% tp.frontmatter["RHOST"] %>
