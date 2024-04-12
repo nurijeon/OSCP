@@ -793,6 +793,7 @@ ifconfig
 
 # let's add routing table( on a new tab)
 sudo ip route add 10.10.210.0/24 dev ligolo
+(When you want to delete after, sudo ip route del 10.10.210.0/24 dev ligolo)
 # confirm if it's added
 ip route list
 
