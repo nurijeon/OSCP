@@ -86,6 +86,9 @@ sc.exe config <name> <option>= <value>
 
 # start/stop a service
 net start/stop <name>
+
+# we can do this with powershell
+Restart-Service auditTracker
 ```
 
 ## Powerup displays services the current user can modify
