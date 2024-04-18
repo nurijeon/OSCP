@@ -2025,6 +2025,7 @@ mget *
 # When the file is too big, just mount the share on kali's file system
 mkdir /mnt/resourced
 mount -t cifs '//192.168.179.175/Password Audit' /mnt/resourced -o 'user=V.Ventz,password=HotelCalifornia194!'
+sudo mount -t cifs -o username=plaintext,password=Password123,domain=. //192.168.220.129/Finance /mnt/Finance
 umount /mnt/resourced
 findmnt -s
 ```
