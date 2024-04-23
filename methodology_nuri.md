@@ -1417,13 +1417,20 @@ curl -s http://10.129.42.190/nibbleblog/content/private/config.xml | xmllint --f
 ### curl
 ![image](https://github.com/nuricheun/OSCP/assets/14031269/83b00a36-8468-4e38-a5c9-3cf2eb68cbbd)
 ```bash
-# finger print
+# Finger print
 curl -IL https://www.inlanefreight.com
 
-# with xmllint
+# Provide user credentials
+curl -u admin:admin http://<SERVER_IP>:<PORT>/
+curl http://admin:admin@<SERVER_IP>:<PORT>/
+
+# With xmllint
 curl -s http://10.129.42.190/nibbleblog/content/private/config.xml | xmllint --format -
 
-# download files
+# Silent the status with the -s flag
+curl -s -O inlanefreight.com/index.html
+
+# Download files
 curl http://10.10.14.1:8000/linenum.sh -o linenum.sh
 
 # -v : When the web page looks like above, use -v for debugging and getting extra information about the response from server
