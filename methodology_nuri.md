@@ -1420,6 +1420,12 @@ curl -s http://10.129.42.190/nibbleblog/content/private/config.xml | xmllint --f
 # Finger print
 curl -IL https://www.inlanefreight.com
 
+# Send a HEAD request and only display the response headers
+curl -I https://www.inlanefreight.com
+
+# Set User-Agent
+curl https://www.inlanefreight.com -A 'Mozilla/5.0'
+
 # Provide user credentials
 curl -u admin:admin http://<SERVER_IP>:<PORT>/
 curl http://admin:admin@<SERVER_IP>:<PORT>/
@@ -1433,7 +1439,7 @@ curl -s -O inlanefreight.com/index.html
 # Download files
 curl http://10.10.14.1:8000/linenum.sh -o linenum.sh
 
-# -v : When the web page looks like above, use -v for debugging and getting extra information about the response from server
+# -v : Show the full details of the HTTP request and response
 We can find the stack information as well(ex. saltstack)
 curl -v target:port
 
