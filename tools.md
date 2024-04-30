@@ -1361,6 +1361,16 @@ p	Paste
 ```
 
 ### NMAP
+**Speed**
+```bash
+# Timeouts: default rountd trip time --min-RTT-timeout of 100ms
+mightyllama@htb[/htb]$ sudo nmap 10.129.2.0/24 -F --initial-rtt-timeout 50ms --max-rtt-timeout 100ms
+
+# Max Retries: default retries 10
+sudo nmap 10.129.2.0/24 -F --max-retries 0
+
+```
+
 ```bash
 # update nmap scripts (/usr/share/nmap/scripts/)
 sudo nmap --script-updatedb
@@ -1394,6 +1404,8 @@ sudo nmap 10.129.2.18 -sn -oA host -PE --reason
 # host discovery with ICMP packet(by disabling arp-ping)
 sudo nmap 10.129.2.18 -sn -oA host -PE --packet-trace --disable-arp-ping
 
+# To convert the stored results from XML format to HTML
+xsltproc target.xml -o target.html
 ```
 
 ### feroxbuster 
