@@ -38,5 +38,16 @@ lsblk
 
 # Show usage of disk
 df
-
 ```
+
+## System call analysis with strace
+A system call is a procedure that provides the interface between a process and the operating system
+Operating Systems have functions that process can access/utilize
+
+Strace runs the provided binary so If analyzing malware, run strace in a safe environment
+```bash
+strace -o out_write_file.txt ./write_file
+```
+
+
+
