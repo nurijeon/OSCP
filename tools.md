@@ -1058,9 +1058,13 @@ hello there
 samrdump.py 10.129.14.128
 
 ### tar
+f: this must be the last flag of the command, and the tar file must be immediately after. It tells tar the name and path of the compressed file.
+z: tells tar to decompress the archive using gzip
+x: tar can collect files or extract them. x does the latter.
+v: makes tar talk a lot. Verbose output shows you all the files being extracted.
 ```bash
 # extract its contents
-tar xvf captcha-8.x-1.2.tar.gz
+tar -xvzf /path/to/yourfile.tgz
 
 # create an archive
 tar cvf captcha.tar.gz captcha/
