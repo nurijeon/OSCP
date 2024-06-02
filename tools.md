@@ -858,7 +858,7 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Bug Bounty
-### How to scan safely?
+### How to scan ports safely?
 **NMAP**
 ```bash
 # -F: top 100 ports
@@ -880,6 +880,15 @@ nmap -A -F -T2 10.10.10.10 -v
 ### IDOR
 - [burpsuite](#burpsuite-idor)
 - [ffuf](#ffuf-idor)
+
+### Broken Access Control: JWT token(jwt.io)
+- Can we update/access others account with current user's JWT?
+JWT token has three parts separated by dot. In the example, the last part(signature) is missing.
+![image](https://github.com/nurijeon/OSCP/assets/14031269/68330cc8-4b4d-4e03-94b9-326bd31efaee)
+```bash
+└─$ echo "eyJ1c2VyIjoiamVyZW15Iiwicm9sZSI6InN0YWZmIn0=" | base64 -d
+{"user":"jeremy","role":"staff"}  
+```
 
 ## Tools
 ### Burpsuite
