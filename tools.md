@@ -1,4 +1,4 @@
-![image](https://github.com/nurijeon/OSCP/assets/14031269/072cde5a-e5d9-4f0a-883b-c3586c61d76a)![image](https://github.com/nurijeon/OSCP/assets/14031269/a0b48605-c3ee-4b04-baf0-8ebd6129e857)# Table of Content
+# Table of Content
 - [General](#general)
   - [Important Files](#important-files)
   - [Upgrade Shell](#upgrade-shell)
@@ -14,7 +14,7 @@
   - [Mssql](#mssql)
   - [sqlite](#salite)
   - [SQLi](#sqli)
-- [Bug Bounty](#bug bounty)
+- [Bug Bounty](#bug-bounty)
   - [Authentication](#authentication)
 - [Tools](#tools)
   - [burp suite](#burpsuite)
@@ -32,7 +32,7 @@
   - [tar](#tar)
   - [proof.txt](#proof.txt)
   - [gitdumper](#gitdumper)
-  - [KPCLI && kdbx](#kpcli_&&_kdbx)
+  - [KPCLI && kdbx](#kpcli-&&-kdbx)
   - [whatweb](#whatweb)
   - [ntpdate](#ntpdate)
   - [certipy](#certipy)
@@ -868,12 +868,13 @@ nmap -A -F -T2 10.10.10.10 -v
 
 ### Authentication
 **Password Brute-force Attacks**
-- [burpsuite](#burpsuite-password-bruteforce)
-- [burpsuite](#burpsuite-username-password-bruteforce)
-- [ffuf](#ffuf-password-brute-force)
-- [ffuf](#ffuf-username-password-brute-force-with-lockout)
+- [Burpsuite Password Bruteforce](#burpsuite-password-bruteforce)
+- [Burpsuite Username Password Bruteforce with Lockout](#burpsuite-username-password-bruteforce-with-lockout)
+- [Ffuf Password Bruteforce](#ffuf-password-bruteforce)
+- [ffuf Username Password Bruteforce with Lockout](#ffuf-username-password-bruteforce-with-lockout)
 
 **Attacking MFA**
+- Can we bruteforce MFA?
 - See if anyone is using same MFA(use it against others' account login)
 
 ### IDOR
@@ -892,16 +893,16 @@ nmap -A -F -T2 10.10.10.10 -v
 4. click "Start attack"
 ![image](https://github.com/nurijeon/OSCP/assets/14031269/d5385545-fde0-4bfe-9c7b-2972481eec2a)
 
-#### Burpsuite Username Password Bruteforce
-1. Check "Cluster bomb" on Intruder
+#### Burpsuite Username Password Bruteforce With Lockout
+1. On Intruder, select Attack type to "Cluster bomb"  
 ![image](https://github.com/nurijeon/OSCP/assets/14031269/62ce789c-a474-470b-ad05-52b56a84e4fb)
-2. load username
-3. load password
+2. For payload set 1, load username
+3. For payload set 2, load password
 ```bash
 head /usr/share/seclists/Passwords/xato-net-10-million
 ```
 
-#### burpsuite idor
+#### Burpsuite IDOR
 1. Mark account and click "Add" and check out payloads
 ![image](https://github.com/nurijeon/OSCP/assets/14031269/34287bcc-c814-4267-af9b-0baaac3717a6)
 2. Generate numbers with python and save it to the file nums.txt
@@ -1623,21 +1624,22 @@ ffuf -w ids.txt:FUZZ -u http://admin.academy.htb:PORT/admin/admin.php -X POST -d
 curl http://admin.academy.htb:37235/admin/admin.php -X POST -d 'id=73' -H 'Content-Type: application/x-www-form-urlencoded'
 ```
 
-#### Ffuf Password Brute Force
-1. Right click and download the request
+#### Ffuf Password Bruteforce
+1. From burpsuite, right click and download the request
 ![image](https://github.com/nurijeon/OSCP/assets/14031269/7fee7b16-dec7-4200-b0b2-a1c7e0e41a19)
 2. Change the password to "FUZZ"
 ![image](https://github.com/nurijeon/OSCP/assets/14031269/19df8303-d976-4e4a-8ea4-276f9f976b86)
-
+3. Run Ffuf
 ```bash
 └─$ ffuf -request req.txt -request-proto http -w /usr/share/seclists/SecLists-master/Passwords/xato-net-10-million-passwords-10000.txt -fs 1814
 ```
 
-#### Ffuf Username Password Brute Force With Lockout
-1. Download request file and change both username and password
+#### Ffuf Username Password Bruteforce With Lockout
+1. From burpsuite, right click and download the request. Change the file with two keywords
 ![image](https://github.com/nurijeon/OSCP/assets/14031269/194ca3e1-45c8-4a84-9060-0268ca817c8f)
 2. Run Ffuf
 ```bash
+└─$ ffuf -request req.txt -request-proto http -mode clusterbomb -w /usr/share/seclists/SecLists-master/Usernames/top-usernames-shortlist.txt:FUZZUSER -w passwords.txt:FUZZPASS -fs 1814
 ```
 
 #### Ffuf Idor
