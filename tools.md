@@ -1,4 +1,4 @@
-# Table of Content
+![image](https://github.com/nurijeon/OSCP/assets/14031269/072cde5a-e5d9-4f0a-883b-c3586c61d76a)![image](https://github.com/nurijeon/OSCP/assets/14031269/a0b48605-c3ee-4b04-baf0-8ebd6129e857)# Table of Content
 - [General](#general)
   - [Important Files](#important-files)
   - [Upgrade Shell](#upgrade-shell)
@@ -14,8 +14,11 @@
   - [Mssql](#mssql)
   - [sqlite](#salite)
   - [SQLi](#sqli)
- 
+- [Bug Bounty](#bug bounty)
+  - [Authentication](#authentication)
 - [Tools](#tools)
+  - [burp suite](#burpsuite)
+  - [foxyproxy](#foxyproxy)
   - [pdfid](#pdfid)
   - [sqsh](#sqsh)
   - [file transfer](#file-transfer)
@@ -854,7 +857,80 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ' union select 'd', cast((SELECT concat('DATABASE: ',passwd) FROM pg_shadow limit 1 offset 1) as int), 1, 'd', 'd', null -- //
 ```
 
+## Bug Bounty
+### How to scan safely?
+**NMAP**
+```bash
+# -F: top 100 ports
+# -T1 or -T2: slow 
+nmap -A -F -T2 10.10.10.10 -v
+```
+
+### Authentication
+**Password Brute-force Attacks**
+- [burpsuite](#burpsuite-password-bruteforce)
+- [burpsuite](#burpsuite-username-password-bruteforce)
+- [ffuf](#ffuf-password-brute-force)
+- [ffuf](#ffuf-username-password-brute-force-with-lockout)
+
+**Attacking MFA**
+- See if anyone is using same MFA(use it against others' account login)
+
+### IDOR
+- [burpsuite](#burpsuite-idor)
+- [ffuf](#ffuf-idor)
+
 ## Tools
+### Burpsuite
+#### Burpsuite Password Bruteforce
+1. Send the req to intruder and highlight password field(where jeremy is at) and click "Add"
+![image](https://github.com/nurijeon/OSCP/assets/14031269/d2bdfc2b-f7be-4a2d-9eb8-6c0ea69684f3)
+2. Click payload
+![image](https://github.com/nurijeon/OSCP/assets/14031269/b3054845-0c5b-4a3d-8f53-4250e9ca948d)
+3. Click Load and find the right wordlist for you
+![image](https://github.com/nurijeon/OSCP/assets/14031269/1397cac3-d023-4cb4-80eb-b581d860067c)
+4. click "Start attack"
+![image](https://github.com/nurijeon/OSCP/assets/14031269/d5385545-fde0-4bfe-9c7b-2972481eec2a)
+
+#### Burpsuite Username Password Bruteforce
+1. Check "Cluster bomb" on Intruder
+![image](https://github.com/nurijeon/OSCP/assets/14031269/62ce789c-a474-470b-ad05-52b56a84e4fb)
+2. load username
+3. load password
+```bash
+head /usr/share/seclists/Passwords/xato-net-10-million
+```
+
+#### burpsuite idor
+1. Mark account and click "Add" and check out payloads
+![image](https://github.com/nurijeon/OSCP/assets/14031269/34287bcc-c814-4267-af9b-0baaac3717a6)
+2. Generate numbers with python and save it to the file nums.txt
+```bash
+for i in range(1, 5000):
+  print(i)
+```
+3. Load nums.txt file on payload
+4. After cliking "Start attack" button, change the filter to "Search by search term" and search admin 
+![image](https://github.com/nurijeon/OSCP/assets/14031269/e373881e-26bb-44a2-9fab-b583b158d5c4)
+
+
+### foxyproxy
+```bash
+1. Add foxyproxy addon to firefox
+2. Click foxyproxy and click option
+3. Add proxy
+  - Title or Description: burp suite
+  - Proxy Type: HTTP
+  - Proxy IP address or DNS name: 127.0.0.1
+  - Port: 8080
+4. switch on burp suite
+5. go to http://burp, Download Certificate
+6. Go to settings on firefox -> Privacy & Security -> Go all the way down
+7. Click "View Certificate"
+8. Grab the certificate that we just downloaded
+
+```
+
 ### pdfid
 The combination of automatic action and JavaScript makes a PDF document very suspicious
 ```bash
@@ -1545,6 +1621,29 @@ ffuf -w ids.txt:FUZZ -u http://admin.academy.htb:PORT/admin/admin.php -X POST -d
 
 ##We can check this with curl
 curl http://admin.academy.htb:37235/admin/admin.php -X POST -d 'id=73' -H 'Content-Type: application/x-www-form-urlencoded'
+```
+
+#### Ffuf Password Brute Force
+1. Right click and download the request
+![image](https://github.com/nurijeon/OSCP/assets/14031269/7fee7b16-dec7-4200-b0b2-a1c7e0e41a19)
+2. Change the password to "FUZZ"
+![image](https://github.com/nurijeon/OSCP/assets/14031269/19df8303-d976-4e4a-8ea4-276f9f976b86)
+
+```bash
+└─$ ffuf -request req.txt -request-proto http -w /usr/share/seclists/SecLists-master/Passwords/xato-net-10-million-passwords-10000.txt -fs 1814
+```
+
+#### Ffuf Username Password Brute Force With Lockout
+1. Download request file and change both username and password
+![image](https://github.com/nurijeon/OSCP/assets/14031269/194ca3e1-45c8-4a84-9060-0268ca817c8f)
+2. Run Ffuf
+```bash
+```
+
+#### Ffuf Idor
+```bash
+# Find admin
+ffuf -u 'http://localhost/labs/e0x02.php?account=FUZZ' -w nums.txt -mr 'admin' 
 ```
 
 ### xmllint
