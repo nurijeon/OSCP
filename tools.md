@@ -858,12 +858,23 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 ```
 
 ## Bug Bounty
-### How to scan ports safely?
-**NMAP**
+### How to run NMAP safely?
 ```bash
 # -F: top 100 ports
 # -T1 or -T2: slow
 nmap -A -F -T2 10.10.10.10 -v
+```
+
+### How to run FFUF safely?
+```bash
+ffuf -w /usr/share/wordlists/dirb/common.txt -u http://tenet.htb/FUZZ -p 1 
+# -p delay in between requests
+```
+
+### Shodan
+```bash
+shodan init API_KEY
+shodan info
 ```
 
 ### Authentication
