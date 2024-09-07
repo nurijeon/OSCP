@@ -1496,8 +1496,53 @@ C:\Windows\System32\calc.exe
 # Recursive Where
 where /R C:\Users\student\ bio.txt
 where /R C:\Users\student\ *.csv
+```
+
+**share**
+```bash
+# create exfil folder and share
+mkdir exfil
+net share Exfil=C:\Users\njeon\Downloads\exfil
+
+# check what is currently being shared on our localhost
+net view \\127.0.0.1
+
+# check what's being shared on our network(Displays available smb shares)
+net share
+
+# connect to the share on a remote host
+net use m: \\<% tp.frontmatter["LHOST"] %>\test /user:joe joe /persistent:yes
+```
+
+**network**
+```bash
+# Display all sessions connected to the computer and deletes them if specified.
+net session
+
+# Display information about your connections
+net use
+```
+
+**netstat**
+```bash
+# -n: do not resolve dns names
+netstat -n
+
+# -a: displays which tcp and upp ports are listening
+netstat -a
+
+# -b: which program is used to make the connection
+netstat -b
+
+# -f: fully qualified domain name
+netstat -f
+
+# -o: include process id
+
 
 ```
+
+
 
 ### smbpasswd
 ```bash
