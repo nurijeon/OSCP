@@ -1538,8 +1538,27 @@ netstat -b
 netstat -f
 
 # -o: include process id
+```
 
+**tasklist**
+```bash
+# enumerate processes on windows(run as admin)
+tasklist
 
+# enumerate processes on windows with more verbose output
+tasklist /V
+
+# list dll module associated with each process
+tasklist /M
+
+# filter by executable name
+tasklist /FI "IMAGENAME eq program.exe"
+
+# filter by pid
+tasklist /FI "PID eq 2222"
+
+# filter by pid and provide any associated dynamic library link
+tasklist /FI "PID eq 2222" /M
 ```
 
 
