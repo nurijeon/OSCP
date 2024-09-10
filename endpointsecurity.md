@@ -1,3 +1,4 @@
+## Windows Process Analysis
 **Process**
 ```bash
 tasklist
@@ -27,6 +28,7 @@ wmic process get name, parentprocessid, processid | find "192"
 wmic process where processid=2088 get commandline
 ```
 
+## Windows Core Processes
 **System Process**
 - No path
 - PID 4
