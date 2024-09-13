@@ -66,6 +66,11 @@ net use
 
 
 ## Windows Process Analysis
+**Windows core processes**
+- System(Windows) processes
+- User processes
+
+
 **Process**
 ```bash
 tasklist
