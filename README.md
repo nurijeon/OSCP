@@ -981,6 +981,7 @@ hashcat -m 13400 keepass.hash /usr/share/wordlists/rockyou.txt --force
 ```bash
 sudo apt install kpcli
 kpcli --kdb=Database.kdbx
+show -f 1
 ```
 
 
