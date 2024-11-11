@@ -17,6 +17,7 @@
 - [Bug Bounty](#bug-bounty)
   - [Authentication](#authentication)
 - [Tools](#tools)
+  - [puttygen](#puttygen)
   - [powershell](#powershell)
   - [registry](#registry)
   - [SQLMAP](#SQLMAP)
@@ -1167,6 +1168,14 @@ Use .php extension and magic byte for png and add php code somewhere in the orig
 
 
 ## Tools
+### puttygen
+**Convert putty key to openssh key**
+```bash
+apt install putty-tools
+puttygen root-putty.key -O private-openssh -o keeper-root
+```
+
+
 ### Powershell
 ```bash
 # 1. Check Windows Defender & RealTimeProtectionEnabled property
