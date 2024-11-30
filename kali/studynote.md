@@ -1,5 +1,8 @@
-[Firewall](#firewall)
-[File System](#file-system)
+- [Firewall](#firewall)
+- [File System](#file-system)
+- [Strace](#strace)
+- [kali-tweaks](#kali-tweak)
+- [conf](#conf)
 
 ## Firewall
 
@@ -40,7 +43,8 @@ lsblk
 df
 ```
 
-## System call analysis with strace
+## Strace
+**System call analysis with strace**
 A system call is a procedure that provides the interface between a process and the operating system
 Operating Systems have functions that process can access/utilize
 
@@ -48,6 +52,10 @@ Strace runs the provided binary so If analyzing malware, run strace in a safe en
 ```bash
 strace -o out_write_file.txt ./write_file
 ```
+
+## Conf
+- In linux, configuration files are located in /etc directory
+- .conf, .configuration, .cfg
 
 
 
