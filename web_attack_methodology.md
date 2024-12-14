@@ -1,10 +1,10 @@
-- 0. Hostname and add it to /etc/hosts
+## 0. Hostname and add it to /etc/hosts
 
-- 1. Server Information
+## 1. Server Information
  - nmap -sCV
  - curl -s -v 10.10.11.208 
 
-- 2. Fuzz input
+## 2. Fuzz input
  - 2.1 Using FUFF
 
   *1 Intercept and send the request to the repeater and right click and select "copy to file"
@@ -16,5 +16,15 @@
   ffuf -request search.req -request-proto http -w /usr/share/seclists/Fuzzing/special-chars.txt -ms 0
   ```
 
-- 3. Check /var/www/ directory for the web files
+## 3. Check /var/www/ directory for the web files
  - 3.1 Check if credentials can be found through .git/config
+
+## ETC
+### MYSQL
+**Find MySQL config**
+
+
+**Connect to MySQL**
+```bash
+mysql -h 127.0.0.1 -u gitea -p
+```
