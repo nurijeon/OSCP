@@ -1,11 +1,11 @@
-0. Hostname and add it to /etc/hosts
+- 0. Hostname and add it to /etc/hosts
 
-1. Server Information
-- nmap -sCV
-- curl -s -v 10.10.11.208 
+- 1. Server Information
+ - nmap -sCV
+ - curl -s -v 10.10.11.208 
 
-2. Fuzz input
-2.1 Using FUFF
+- 2. Fuzz input
+ - 2.1 Using FUFF
 
   *1 Intercept and send the request to the repeater and right click and select "copy to file"
   ![image](https://github.com/user-attachments/assets/64b68dd4-5c28-441e-9cae-9a8c93338375)
@@ -15,3 +15,6 @@
   ```bash
   ffuf -request search.req -request-proto http -w /usr/share/seclists/Fuzzing/special-chars.txt -ms 0
   ```
+
+- 3. Check /var/www/ directory for the web files
+ - 3.1 Check if credentials can be found through .git/config
